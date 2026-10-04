@@ -131,6 +131,7 @@
                     android:textStyle="bold" />
 
             </LinearLayout>
+
             <!-- TITULO REGISTRO -->
             <TextView
                 android:layout_width="wrap_content"
