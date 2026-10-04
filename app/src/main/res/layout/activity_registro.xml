@@ -9,6 +9,7 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,6 +92,280 @@
                     android:textSize="14sp" />
 
             </LinearLayout>
+
+            <!-- LOGO VIAJAPP -->
+            <ImageView
+                android:id="@+id/imgLogoViajApp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/fondo_logo"
+                android:padding="10dp"
+                android:src="@drawable/logo_viajapp"
+                android:contentDescription="Logo de ViajApp"
+                android:scaleType="fitCenter" />
+
+            <!-- TURISMO INCLUSIVO -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="28dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_shield_check"
+                    android:contentDescription="Escudo de accesibilidad" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Turismo 100% Inclusivo"
+                    android:textColor="#0B1F3A"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+            <!-- TITULO REGISTRO -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="18dp"
+                android:text="Crea tu cuenta en ViajAPP"
+                android:textColor="#111827"
+                android:textSize="16sp" />
+
+            <!-- DESCRIPCION -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Planifica aventuras seguras, cómodas y sin&#10;barreras en cada destino."
+                android:textColor="#111827"
+                android:textSize="16sp" />
+
+            <!-- NOMBRE Y APELLIDOS - ENCABEZADO -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Nombre y Apellidos *"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Requerido"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- CAMPO NOMBRE Y APELLIDOS -->
+            <EditText
+                android:id="@+id/etNombreApellidos"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/fondo_campo"
+                android:drawableStart="@drawable/ic_person"
+                android:drawablePadding="12dp"
+                android:hint="Ej.Carmen Rodríguez Silva"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280"
+                android:textSize="14sp"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+
+            <!-- CORREO ELECTRÓNICO - ENCABEZADO -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Correo electrónico *"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tu correo activo"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- CAMPO CORREO ELECTRÓNICO -->
+            <EditText
+                android:id="@+id/etCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/fondo_campo"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="12dp"
+                android:hint="ejemplo@viajapp.org"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280"
+                android:textSize="14sp"
+                android:inputType="textEmailAddress"
+                android:singleLine="true" />
+
+            <!-- CONTRASEÑA - ENCABEZADO -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Contraseña *"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mínimo 8 caracteres"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- CAMPO CONTRASEÑA -->
+            <EditText
+                android:id="@+id/etContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/fondo_campo"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="12dp"
+                android:hint="Introduce tu contraseña"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280"
+                android:textSize="14sp"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+
+            <!-- SEGURIDAD DE LA CONTRASEÑA -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="end"
+                android:text="Seguridad"
+                android:textColor="#111827"
+                android:textSize="14sp" />
+
+            <!-- CONFIRMAR CONTRASEÑA - ENCABEZADO -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Confirmar Contraseña *"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Debe coincidir"
+                    android:textColor="#111827"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- CAMPO CONFIRMAR CONTRASEÑA -->
+            <EditText
+                android:id="@+id/etConfirmarContrasena"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/fondo_campo"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="12dp"
+                android:hint="Repite tu contraseña"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280"
+                android:textSize="14sp"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+
+            <!-- PREFERENCIAS DE ACCESIBILIDAD -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="¿Cómo te adaptamos la experiencia?"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(Opcional)"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <!-- EXPLICACIÓN ACCESIBILIDAD -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Personalizaremos rutas, transportes accesibles y audio-guías según tu selección."
+                android:textColor="#6B7280"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
