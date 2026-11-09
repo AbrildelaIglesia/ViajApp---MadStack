@@ -274,23 +274,34 @@
 
             </LinearLayout>
 
+
             <!-- CAMPO CONTRASEÑA -->
-            <EditText
-                android:id="@+id/etContrasena"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/fondo_campo"
-                android:drawableStart="@drawable/ic_lock"
-                android:drawablePadding="12dp"
-                android:hint="Introduce tu contraseña"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:textSize="14sp"
-                android:inputType="textPassword"
-                android:singleLine="true" />
+                app:boxBackgroundMode="none"
+                app:hintEnabled="false"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etContrasena"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/fondo_campo"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="12dp"
+                    android:hint="Introduce tu contraseña"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:textSize="14sp"
+                    android:inputType="textPassword"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- SEGURIDAD DE LA CONTRASEÑA -->
             <TextView
@@ -327,23 +338,34 @@
 
             </LinearLayout>
 
+
             <!-- CAMPO CONFIRMAR CONTRASEÑA -->
-            <EditText
-                android:id="@+id/etConfirmarContrasena"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/fondo_campo"
-                android:drawableStart="@drawable/ic_lock"
-                android:drawablePadding="12dp"
-                android:hint="Repite tu contraseña"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:textSize="14sp"
-                android:inputType="textPassword"
-                android:singleLine="true" />
+                app:boxBackgroundMode="none"
+                app:hintEnabled="false"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etConfirmarContrasena"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/fondo_campo"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="12dp"
+                    android:hint="Repite tu contraseña"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="18dp"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:textSize="14sp"
+                    android:inputType="textPassword"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <!-- PREFERENCIAS DE ACCESIBILIDAD -->
             <LinearLayout
@@ -361,13 +383,6 @@
                     android:textColor="#111827"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="(Opcional)"
-                    android:textColor="#6B7280"
-                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -554,43 +569,27 @@
 
             </LinearLayout>
 
+
             <!-- BOTÓN CREAR CUENTA -->
-            <LinearLayout
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCrearCuenta"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/fondo_boton_crear_cuenta"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingStart="24dp"
+                android:background="@drawable/fondo_boton_crear_cuenta_estado"
+                android:backgroundTint="@null"
+                android:text="Crear Cuenta Accesible"
+                android:textColor="#111827"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:drawableEnd="@drawable/ic_arrow_forward"
+                android:drawablePadding="12dp"
                 android:paddingEnd="24dp"
+                android:paddingStart="24dp"
+                android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Crear Cuenta Accesible"
-                        android:textColor="#111827"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_marginStart="12dp"
-                        android:src="@drawable/ic_arrow_forward"
-                        android:contentDescription="Continuar" />
-
-                </LinearLayout>
-
-            </LinearLayout>
 
             <!-- TÍTULO REGISTRO ASISTIDO -->
             <TextView
