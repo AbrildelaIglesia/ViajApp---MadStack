@@ -21,6 +21,30 @@
             android:exported="false" />
 
         <activity
+            android:name=".AccesibilidadActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ErrorActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ItinerarioActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".LugaresActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".PlanearActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
 
