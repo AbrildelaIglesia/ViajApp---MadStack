@@ -9,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class InicioActivity extends AppCompatActivity {
@@ -16,6 +18,7 @@ public class InicioActivity extends AppCompatActivity {
     private EditText etCorreo, etContrasena;
     private TextView txtRegistrarse;
     private LinearLayout btnIniciarSesion;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,18 +26,52 @@ public class InicioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAuth = FirebaseAuth.getInstance();
         etCorreo = findViewById(R.id.etCorreo);
         etContrasena = findViewById(R.id.etContrasena);
 
         btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
-        btnIniciarSesion.setOnClickListener(v ->
-        {
-            String correo = etCorreo.getText().toString().trim();
-            String contrasena = etContrasena.getText().toString().trim();
-            if (!validarCorreo(correo)) {
-                return;
-            }
-            etCorreo.setText(correo);
+        btnIniciarSesion.setOnClickListener(v -> {
+
+        String correo = etCorreo.getText().toString().trim();
+        String contrasena = etContrasena.getText().toString();
+
+        // Validar correo
+        if (!validarCorreo(correo)) {
+            return;
+        }
+
+        // Validar contraseña
+        if (contrasena.isEmpty()) {
+            etContrasena.setError("Ingrese su contraseña");
+            etContrasena.requestFocus();
+            return;
+        }
+
+        // Consultar Firebase Authentication
+        mAuth.signInWithEmailAndPassword(correo, contrasena)
+            .addOnCompleteListener(this, task -> {
+
+                if (task.isSuccessful()) {
+
+                    Toast.makeText(
+                            InicioActivity.this,
+                            "¡Bienvenido!",
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                    Intent intent = new Intent(InicioActivity.this, AccesibilidadActivity.class);
+                    startActivity(intent);
+
+                } else {
+
+                    Toast.makeText(
+                            InicioActivity.this,
+                            "No se pudo iniciar sesión. Verificá tu correo y contraseña.",
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            });
         });
 
         // BOTÓN "REGISTRATE ACÁ"
@@ -56,6 +93,7 @@ public class InicioActivity extends AppCompatActivity {
             etCorreo.requestFocus();
             return false;
         }
+
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
             etCorreo.setError("El formato de correo es inválido");
             etCorreo.requestFocus();
