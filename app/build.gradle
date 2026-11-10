@@ -15,7 +15,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resValue("string", "places_api_key", project.findProperty("PLACES_API_KEY") ?: "")
+        manifestPlaceholders = [PLACES_API_KEY: project.findProperty("PLACES_API_KEY") ?: ""]
     }
 
     buildTypes {
