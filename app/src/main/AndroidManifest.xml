@@ -15,6 +15,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/places_api_key" />
         <activity
+            android:name=".RegistroActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
