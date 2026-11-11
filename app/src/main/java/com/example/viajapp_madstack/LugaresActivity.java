@@ -1,0 +1,57 @@
+package com.example.viajapp_madstack;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class LugaresActivity extends AppCompatActivity {
+
+    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_lugares_turisticos);
+
+
+
+        // BOTONES DE NAVEGACIÓN
+        navPlanear = findViewById(R.id.navPlanear);
+        navAccesibilidad = findViewById(R.id.navAccesibilidad);
+        navItinerario = findViewById(R.id.navItinerario);
+        navLugares = findViewById(R.id.navLugares);
+
+        navPlanear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LugaresActivity.this, PlanearActivity.class);
+                startActivity(intent);
+            }
+        });
+        navAccesibilidad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LugaresActivity.this, AccesibilidadActivity.class);
+                startActivity(intent);
+            }
+        });
+        navItinerario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LugaresActivity.this, ItinerarioActivity.class);
+                startActivity(intent);
+            }
+        });
+        navLugares.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LugaresActivity.this, LugaresActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+}
