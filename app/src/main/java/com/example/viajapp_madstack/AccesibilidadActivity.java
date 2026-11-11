@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class AccesibilidadActivity extends AppCompatActivity {
+public class  AccesibilidadActivity extends AppCompatActivity {
 
     private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares;
 
