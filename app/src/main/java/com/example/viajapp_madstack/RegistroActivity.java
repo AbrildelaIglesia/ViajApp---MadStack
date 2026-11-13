@@ -322,50 +322,55 @@ public class RegistroActivity extends AppCompatActivity {
         boolean normal = modoContraste == 0;
         boolean crema = modoContraste == 1;
 
+
         // COLORES DE CADA TEMA
+        // Inspirados en los modos oscuro y crema de Wattpad
+
         int fondoPantalla = Color.parseColor(
-                crema ? "#FFF8E1" : "#121212"
+                crema ? "#FFF1D6" : "#111111"
         );
 
         int fondoBarra = Color.parseColor(
-                crema ? "#FFF0BF" : "#202020"
+                crema ? "#F6E8CF" : "#181818"
         );
 
         int fondoControl = Color.parseColor(
-                crema ? "#FFFBEC" : "#303030"
+                crema ? "#FFFAF0" : "#252525"
         );
 
         int fondoCampo = Color.parseColor(
-                crema ? "#FFFFFF" : "#252525"
+                crema ? "#F3DFC0" : "#222222"
         );
 
         int borde = Color.parseColor(
-                crema ? "#9C7600" : "#FFE16B"
+                crema ? "#A6947F" : "#666666"
         );
 
         int textoPrincipal = Color.parseColor(
-                crema ? "#211C13" : "#FAFAFA"
+                crema ? "#222222" : "#FFFFFF"
         );
 
         int textoSecundario = Color.parseColor(
-                crema ? "#51452D" : "#D6D6D6"
+                crema ? "#5A5146" : "#D0D0D0"
         );
 
         int textoPista = Color.parseColor(
-                crema ? "#51452D" : "#D7D7D7"
+                crema ? "#71665B" : "#BABABA"
         );
 
         int fondoBoton = Color.parseColor(
-                crema ? "#EBCB71" : "#FFE16B"
+                crema ? "#E9D7B8" : "#111111"
         );
 
         int fondoBotonPresionado = Color.parseColor(
-                crema ? "#DAB858" : "#EAC950"
+                crema ? "#D8C5A8" : "#303030"
         );
 
+
         int colorIconos = Color.parseColor(
-                crema ? "#5E4700" : "#FFE16B"
+                crema ? "#272727" : "#FFFFFF"
         );
+
 
         // 1. FONDO GENERAL
         if (normal) {
@@ -439,20 +444,22 @@ public class RegistroActivity extends AppCompatActivity {
                     coloresOriginales.get(btnCrearCuenta)
             );
 
+
         } else {
 
             btnCrearCuenta.setBackground(
                     fondoBotonTema(
                             fondoBoton,
                             fondoBotonPresionado,
-                            borde
+                            crema ? borde : Color.WHITE
                     )
             );
 
             btnCrearCuenta.setTextColor(
-                    Color.parseColor("#171717")
+                    crema ? Color.parseColor("#222222") : Color.WHITE
             );
         }
+
 
         // 7. CAMPOS DEL FORMULARIO
         EditText[] campos = {
@@ -532,8 +539,9 @@ public class RegistroActivity extends AppCompatActivity {
         actualizarIconoFinal(
                 btnCrearCuenta,
                 R.drawable.ic_arrow_forward,
-                Color.parseColor("#171717")
+                crema ? Color.parseColor("#222222") : Color.WHITE
         );
+
 
         // 11. OJITOS DE LAS CONTRASEÑAS
         actualizarIconosContrasenas(
