@@ -70,32 +70,44 @@
     </LinearLayout>
 
 
+
+    <!-- BARRA DE ACCESIBILIDAD FIJA -->
     <LinearLayout
         android:id="@+id/barraAccesibilidad"
         android:layout_width="0dp"
         android:layout_height="64dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="14dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:background="@drawable/fondo_barra_accesibilidad"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- ACCESIBILIDAD -->
         <TextView
+            android:id="@+id/btnAccesibilidad"
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/fondo_boton_accesibilidad"
-            android:text="ⓘ ACCESIBILIDAD"
+            android:text=" ☰  ACCESIBILIDAD"
             android:textColor="#1E5FA8"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cerrar menú de accesibilidad"
+            android:clickable="true"
+            android:focusable="true" />
 
+        <!-- DISMINUIR TEXTO -->
         <TextView
-            android:id="@+id/btnReducirTexto"
+            android:id="@+id/btnDisminuirTexto"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginStart="5dp"
@@ -106,6 +118,7 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
+        <!-- AUMENTAR TEXTO -->
         <TextView
             android:id="@+id/btnAumentarTexto"
             android:layout_width="44dp"
@@ -118,6 +131,7 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <!-- CONTRASTE -->
         <TextView
             android:id="@+id/btnContraste"
             android:layout_width="90dp"
@@ -125,22 +139,25 @@
             android:layout_marginStart="5dp"
             android:gravity="center"
             android:background="@drawable/fondo_boton_accesibilidad"
-            android:text="◐ Contraste"
+            android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
             android:textStyle="bold" />
 
+        <!-- AUDIO -->
         <TextView
-            android:id="@+id/tvVozActiva"
+            android:id="@+id/btnAudio"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginStart="5dp"
-            android:gravity="center"
             android:background="@drawable/fondo_boton_audio"
+            android:gravity="center"
             android:text="🔊"
             android:textSize="14sp"
             android:contentDescription="Audio" />
+
     </LinearLayout>
+
 
 
     <ScrollView
@@ -313,8 +330,8 @@
 
                     <Button
                         android:id="@+id/btnMenosDias"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/bg_stepper_minus"
                         app:backgroundTint="@null"
                         android:minWidth="0dp"
@@ -327,8 +344,8 @@
 
                     <Button
                         android:id="@+id/btnMasDias"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginStart="5dp"
                         android:background="@drawable/bg_stepper_plus"
                         app:backgroundTint="@null"
@@ -387,8 +404,8 @@
 
                     <Button
                         android:id="@+id/btnMenosViajeros"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/bg_stepper_minus"
                         app:backgroundTint="@null"
                         android:minWidth="0dp"
@@ -401,8 +418,8 @@
 
                     <Button
                         android:id="@+id/btnMasViajeros"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginStart="5dp"
                         android:background="@drawable/bg_stepper_plus"
                         app:backgroundTint="@null"
@@ -439,7 +456,7 @@
                     <EditText
                         android:id="@+id/etPresupuesto"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:background="@android:color/transparent"
                         android:inputType="number"
                         android:padding="0dp"
