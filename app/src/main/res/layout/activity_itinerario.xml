@@ -328,6 +328,33 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:id="@+id/navAccesibilidad"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="center"
+                android:text="♿︎"
+                android:textColor="#64748B"
+                android:textSize="23sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accesibilidad"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/navPlanear"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -354,32 +381,7 @@
                 android:textSize="11sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/navAccesibilidad"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="false"
-                android:gravity="center"
-                android:text="♿︎"
-                android:textColor="#64748B"
-                android:textSize="23sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Accesibilidad"
-                android:textColor="#64748B"
-                android:textSize="11sp" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navItinerario"
@@ -433,7 +435,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lugares"
+                android:text="Actividades"
                 android:textColor="#64748B"
                 android:textSize="11sp"
                 android:clickable="false"/>
