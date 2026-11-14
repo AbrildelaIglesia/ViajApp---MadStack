@@ -1,4 +1,3 @@
-
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
@@ -720,7 +719,7 @@ public class PlanearActivity extends AppCompatActivity {
         final int peticionActual = ++solicitudFoto;
         Glide.with(this).clear(imgDestino);
         imgDestino.setImageDrawable(null);
-        imgDestino.setContentDescription("Imagen predeterminada; buscando foto de " + ubicacion);
+        imgDestino.setContentDescription("Buscando fotografía de " + ubicacion);
 
         try {
             if (!Places.isInitialized()) {
@@ -785,4 +784,3 @@ public class PlanearActivity extends AppCompatActivity {
         super.onDestroy();
     }
 }
-
