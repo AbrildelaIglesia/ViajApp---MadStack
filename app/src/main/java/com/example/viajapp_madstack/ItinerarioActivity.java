@@ -70,6 +70,24 @@ public class ItinerarioActivity extends AppCompatActivity {
         configurarAccesibilidad();
 
         // ===================================================
+        // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
+        // ===================================================
+
+        View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
+
+        btnAbrirPerfil.setOnClickListener(v -> {
+
+            MenuPerfilUsuario.mostrar(
+                    ItinerarioActivity.this,
+                    btnAbrirPerfil,
+                    modoContraste,
+                    escalaTexto
+            );
+
+        });
+
+
+        // ===================================================
         // CÓDIGO ORIGINAL DE NAVEGACIÓN - SIN MODIFICACIONES
         // ===================================================
 

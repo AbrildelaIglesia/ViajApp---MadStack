@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tarjetaMenuPerfil"
+
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:strokeWidth="2dp"
+    app:strokeColor="#B6C6E3">
+
+    <LinearLayout
+        android:id="@+id/menuPerfilRaiz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <!-- ================================== -->
+        <!-- ENCABEZADO MI CUENTA               -->
+        <!-- ================================== -->
+
+        <LinearLayout
+            android:id="@+id/contenedorCuenta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="16dp">
+
+            <!-- AVATAR CUADRADO REDONDEADO -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tarjetaAvatarPerfil"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#DBEAFE"
+                app:strokeColor="#93C5FD"
+                app:strokeWidth="2dp">
+
+                <ImageView
+                    android:id="@+id/imgAvatarPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="#1D4ED8"
+                    android:contentDescription="Avatar del usuario" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- DATOS DEL USUARIO -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtMiCuenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mi cuenta"
+                    android:textColor="#2563EB"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtNombrePerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Cargando usuario..."
+                    android:textColor="#001428"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:maxLines="2" />
+
+                <TextView
+                    android:id="@+id/txtCorreoPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Cargando correo..."
+                    android:textColor="#5B667A"
+                    android:textSize="12sp"
+                    android:maxLines="2" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- SEPARADOR SUPERIOR -->
+        <View
+            android:id="@+id/divisorSuperiorPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="14dp"
+            android:background="#E2E8F0" />
+
+        <!-- ================================== -->
+        <!-- BOTON EDITAR PERFIL                -->
+        <!-- ================================== -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnMenuEditarPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Editar perfil, modificar nombre, apellido y correo electrónico"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#DBEAFE"
+            app:strokeColor="#93C5FD"
+            app:strokeWidth="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:importantForAccessibility="no">
+
+                <!-- ICONO NEGRO -->
+                <TextView
+                    android:id="@+id/iconoEditarPerfil"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="✎"
+                    android:textColor="#111827"
+                    android:textSize="24sp" />
+
+                <!-- TEXTO -->
+                <TextView
+                    android:id="@+id/txtEditarPerfil"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="Editar perfil"
+                    android:textColor="#111827"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <!-- FLECHA -->
+                <TextView
+                    android:id="@+id/flechaEditarPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#111827"
+                    android:textSize="28sp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================================== -->
+        <!-- BOTON SEGURIDAD                    -->
+        <!-- ================================== -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnMenuSeguridad"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Seguridad, cambiar contraseña"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#DBEAFE"
+            app:strokeColor="#93C5FD"
+            app:strokeWidth="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:importantForAccessibility="no">
+
+                <!-- ICONO NEGRO -->
+                <ImageView
+                    android:id="@+id/iconoSeguridadPerfil"
+                    android:layout_width="30dp"
+                    android:layout_height="24dp"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_lock"
+                    app:tint="#111827"
+                    android:importantForAccessibility="no" />
+
+                <!-- TEXTO -->
+                <TextView
+                    android:id="@+id/txtSeguridadPerfil"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="Seguridad"
+                    android:textColor="#111827"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <!-- FLECHA -->
+                <TextView
+                    android:id="@+id/flechaSeguridadPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="›"
+                    android:textColor="#111827"
+                    android:textSize="28sp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- SEPARADOR INFERIOR -->
+        <View
+            android:id="@+id/divisorInferiorPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="14dp"
+            android:background="#E2E8F0" />
+
+        <!-- ================================== -->
+        <!-- BOTON CERRAR SESION                -->
+        <!-- ================================== -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnMenuCerrarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Cerrar sesión de ViajAPP"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#FEE2E2"
+            app:strokeColor="#FCA5A5"
+            app:strokeWidth="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:importantForAccessibility="no">
+
+                <!-- ICONO ROJO -->
+
+                <ImageView
+                    android:id="@+id/iconoCerrarSesion"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="6dp"
+                    android:src="@drawable/ic_logout"
+                    app:tint="#B91C1C"
+                    android:importantForAccessibility="no" />
+
+
+                <!-- TEXTO -->
+                <TextView
+                    android:id="@+id/txtCerrarSesion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="Cerrar sesión"
+                    android:textColor="#B91C1C"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -50,12 +50,34 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accesibilidad);
 
+        // INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
+
+        // ===================================================
+        // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
+        // ===================================================
+
+        View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
+
+        btnAbrirPerfil.setOnClickListener(v -> {
+
+            MenuPerfilUsuario.mostrar(
+                    AccesibilidadActivity.this,
+                    btnAbrirPerfil,
+                    modoContraste,
+                    escalaTexto
+            );
+
+        });
+
+        // NAVEGACIÓN INFERIOR ORIGINAL
         configurarNavegacion();
     }
+
 
     // NAVEGACIÓN INFERIOR
     private void configurarNavegacion() {

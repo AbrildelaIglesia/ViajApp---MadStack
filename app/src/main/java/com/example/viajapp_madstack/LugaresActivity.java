@@ -69,6 +69,25 @@ public class LugaresActivity extends AppCompatActivity {
         // NUEVO: INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
 
+
+        // ===================================================
+        // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
+        // ===================================================
+
+        View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
+
+        btnAbrirPerfil.setOnClickListener(v -> {
+
+            MenuPerfilUsuario.mostrar(
+                    LugaresActivity.this,
+                    btnAbrirPerfil,
+                    modoContraste,
+                    escalaTexto
+            );
+
+        });
+
+
         // ===================================================
         // CÓDIGO ORIGINAL DE NAVEGACIÓN - SIN MODIFICACIONES
         // ===================================================
