@@ -159,6 +159,60 @@
     </LinearLayout>
 
 
+    <LinearLayout
+        android:id="@+id/barraBusqueda"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="8dp"
+        android:background="@drawable/fondo_buscador"
+        android:elevation="2dp"
+        app:layout_constraintTop_toBottomOf="@id/barraAccesibilidad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_search"
+            app:tint="#3B82F6"
+            android:contentDescription="Buscar destino"/>
+
+        <EditText
+            android:id="@+id/etBuscarDestino"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Buscar localidad o destino..."
+            android:textColor="#0C2340"
+            android:textColorHint="#94A3B8"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:inputType="textCapWords"
+            android:imeOptions="actionSearch"
+            android:padding="0dp"
+            android:importantForAutofill="no"/>
+
+        <ImageView
+            android:id="@+id/btnBuscarVoz"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:padding="10dp"
+            android:background="@drawable/fondo_boton_microfono_busqueda"
+            android:src="@drawable/ic_mic"
+            app:tint="#FFFFFF"
+            android:contentDescription="Búsqueda por voz"/>
+
+    </LinearLayout>
+
 
     <ScrollView
         android:id="@+id/scrollContenido"
@@ -167,7 +221,7 @@
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/barraAccesibilidad"
+        app:layout_constraintTop_toBottomOf="@id/barraBusqueda"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -179,42 +233,17 @@
             android:paddingTop="12dp"
             android:paddingBottom="18dp">
 
-            <!-- BUSCADOR DE LUGARES -->
+            <!-- RESULTADOS DE BUSQUEDA DE FIREBASE -->
             <LinearLayout
+                android:id="@+id/contenedorResultadosDestinos"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/fondo_buscador">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_search"
-                    app:tint="#3B82F6"
-                    android:contentDescription="Buscar lugar" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Buscar lugar o hablar "
-                    android:textColor="#94A3B8"
-                    android:textSize="14sp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_card"
+                android:padding="8dp"
+                android:visibility="gone"/>
 
-                <ImageView
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:padding="10dp"
-                    android:background="@drawable/fondo_boton_microfono_busqueda"
-                    android:src="@drawable/ic_mic"
-                    app:tint="#FFFFFF"
-                    android:contentDescription="Búsqueda por voz" />
-
-            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -223,11 +252,11 @@
                 android:clipToOutline="true">
 
                 <ImageView
+                    android:id="@+id/imgDestino"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/bariloche"
                     android:scaleType="centerCrop"
-                    android:contentDescription="Bariloche, lago y montañas"/>
+                    android:contentDescription="Fotografía del destino seleccionado" />
 
                 <View
                     android:layout_width="match_parent"
@@ -251,7 +280,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bariloche, Río Negro"
+                        android:text=""
+                        android:id="@+id/tvDestinoSeleccionado"
                         android:textColor="#FFFFFF"
                         android:textSize="17sp"
                         android:textStyle="bold"/>
@@ -298,14 +328,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="85% de puntos verificados con rampa"
+                        android:text="Accesibilidad de los lugares pendiente de verificar"
                         android:textColor="#0C4A6E"
                         android:textSize="12sp"
                         android:textStyle="bold"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Certificación comunitaria y técnica presencial"
+                        android:text="Consultá las condiciones de acceso antes de viajar"
                         android:textColor="#64748B"
                         android:textSize="10sp"/>
                 </LinearLayout>
@@ -537,6 +567,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tvInteresesActivos"
                     android:text="3 activos"
                     android:textColor="#F43F5E"
                     android:textSize="10sp"
@@ -548,13 +579,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
-                android:text="Rutas filtradas exclusivamente con transitabilidad universal garantizada."
+                android:text="Elegí tus intereses. La accesibilidad de cada lugar requiere confirmación."
                 android:textColor="#64748B"
                 android:textSize="11sp"/>
 
-            <include layout="@layout/item_interes_naturaleza"/>
-            <include layout="@layout/item_interes_gastronomia"/>
-            <include layout="@layout/item_interes_trekking"/>
+            <include android:id="@+id/interesNaturaleza" layout="@layout/item_interes_naturaleza"/>
+            <include android:id="@+id/interesGastronomia" layout="@layout/item_interes_gastronomia"/>
+            <include android:id="@+id/interesTrekking" layout="@layout/item_interes_trekking"/>
 
 
             <LinearLayout
@@ -626,7 +657,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
-                android:text="⚡ Itinerario optimizado en segundos con topografía libre de barreras"
+                android:text="⚡ Itinerario orientativo; verificá la accesibilidad antes de viajar"
                 android:textColor="#64748B"
                 android:textSize="10sp"/>
 
@@ -666,7 +697,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="Planificará pendientes menores al 6% y paradas técnicas sanitarias automáticas."
+                        android:text="Sugerirá actividades según tus preferencias sin asumir accesibilidad no verificada."
                         android:textColor="#64748B"
                         android:textSize="10sp"/>
                 </LinearLayout>
