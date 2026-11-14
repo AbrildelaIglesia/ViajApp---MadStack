@@ -1,12 +1,34 @@
+
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
 }
 
+// Leer la clave de Google Places desde local.properties
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        localProperties.load(stream)
+    }
+}
+
+// Priorizar local.properties y permitir propiedades de Gradle
+def placesApiKey = localProperties.getProperty("PLACES_API_KEY", "")
+
+println("PLACES_API_KEY configurada: " + !placesApiKey.trim().isEmpty())
+
+if (placesApiKey.trim().isEmpty()) {
+    placesApiKey = providers.gradleProperty("PLACES_API_KEY")
+            .getOrElse("")
+}
+
 android {
     namespace 'com.example.viajapp_madstack'
     compileSdk 37
-
 
     buildFeatures {
         buildConfig = true
@@ -20,11 +42,18 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [PLACES_API_KEY: project.findProperty("PLACES_API_KEY") ?: ""]
 
+        // Clave de Google Places para AndroidManifest
+        manifestPlaceholders = [
+                PLACES_API_KEY: placesApiKey
+        ]
 
-        def geminiKey = project.findProperty("GEMINI_API_KEY") ?: ""
-        buildConfigField("String", "GEMINI_API_KEY", "\"${geminiKey}\"")
+        // Clave disponible desde BuildConfig.PLACES_API_KEY
+        buildConfigField(
+                "String",
+                "PLACES_API_KEY",
+                "\"${placesApiKey.replace("\\", "\\\\").replace("\"", "\\\"")}\""
+        )
     }
 
     buildTypes {
@@ -42,17 +71,40 @@ android {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:34.16.0')
+
+    // Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:35.2.0')
+
+    // Firebase
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
 
+    // Firebase AI Logic - Gemini
+    implementation 'com.google.firebase:firebase-ai'
+
+    // Firebase App Check para pruebas
+    implementation 'com.google.firebase:firebase-appcheck-debug'
+
+    // Dependencias necesarias para Java
+    implementation 'com.google.guava:guava:31.0.1-android'
+    implementation 'org.reactivestreams:reactive-streams:1.0.4'
+
+    // Google Places SDK
+    implementation 'com.google.android.libraries.places:places:6.0.2'
+
+    // Glide para cargar fotografías
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // AndroidX
     implementation libs.androidx.activity.ktx
     implementation libs.androidx.appcompat
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.core.ktx
     implementation libs.material
 
+    // Tests
     testImplementation libs.junit
     androidTestImplementation libs.androidx.espresso.core
     androidTestImplementation libs.androidx.junit
