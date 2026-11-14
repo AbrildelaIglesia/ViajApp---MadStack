@@ -2,51 +2,34 @@
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.firebase.auth.FirebaseAuth;
-// ===================================================
-// NUEVAS IMPORTACIONES PARA ACCESIBILIDAD
-// ===================================================
-
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.IdentityHashMap;
 
-import android.graphics.drawable.ColorDrawable;
-
 public class AccesibilidadActivity extends AppCompatActivity {
 
-    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares;
+    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares, barraAccesibilidad;
 
-    // ===================================================
-    // NUEVO: VARIABLES DE ACCESIBILIDAD
-    // ===================================================
+    private TextView btnAccesibilidad, btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnCrearViajeIA;
 
-    private TextView btnAccesibilidad, btnDisminuirTexto,
-            btnAumentarTexto, btnContraste, btnAudio;
+    private View pantallaPrincipal, scrollContenido, header, bottomNav, tarjetaTamanoTexto;
 
-    private LinearLayout barraAccesibilidad;
-
-    private View pantallaPrincipal;
-    private View scrollContenido;
-    private View header;
-    private View bottomNav;
-
-    // GUARDAR EL DISEÑO ORIGINAL
+    // Guardado de los valores originales
     private final IdentityHashMap<View, Drawable> fondosOriginales =
             new IdentityHashMap<>();
 
@@ -56,72 +39,66 @@ public class AccesibilidadActivity extends AppCompatActivity {
     private final IdentityHashMap<TextView, Float> tamanosOriginales =
             new IdentityHashMap<>();
 
+    // Estados de accesibilidad
     private float escalaTexto = 1.0f;
-
-    // 0 = NORMAL
-    // 1 = CREMA
-    // 2 = OSCURO
     private int modoContraste = 0;
+    private boolean controlesVisibles = true;
+
+    // 0 = Normal
+    // 1 = Crema
+    // 2 = Oscuro
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accesibilidad);
 
-        // NUEVO: INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
+        configurarNavegacion();
+    }
 
-        // ===================================================
-        // CÓDIGO ORIGINAL DE NAVEGACIÓN - SIN MODIFICACIONES
-        // ===================================================
+    // NAVEGACIÓN INFERIOR
+    private void configurarNavegacion() {
 
-        // BOTONES DE NAVEGACIÓN
         navPlanear = findViewById(R.id.navPlanear);
         navAccesibilidad = findViewById(R.id.navAccesibilidad);
         navItinerario = findViewById(R.id.navItinerario);
         navLugares = findViewById(R.id.navLugares);
 
-        navPlanear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccesibilidadActivity.this, PlanearActivity.class);
-                startActivity(intent);
-            }
+        navPlanear.setOnClickListener(v -> {
+            startActivity(new Intent(
+                    AccesibilidadActivity.this,
+                    PlanearActivity.class
+            ));
         });
-        navAccesibilidad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccesibilidadActivity.this, AccesibilidadActivity.class);
-                startActivity(intent);
-            }
+
+        navAccesibilidad.setOnClickListener(v -> {
+            // Ya estamos en esta pantalla
         });
-        navItinerario.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccesibilidadActivity.this, ItinerarioActivity.class);
-                startActivity(intent);
-            }
+
+        navItinerario.setOnClickListener(v -> {
+            startActivity(new Intent(
+                    AccesibilidadActivity.this,
+                    ItinerarioActivity.class
+            ));
         });
-        navLugares.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AccesibilidadActivity.this, LugaresActivity.class);
-                startActivity(intent);
-            }
+
+        navLugares.setOnClickListener(v -> {
+            startActivity(new Intent(
+                    AccesibilidadActivity.this,
+                    LugaresActivity.class
+            ));
         });
     }
 
-    // ===================================================
-    // NUEVO: CONFIGURAR ACCESIBILIDAD
-    // ===================================================
-
+    // CONFIGURACIÓN DE ACCESIBILIDAD
     private void configurarAccesibilidad() {
 
         pantallaPrincipal = findViewById(R.id.main);
         scrollContenido = findViewById(R.id.scrollContenido);
         header = findViewById(R.id.header);
         bottomNav = findViewById(R.id.bottomNav);
+        tarjetaTamanoTexto = findViewById(R.id.tarjetaTamanoTexto);
 
         barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
 
@@ -130,152 +107,99 @@ public class AccesibilidadActivity extends AppCompatActivity {
         btnAumentarTexto = findViewById(R.id.btnAumentarTexto);
         btnContraste = findViewById(R.id.btnContraste);
         btnAudio = findViewById(R.id.btnAudio);
+        btnCrearViajeIA = findViewById(R.id.btnCrearViajeIA);
 
-        // GUARDAR TODOS LOS COLORES Y FONDOS ORIGINALES
-        // ANTES DE MODIFICAR CUALQUIER ELEMENTO
+        // Guardamos los valores originales de toda la pantalla
         guardarOriginales(pantallaPrincipal);
 
-        // ABRIR Y CERRAR EL MENÚ
+        // Mostrar u ocultar los controles
         btnAccesibilidad.setOnClickListener(v -> {
 
-            boolean mostrar =
-                    btnDisminuirTexto.getVisibility() != View.VISIBLE;
+            controlesVisibles = !controlesVisibles;
 
-            int visibilidad = mostrar ? View.VISIBLE : View.GONE;
+            int visibilidad = controlesVisibles
+                    ? View.VISIBLE
+                    : View.GONE;
 
             btnDisminuirTexto.setVisibility(visibilidad);
             btnAumentarTexto.setVisibility(visibilidad);
             btnContraste.setVisibility(visibilidad);
             btnAudio.setVisibility(visibilidad);
 
-            // AJUSTAR BOTÓN PRINCIPAL
-            LinearLayout.LayoutParams parametrosBoton =
-                    (LinearLayout.LayoutParams)
-                            btnAccesibilidad.getLayoutParams();
-
-            parametrosBoton.width = mostrar
-                    ? 0
-                    : LinearLayout.LayoutParams.WRAP_CONTENT;
-
-            parametrosBoton.weight = mostrar ? 1f : 0f;
-
-            btnAccesibilidad.setLayoutParams(parametrosBoton);
-
-            int espacio = dp(12);
-
-            btnAccesibilidad.setPadding(
-                    mostrar ? 0 : espacio,
-                    0,
-                    mostrar ? 0 : espacio,
-                    0
-            );
-
-            // AJUSTAR ANCHO DE LA BARRA
-            ConstraintLayout.LayoutParams parametrosBarra =
-                    (ConstraintLayout.LayoutParams)
-                            barraAccesibilidad.getLayoutParams();
-
-            parametrosBarra.width = mostrar
-                    ? 0
-                    : ConstraintLayout.LayoutParams.WRAP_CONTENT;
-
-            barraAccesibilidad.setLayoutParams(parametrosBarra);
-
-            // DESCRIPCIÓN PARA LECTORES DE PANTALLA
             btnAccesibilidad.setContentDescription(
-                    mostrar
+                    controlesVisibles
                             ? "Cerrar menú de accesibilidad"
                             : "Abrir menú de accesibilidad"
             );
         });
 
-        // BOTÓN A+
-        btnAumentarTexto.setOnClickListener(v -> {
-
-            escalaTexto = Math.min(
-                    1.3f,
-                    Math.round((escalaTexto + 0.1f) * 10f) / 10f
-            );
-
-            actualizarTamanoTextos(scrollContenido);
-            actualizarTamanoTextos(header);
-            actualizarTamanoTextos(bottomNav);
-        });
-
-        // BOTÓN A-
+        // Disminuir tamaño del texto
         btnDisminuirTexto.setOnClickListener(v -> {
 
-            escalaTexto = Math.max(
-                    0.9f,
-                    Math.round((escalaTexto - 0.1f) * 10f) / 10f
-            );
+            escalaTexto = Math.max(0.9f, escalaTexto - 0.1f);
 
-            actualizarTamanoTextos(scrollContenido);
-            actualizarTamanoTextos(header);
-            actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(pantallaPrincipal);
         });
 
-        // BOTÓN CONTRASTE
+        // Aumentar tamaño del texto
+        btnAumentarTexto.setOnClickListener(v -> {
+
+            escalaTexto = Math.min(1.3f, escalaTexto + 0.1f);
+
+            actualizarTamanoTextos(pantallaPrincipal);
+        });
+
+        // Cambiar modo de contraste
         btnContraste.setOnClickListener(v -> {
 
-            modoContraste = (modoContraste + 1) % 3;
+            modoContraste++;
 
-            aplicarTemaContraste();
-
-            String nombreModo;
-
-            if (modoContraste == 0) {
-                nombreModo = "Normal";
-            } else if (modoContraste == 1) {
-                nombreModo = "Crema";
-            } else {
-                nombreModo = "Oscuro";
+            if (modoContraste > 2) {
+                modoContraste = 0;
             }
 
+            aplicarTemaContraste();
+        });
+
+        // Botón de audio
+        btnAudio.setOnClickListener(v -> {
             Toast.makeText(
                     this,
-                    "Contraste: " + nombreModo,
+                    "Función de audio próximamente",
                     Toast.LENGTH_SHORT
             ).show();
         });
-
-        // AUDIO SE PROGRAMARÁ MÁS ADELANTE
     }
 
-    // ===================================================
-    // NUEVO: GUARDAR EL DISEÑO ORIGINAL
-    // ===================================================
-
+    // GUARDAR DISEÑO ORIGINAL
     private void guardarOriginales(View vista) {
 
         if (vista == null) {
             return;
         }
 
-        if (!fondosOriginales.containsKey(vista)) {
-
-            fondosOriginales.put(
-                    vista,
-                    vista.getBackground()
-            );
-        }
+        fondosOriginales.put(
+                vista,
+                vista.getBackground() != null
+                        ? vista.getBackground().getConstantState() != null
+                          ? vista.getBackground().getConstantState().newDrawable().mutate()
+                          : vista.getBackground().mutate()
+                        : null
+        );
 
         if (vista instanceof TextView) {
 
             TextView texto = (TextView) vista;
 
-            if (!coloresOriginales.containsKey(texto)) {
+            coloresOriginales.put(
+                    texto,
+                    texto.getTextColors()
+            );
 
-                coloresOriginales.put(
-                        texto,
-                        texto.getTextColors()
-                );
-
-                tamanosOriginales.put(
-                        texto,
-                        texto.getTextSize()
-                );
-            }
+            tamanosOriginales.put(
+                    texto,
+                    texto.getTextSize()
+            );
         }
 
         if (vista instanceof ViewGroup) {
@@ -283,18 +207,12 @@ public class AccesibilidadActivity extends AppCompatActivity {
             ViewGroup grupo = (ViewGroup) vista;
 
             for (int i = 0; i < grupo.getChildCount(); i++) {
-
-                guardarOriginales(
-                        grupo.getChildAt(i)
-                );
+                guardarOriginales(grupo.getChildAt(i));
             }
         }
     }
 
-    // ===================================================
-    // NUEVO: AUMENTAR Y DISMINUIR TEXTOS
-    // ===================================================
-
+    // CAMBIAR TAMAÑO DE LOS TEXTOS
     private void actualizarTamanoTextos(View vista) {
 
         if (vista == null) {
@@ -305,8 +223,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
             TextView texto = (TextView) vista;
 
-            Float tamanoOriginal =
-                    tamanosOriginales.get(texto);
+            Float tamanoOriginal = tamanosOriginales.get(texto);
 
             if (tamanoOriginal != null) {
 
@@ -322,145 +239,182 @@ public class AccesibilidadActivity extends AppCompatActivity {
             ViewGroup grupo = (ViewGroup) vista;
 
             for (int i = 0; i < grupo.getChildCount(); i++) {
+                actualizarTamanoTextos(grupo.getChildAt(i));
+            }
+        }
+    }
 
-                actualizarTamanoTextos(
-                        grupo.getChildAt(i)
+    // APLICAR CONTRASTE
+    private void aplicarTemaContraste() {
+
+        // Primero restauramos los valores originales
+        restaurarDisenoOriginal(pantallaPrincipal);
+
+        // MODO NORMAL
+        if (modoContraste == 0) {
+
+            btnContraste.setText("◐  Contraste");
+
+            return;
+        }
+
+        int fondoPantalla, fondoTarjeta, borde, textoPrincipal, textoSecundario;
+
+        // MODO CREMA
+        if (modoContraste == 1) {
+
+            fondoPantalla = Color.rgb(255, 247, 230);
+            fondoTarjeta = Color.rgb(255, 253, 247);
+            borde = Color.rgb(214, 199, 161);
+
+            textoPrincipal = Color.rgb(59, 47, 32);
+            textoSecundario = Color.rgb(102, 90, 74);
+
+            btnCrearViajeIA.setBackground(
+                    fondoRedondeado(
+                            Color.rgb(130, 85, 35),
+                            Color.rgb(100, 65, 30),
+                            12
+                    )
+            );
+            btnAudio.setBackground(
+                    fondoRedondeado(
+                            Color.rgb(245, 235, 215),
+                            Color.rgb(180, 160, 130),
+                            12
+                    )
+            );
+            btnContraste.setText("◐  Crema");
+
+        } else {
+
+            // MODO OSCURO
+            fondoPantalla = Color.rgb(18, 18, 18);
+            fondoTarjeta = Color.rgb(30, 30, 30);
+            borde = Color.rgb(85, 85, 85);
+
+            textoPrincipal = Color.WHITE;
+            textoSecundario = Color.rgb(210, 210, 210);
+
+            btnCrearViajeIA.setBackground(
+                    fondoRedondeado(
+                            Color.rgb(55, 55, 55),
+                            Color.rgb(120, 120, 120),
+                            12
+                    )
+            );
+            btnAudio.setBackground(
+                    fondoRedondeado(
+                            Color.rgb(55, 55, 55),
+                            Color.rgb(120, 120, 120),
+                            12
+                    )
+            );
+            btnContraste.setText("◐  Oscuro");
+        }
+
+        // Fondo general
+        pantallaPrincipal.setBackgroundColor(fondoPantalla);
+        scrollContenido.setBackgroundColor(fondoPantalla);
+
+        // Encabezado y navegación
+        header.setBackgroundColor(fondoTarjeta);
+        bottomNav.setBackgroundColor(fondoTarjeta);
+
+        // Barra de accesibilidad
+        barraAccesibilidad.setBackground(
+                fondoRedondeado(fondoTarjeta, borde, 16)
+        );
+
+        btnAccesibilidad.setBackground(
+                fondoRedondeado(fondoTarjeta, borde, 12)
+        );
+
+        btnDisminuirTexto.setBackground(
+                fondoRedondeado(fondoTarjeta, borde, 12)
+        );
+
+        btnAumentarTexto.setBackground(
+                fondoRedondeado(fondoTarjeta, borde, 12)
+        );
+
+        btnContraste.setBackground(
+                fondoRedondeado(fondoTarjeta, borde, 12)
+        );
+
+        // Tarjetas del contenido
+        actualizarFondosTarjetas(
+                scrollContenido,
+                fondoTarjeta,
+                borde
+        );
+
+        // Cambiar los colores de los textos
+        actualizarColoresTextos(
+                pantallaPrincipal,
+                textoPrincipal,
+                textoSecundario
+        );
+    }
+
+    // ACTUALIZAR FONDOS DE LAS TARJETAS
+    private void actualizarFondosTarjetas(
+            View vista,
+            int colorFondo,
+            int colorBorde) {
+
+        if (vista == null) {
+            return;
+        }
+
+        if (vista instanceof LinearLayout) {
+
+            Drawable fondoOriginal = fondosOriginales.get(vista);
+
+            if (fondoOriginal instanceof GradientDrawable) {
+
+                vista.setBackground(
+                        fondoRedondeado(colorFondo, colorBorde, 10)
+                );
+            }
+        }
+
+        // Iconos marcados con tag="interest"
+        if (vista.getTag() != null
+                && "interest".equals(vista.getTag().toString())) {
+
+            int fondoIcono = modoContraste == 2
+                    ? Color.rgb(55, 55, 55)
+                    : Color.rgb(237, 227, 201);
+
+            vista.setBackground(
+                    fondoRedondeado(fondoIcono, colorBorde, 8)
+            );
+        }
+
+        if (vista instanceof ViewGroup) {
+
+            ViewGroup grupo = (ViewGroup) vista;
+
+            for (int i = 0; i < grupo.getChildCount(); i++) {
+
+                actualizarFondosTarjetas(
+                        grupo.getChildAt(i),
+                        colorFondo,
+                        colorBorde
                 );
             }
         }
     }
 
-    // ===================================================
-    // NUEVO: CONTRASTE NORMAL, CREMA Y OSCURO
-    // ===================================================
-
-    private void aplicarTemaContraste() {
-
-        boolean normal = modoContraste == 0;
-        boolean crema = modoContraste == 1;
-
-        // MISMOS COLORES QUE REGISTRO E INICIO
-        int fondoPantalla = Color.parseColor(
-                crema ? "#FFF1D6" : "#111111"
-        );
-
-        int fondoBarra = Color.parseColor(
-                crema ? "#F6E8CF" : "#181818"
-        );
-
-        int fondoControl = Color.parseColor(
-                crema ? "#FFFAF0" : "#252525"
-        );
-
-        int fondoCampo = Color.parseColor(
-                crema ? "#F3DFC0" : "#222222"
-        );
-
-        int borde = Color.parseColor(
-                crema ? "#A6947F" : "#666666"
-        );
-
-        int textoPrincipal = Color.parseColor(
-                crema ? "#222222" : "#FFFFFF"
-        );
-
-        int textoSecundario = Color.parseColor(
-                crema ? "#5A5146" : "#D0D0D0"
-        );
-
-        // 1. RESTAURAR TODOS LOS ELEMENTOS EN MODO NORMAL
-        if (normal) {
-
-            restaurarDisenoOriginal(pantallaPrincipal);
-            return;
-        }
-
-        // 2. FONDO PRINCIPAL
-        pantallaPrincipal.setBackground(new ColorDrawable(fondoPantalla));
-        scrollContenido.setBackground(new ColorDrawable(fondoPantalla));
-
-        // 3. ENCABEZADO
-        header.setBackground(new ColorDrawable(fondoBarra));
-
-        // 4. NAVEGACIÓN INFERIOR
-        bottomNav.setBackground(new ColorDrawable(fondoBarra));
-
-        // 5. OPCIÓN ACTIVA DE LA NAVEGACIÓN
-        View opcionActual =
-                findViewById(R.id.navAccesibilidad);
-
-        opcionActual.setBackground(
-                new ColorDrawable(
-                        crema
-                                ? Color.parseColor("#E9D7B8")
-                                : Color.parseColor("#303030")
-                )
-        );
-
-        // 6. BARRA DE ACCESIBILIDAD
-        barraAccesibilidad.setBackground(
-                fondoRedondeado(
-                        fondoBarra,
-                        borde,
-                        16
-                )
-        );
-
-        // 7. BOTONES DE ACCESIBILIDAD
-        TextView[] controles = {
-                btnAccesibilidad,
-                btnDisminuirTexto,
-                btnAumentarTexto,
-                btnContraste,
-                btnAudio
-        };
-
-        for (TextView control : controles) {
-
-            control.setBackground(
-                    fondoRedondeado(
-                            fondoControl,
-                            borde,
-                            12
-                    )
-            );
-
-            control.setTextColor(textoPrincipal);
-        }
-
-        // 8. TEXTOS DEL ENCABEZADO
-        actualizarColoresTextos(
-                header,
-                textoPrincipal,
-                textoSecundario
-        );
-
-        // 9. TEXTOS DE LA NAVEGACIÓN
-        actualizarColoresTextos(
-                bottomNav,
-                textoPrincipal,
-                textoSecundario
-        );
-
-        // 10. TEXTOS DEL CONTENIDO
-        actualizarColoresTextos(
-                scrollContenido,
-                textoPrincipal,
-                textoSecundario
-        );
-
-        // 11. CONSERVAR EL LOGO ORIGINAL
-        // NO SE APLICAN TINTES A SU IMAGEN DE FONDO
-    }
-
-    // ===================================================
-    // NUEVO: CAMBIAR COLORES DE LOS TEXTOS
-    // ===================================================
+    // =====================================================
+    // ACTUALIZAR COLORES DE LOS TEXTOS
+    // =====================================================
 
     private void actualizarColoresTextos(
             View vista,
-            int principal,
-            int secundario) {
+            int colorPrincipal,
+            int colorSecundario) {
 
         if (vista == null) {
             return;
@@ -470,40 +424,31 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
             TextView texto = (TextView) vista;
 
-            ColorStateList original =
-                    coloresOriginales.get(texto);
+            ColorStateList colorOriginal = coloresOriginales.get(texto);
 
-            if (original != null) {
+            if (colorOriginal != null) {
 
-                CharSequence descripcion =
-                        texto.getContentDescription();
+                int color = colorOriginal.getDefaultColor();
 
-                boolean esLogo =
-                        descripcion != null
-                                && descripcion.toString()
-                                .equals("Logo ViajAPP");
+                if ("Logo ViajAPP".equals(
+                        texto.getContentDescription())
+                        || "Perfil".equals(
+                        texto.getContentDescription())) {
 
-                boolean esPerfil =
-                        descripcion != null
-                                && descripcion.toString()
-                                .equals("Perfil");
+                    texto.setTextColor(colorOriginal);
+                }
 
-                if (!esLogo && !esPerfil) {
+                // Textos secundarios
+                else if (color == Color.rgb(100, 116, 139)
+                        || color == Color.rgb(67, 71, 77)
+                        || color == Color.rgb(30, 41, 59)) {
 
-                    int colorOriginal =
-                            original.getDefaultColor();
+                    texto.setTextColor(colorSecundario);
+                }
 
-                    boolean esSecundario =
-                            colorOriginal == Color.parseColor("#64748B")
-                                    || colorOriginal == Color.parseColor("#43474D")
-                                    || colorOriginal == Color.parseColor("#4B5563")
-                                    || colorOriginal == Color.parseColor("#6B7280");
-
-                    texto.setTextColor(
-                            esSecundario
-                                    ? secundario
-                                    : principal
-                    );
+                // Textos principales
+                else {
+                    texto.setTextColor(colorPrincipal);
                 }
             }
         }
@@ -516,16 +461,16 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
                 actualizarColoresTextos(
                         grupo.getChildAt(i),
-                        principal,
-                        secundario
+                        colorPrincipal,
+                        colorSecundario
                 );
             }
         }
     }
 
-    // ===================================================
-    // NUEVO: RESTAURAR DISEÑO NORMAL
-    // ===================================================
+    // =====================================================
+    // RESTAURAR DISEÑO ORIGINAL
+    // =====================================================
 
     private void restaurarDisenoOriginal(View vista) {
 
@@ -533,29 +478,29 @@ public class AccesibilidadActivity extends AppCompatActivity {
             return;
         }
 
-        // RESTAURAR FONDO ORIGINAL
-        if (fondosOriginales.containsKey(vista)) {
+        Drawable fondoOriginal = fondosOriginales.get(vista);
 
-            vista.setBackground(
-                    fondosOriginales.get(vista)
-            );
+        if (fondoOriginal != null) {
+            Drawable copia = fondoOriginal.getConstantState() != null
+                    ? fondoOriginal.getConstantState().newDrawable().mutate()
+                    : fondoOriginal.mutate();
+
+            vista.setBackground(copia);
+        } else {
+            vista.setBackground(null);
         }
 
-        // RESTAURAR COLOR ORIGINAL DEL TEXTO
         if (vista instanceof TextView) {
 
             TextView texto = (TextView) vista;
 
-            ColorStateList colorOriginal =
-                    coloresOriginales.get(texto);
+            ColorStateList colorOriginal = coloresOriginales.get(texto);
 
             if (colorOriginal != null) {
-
                 texto.setTextColor(colorOriginal);
             }
         }
 
-        // RESTAURAR ELEMENTOS INTERNOS
         if (vista instanceof ViewGroup) {
 
             ViewGroup grupo = (ViewGroup) vista;
@@ -569,39 +514,34 @@ public class AccesibilidadActivity extends AppCompatActivity {
         }
     }
 
-    // ===================================================
-    // NUEVO: CREAR FONDOS REDONDEADOS
-    // ===================================================
+    // =====================================================
+    // CREAR FONDOS REDONDEADOS
+    // =====================================================
 
-    private Drawable fondoRedondeado(
-            int color,
-            int borde,
-            int radioDp) {
+    private GradientDrawable fondoRedondeado(
+            int colorFondo,
+            int colorBorde,
+            int radio) {
 
-        GradientDrawable forma = new GradientDrawable();
+        GradientDrawable drawable = new GradientDrawable();
 
-        forma.setShape(GradientDrawable.RECTANGLE);
-        forma.setColor(color);
+        drawable.setColor(colorFondo);
+        drawable.setCornerRadius(dp(radio));
+        drawable.setStroke(dp(1), colorBorde);
 
-        forma.setCornerRadius(
-                dp(radioDp)
-        );
-
-        forma.setStroke(
-                dp(1),
-                borde
-        );
-
-        return forma;
+        return drawable;
     }
 
-    // CONVERTIR DP A PÍXELES
+    // =====================================================
+    // CONVERTIR DP A PIXELES
+    // =====================================================
+
     private int dp(int valor) {
 
-        return Math.round(
-                valor * getResources()
-                        .getDisplayMetrics()
-                        .density
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                valor,
+                getResources().getDisplayMetrics()
         );
     }
 }
