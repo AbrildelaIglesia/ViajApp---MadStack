@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+import android.content.Intent;
 public class RegistroActivity extends AppCompatActivity {
 
     // CAMPOS DEL FORMULARIO
@@ -278,7 +279,27 @@ public class RegistroActivity extends AppCompatActivity {
 
             crearCuentaFirebase(nombre, correo, contrasena);
         });
+
+        // ===================================================
+        // NUEVO: IR A LA PANTALLA DE INICIO DE SESIÓN
+        // ===================================================
+
+        TextView txtIniciarSesion = findViewById(R.id.txtIniciarSesion);
+
+        txtIniciarSesion.setOnClickListener(v -> {
+
+            Intent intent = new Intent(
+                    RegistroActivity.this,
+                    InicioActivity.class
+            );
+
+            startActivity(intent);
+            finish();
+
+        });
     }
+
+
 
     // ===================================================
     // AUMENTAR Y DISMINUIR TAMAÑO DE TEXTOS
@@ -1448,20 +1469,31 @@ public class RegistroActivity extends AppCompatActivity {
         firestore.collection("usuarios")
                 .document(uid)
                 .set(datosUsuario)
+
                 .addOnSuccessListener(unused -> {
 
                     finalizarRegistroEnCurso();
 
                     Toast.makeText(
-                            this,
+                            RegistroActivity.this,
                             "¡Cuenta creada correctamente!",
                             Toast.LENGTH_LONG
                     ).show();
 
-                    // LA NAVEGACIÓN SE INTEGRARÁ
-                    // CON LA PANTALLA DE INICIO DE SESIÓN
+                    // CERRAR LA SESIÓN AUTOMÁTICA DE FIREBASE
+                    firebaseAuth.signOut();
+
+                    // IR A INICIO DE SESIÓN
+                    Intent intent = new Intent(
+                            RegistroActivity.this,
+                            InicioActivity.class
+                    );
+
+                    startActivity(intent);
+                    finish();
 
                 })
+
                 .addOnFailureListener(e -> {
 
                     finalizarRegistroEnCurso();

@@ -426,6 +426,38 @@ public class InicioActivity extends AppCompatActivity {
                 textoSecundario
         );
 
+
+
+        // ===================================================
+        // RECUADRO DE LECTORES DE PANTALLA
+        // NORMAL: VERDE / CREMA Y OSCURO: COLORES DEL TEMA
+        // ===================================================
+
+        TextView txtCompatibilidad =
+                findViewById(R.id.txtCompatibilidadLectores);
+
+        if (normal) {
+
+            // CONSERVAR EL VERDE ORIGINAL
+            restaurarFondo(txtCompatibilidad);
+            restaurarColor(txtCompatibilidad);
+
+        } else {
+
+            // CREMA Y OSCURO: USAR LOS COLORES DEL TEMA
+            txtCompatibilidad.setBackground(
+                    fondoRedondeado(
+                            fondoCampo,
+                            borde,
+                            20
+                    )
+            );
+
+            txtCompatibilidad.setTextColor(textoPrincipal);
+        }
+
+
+
         // 3. BARRA DE ACCESIBILIDAD
         if (normal) {
 
