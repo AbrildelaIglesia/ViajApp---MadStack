@@ -50,50 +50,61 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ACCESIBLE"
+                    android:text="ITINERARIO"
                     android:textColor="#43474D"
                     android:textSize="10sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:gravity="center"
-                android:background="#60A5FA"
+                android:background="@drawable/bg_icon_blue"
                 android:text="●"
                 android:textColor="#FFFFFF"
                 android:contentDescription="Perfil" />
         </LinearLayout>
-
     </LinearLayout>
 
+
+    <!-- BARRA DE ACCESIBILIDAD FIJA -->
     <LinearLayout
         android:id="@+id/barraAccesibilidad"
         android:layout_width="0dp"
         android:layout_height="64dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="14dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:background="@drawable/fondo_barra_accesibilidad"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- ACCESIBILIDAD -->
         <TextView
+            android:id="@+id/btnAccesibilidad"
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/fondo_boton_accesibilidad"
-            android:text="ⓘ ACCESIBILIDAD"
+            android:text=" ☰  ACCESIBILIDAD"
             android:textColor="#1E5FA8"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cerrar menú de accesibilidad"
+            android:clickable="true"
+            android:focusable="true" />
 
+        <!-- DISMINUIR TEXTO -->
         <TextView
-            android:id="@+id/btnReducirTexto"
+            android:id="@+id/btnDisminuirTexto"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginStart="5dp"
@@ -104,6 +115,7 @@
             android:textSize="12sp"
             android:textStyle="bold" />
 
+        <!-- AUMENTAR TEXTO -->
         <TextView
             android:id="@+id/btnAumentarTexto"
             android:layout_width="44dp"
@@ -116,6 +128,7 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <!-- CONTRASTE -->
         <TextView
             android:id="@+id/btnContraste"
             android:layout_width="90dp"
@@ -123,22 +136,25 @@
             android:layout_marginStart="5dp"
             android:gravity="center"
             android:background="@drawable/fondo_boton_accesibilidad"
-            android:text="◐ Contraste"
+            android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
             android:textStyle="bold" />
 
+        <!-- AUDIO -->
         <TextView
-            android:id="@+id/tvVozActiva"
+            android:id="@+id/btnAudio"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginStart="5dp"
-            android:gravity="center"
             android:background="@drawable/fondo_boton_audio"
+            android:gravity="center"
             android:text="🔊"
             android:textSize="14sp"
             android:contentDescription="Audio" />
+
     </LinearLayout>
+
 
     <ScrollView
         android:id="@+id/scrollContenido"
@@ -309,21 +325,116 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout android:id="@+id/navPlanear" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:text="⌖" android:textColor="#43474D" android:textSize="23sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Planear" android:textColor="#43474D" android:textSize="11sp" />
+        <LinearLayout
+            android:id="@+id/navPlanear"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="◎"
+                android:textColor="#64748B"
+                android:textSize="23sp"
+                android:clickable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:text="Planear"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
         </LinearLayout>
-        <LinearLayout android:id="@+id/navAccesibilidad" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:text="♿" android:textColor="#43474D" android:textSize="23sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Accesibilidad" android:textColor="#43474D" android:textSize="11sp" />
+
+        <LinearLayout
+            android:id="@+id/navAccesibilidad"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:gravity="center"
+                android:text="♿︎"
+                android:textColor="#64748B"
+                android:textSize="23sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accesibilidad"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
         </LinearLayout>
-        <LinearLayout android:id="@+id/navItinerario" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:background="#EFF6FF">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:text="▦" android:textColor="#2563EB" android:textSize="23sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Itinerario" android:textColor="#2563EB" android:textStyle="bold" android:textSize="11sp" />
+
+        <LinearLayout
+            android:id="@+id/navItinerario"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:background="#EFF6FF"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="▦"
+                android:textColor="#2563EB"
+                android:textSize="23sp"
+                android:clickable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Itinerario"
+                android:textColor="#2563EB"
+                android:textStyle="bold"
+                android:textSize="11sp"
+                android:clickable="false"/>
         </LinearLayout>
-        <LinearLayout android:id="@+id/navLugares" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:text="⌖" android:textColor="#43474D" android:textSize="23sp" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lugares" android:textColor="#43474D" android:textSize="11sp" />
+
+        <LinearLayout
+            android:id="@+id/navLugares"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="⌖"
+                android:textColor="#64748B"
+                android:textSize="23sp"
+                android:clickable="false"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lugares"
+                android:textColor="#64748B"
+                android:textSize="11sp"
+                android:clickable="false"/>
         </LinearLayout>
     </LinearLayout>
 

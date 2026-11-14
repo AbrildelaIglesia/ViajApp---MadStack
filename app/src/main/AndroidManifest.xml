@@ -11,16 +11,54 @@
         android:roundIcon="@drawable/logo_viajapp"
         android:supportsRtl="true"
         android:theme="@style/Theme.ViajAppMadStack">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${PLACES_API_KEY}" />
+
+        <activity
+            android:name=".RegistroActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AccesibilidadActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ErrorActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ItinerarioActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".LugaresActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".PlanearActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="false" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".InicioActivity"
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
     </application>
 
 </manifest>

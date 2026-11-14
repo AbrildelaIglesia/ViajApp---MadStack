@@ -1,11 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.google.services)
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace 'com.example.viajapp_madstack'
     compileSdk 37
+
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId "com.example.viajapp_madstack"
@@ -15,6 +20,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [PLACES_API_KEY: project.findProperty("PLACES_API_KEY") ?: ""]
+
+
+        def geminiKey = project.findProperty("GEMINI_API_KEY") ?: ""
+        buildConfigField("String", "GEMINI_API_KEY", "\"${geminiKey}\"")
     }
 
     buildTypes {
@@ -36,11 +46,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
+
     implementation libs.androidx.activity.ktx
     implementation libs.androidx.appcompat
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.core.ktx
     implementation libs.material
+
     testImplementation libs.junit
     androidTestImplementation libs.androidx.espresso.core
     androidTestImplementation libs.androidx.junit
