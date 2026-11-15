@@ -1,6 +1,9 @@
+
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
+import android.app.AlertDialog;
+import android.provider.Settings;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -14,6 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -135,7 +141,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
         inicializarBoton(btnCheckMovilidad, false);
         inicializarBoton(btnCheckCortos, false);
         inicializarBoton(btnCheckBanos, false);
-        inicializarBoton(btnCheckVisual, false);
+        inicializarBotonVisual(false);
         inicializarBoton(btnCheckAuditiva, false);
     }
 
@@ -143,14 +149,74 @@ public class AccesibilidadActivity extends AppCompatActivity {
         if (boton == null) return;
 
         boton.setTag(seleccionadoInicial);
+        actualizarVistaBoton(boton, seleccionadoInicial);
+        configurarSemanticaCasilla(boton, nombrePreferencia(boton));
 
         boton.setOnClickListener(v -> {
-            boolean seleccionado = (Boolean) boton.getTag();
-            seleccionado = !seleccionado;
+            boolean seleccionado = !Boolean.TRUE.equals(boton.getTag());
             boton.setTag(seleccionado);
-
             actualizarVistaBoton(boton, seleccionado);
         });
+    }
+
+    private void inicializarBotonVisual(boolean seleccionadoInicial) {
+        if (btnCheckVisual == null) return;
+
+        btnCheckVisual.setTag(seleccionadoInicial);
+        actualizarVistaBoton(btnCheckVisual, seleccionadoInicial);
+        configurarSemanticaCasilla(btnCheckVisual, "Dificultad visual");
+
+        btnCheckVisual.setOnClickListener(v -> {
+            boolean seleccionado = !Boolean.TRUE.equals(btnCheckVisual.getTag());
+            btnCheckVisual.setTag(seleccionado);
+            actualizarVistaBoton(btnCheckVisual, seleccionado);
+
+            if (seleccionado) {
+                preguntarPorTalkBack();
+            }
+        });
+    }
+
+    private String nombrePreferencia(TextView boton) {
+        if (boton == btnCheckMovilidad) return "Silla de ruedas o movilidad reducida";
+        if (boton == btnCheckCortos) return "Priorizar recorridos cortos";
+        if (boton == btnCheckBanos) return "Baños adaptados";
+        if (boton == btnCheckAuditiva) return "Dificultad auditiva";
+        return "Preferencia de accesibilidad";
+    }
+
+    private void configurarSemanticaCasilla(TextView boton, String nombre) {
+        boton.setContentDescription(nombre);
+        boton.setClickable(true);
+        boton.setFocusable(true);
+        ViewCompat.setAccessibilityDelegate(boton, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(
+                    View host, AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClassName("android.widget.CheckBox");
+                info.setCheckable(true);
+                info.setChecked(Boolean.TRUE.equals(boton.getTag()));
+            }
+        });
+    }
+
+    private void preguntarPorTalkBack() {
+        new AlertDialog.Builder(this)
+                .setTitle("Dificultad visual")
+                .setMessage("¿Querés abrir los ajustes de Android para configurar TalkBack? "
+                        + "Es opcional y no modifica tu preferencia de viaje.")
+                .setPositiveButton("Configurar TalkBack", (dialog, which) -> {
+                    try {
+                        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                    } catch (Exception e) {
+                        Toast.makeText(this,
+                                "No se pudo abrir la configuración de accesibilidad",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Ahora no", null)
+                .show();
     }
 
     private void actualizarVistaBoton(TextView boton, boolean seleccionado) {
