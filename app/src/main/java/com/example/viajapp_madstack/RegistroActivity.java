@@ -1451,11 +1451,6 @@ public class RegistroActivity extends AppCompatActivity {
                 cbSubtitulos.isChecked()
         );
 
-        accesibilidad.put(
-                "sinAdaptaciones",
-                cbSinAdaptaciones.isChecked()
-        );
-
         datosUsuario.put(
                 "accesibilidad",
                 accesibilidad
