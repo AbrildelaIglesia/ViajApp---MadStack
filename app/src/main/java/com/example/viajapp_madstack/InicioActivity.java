@@ -31,6 +31,7 @@ import java.util.IdentityHashMap;
 public class InicioActivity extends AppCompatActivity {
 
     private EditText etCorreo, etContrasena;
+    private ImageView btnTogglePassword;
     private TextView txtRegistrarse;
     private LinearLayout btnIniciarSesion;
     private FirebaseAuth mAuth;
@@ -75,13 +76,27 @@ public class InicioActivity extends AppCompatActivity {
         // NUEVO: INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
 
-        // ===================================================
-        // CÓDIGO ORIGINAL - SIN MODIFICACIONES
-        // ===================================================
-
         mAuth = FirebaseAuth.getInstance();
         etCorreo = findViewById(R.id.etCorreo);
         etContrasena = findViewById(R.id.etContrasena);
+        btnTogglePassword = findViewById(R.id.btnTogglePassword);
+
+        final boolean[] isPasswordVisible = {false};
+
+        if (etContrasena != null && btnTogglePassword != null) {
+            btnTogglePassword.setOnClickListener(v -> {
+                isPasswordVisible[0] = !isPasswordVisible[0];
+
+                if (isPasswordVisible[0]) {
+                    etContrasena.setTransformationMethod(android.text.method.HideReturnsTransformationMethod.getInstance());
+                    btnTogglePassword.setImageResource(R.drawable.visible_true);
+                } else {
+                    etContrasena.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
+                    btnTogglePassword.setImageResource(R.drawable.visible_false);
+                }
+                etContrasena.setSelection(etContrasena.getText().length());
+            });
+        }
 
         btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
         btnIniciarSesion.setOnClickListener(v -> {
