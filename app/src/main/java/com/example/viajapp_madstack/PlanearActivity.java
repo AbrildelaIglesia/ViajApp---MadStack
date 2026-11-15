@@ -200,7 +200,15 @@ public class PlanearActivity extends AppCompatActivity {
                     + "indicá que deben verificarse antes de viajar. Respondé en español claro.\n"
                     + "Los datos de Google Places son referencias de lugares reales, no "
                     + "pruebas de accesibilidad. No afirmes que un lugar es accesible "
-                    + "sin evidencia específica. No inventes lugares ni direcciones.\n";
+                    + "sin evidencia específica. No inventes lugares ni direcciones.\n"
+                    + "FORMATO OBLIGATORIO: devolvé solamente un objeto JSON válido, sin markdown ni texto fuera del JSON. "
+                    + "Estructura: {\"dias\":[{\"dia\":1,\"actividades\":[{\"hora\":\"10:00\",\"nombre\":\"Nombre del lugar\",\"descripcion\":\"Descripción breve\",\"accesibilidad\":\"Por verificar: información faltante\"}]}]}. "
+                    + "Incluí exactamente " + cantidadDias + " objetos en dias, numerados del 1 al " + cantidadDias + ". "
+                    + "Cada día debe tener EXACTAMENTE 3 actividades, ordenadas por hora. "
+                    + "Cada actividad debe incluir hora, nombre, descripcion y accesibilidad como strings. "
+                    + "No inventes verificaciones, reservas, clima, fotos ni servicios. "
+                    + "Si no hay tres lugares distintos comprobables, podés proponer descansos o actividades genéricas "
+                    + "sin atribuirles un establecimiento inventado.\n";
 
             btnCrearViajeIA.setEnabled(false);
             btnCrearViajeIA.setText("Buscando lugares turísticos...");
@@ -266,6 +274,7 @@ public class PlanearActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String lugares) {
                     runOnUiThread(() -> {
+
                         if (isFinishing() || isDestroyed()) return;
                         if (lugares == null || lugares.trim().isEmpty()) {
                             restaurarBotonCrearViaje(boton);
@@ -311,13 +320,47 @@ public class PlanearActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String respuesta) {
                     runOnUiThread(() -> {
+                        Log.d("VIAJAPP_GEMINI", "Respuesta completa: " + respuesta);
+                        Log.d("VIAJAPP_GEMINI", "Longitud: " +
+                                (respuesta == null ? 0 : respuesta.length()));
                         if (isFinishing() || isDestroyed()) return;
                         restaurarBotonCrearViaje(boton);
-                        new AlertDialog.Builder(PlanearActivity.this)
-                                .setTitle("Itinerario accesible generado")
-                                .setMessage(respuesta)
-                                .setPositiveButton("Cerrar", (dialog, which) -> dialog.dismiss())
-                                .show();
+                        if (respuesta == null || respuesta.trim().isEmpty()) {
+                            mostrarErrorViaje("Gemini no devolvió un itinerario.");
+                            return;
+                        }
+                        String intentJson;
+                        try {
+                            String limpio = respuesta.trim();
+                            if (limpio.startsWith("```")) {
+                                limpio = limpio.replaceFirst("(?s)^```(?:json)?\\s*", "")
+                                        .replaceFirst("(?s)\\s*```$", "").trim();
+                            }
+                            org.json.JSONObject raiz = new org.json.JSONObject(limpio);
+                            org.json.JSONArray diasJson = raiz.getJSONArray("dias");
+                            if (diasJson.length() != cantidadDias) throw new org.json.JSONException("Cantidad de días incorrecta");
+                            for (int i = 0; i < diasJson.length(); i++) {
+                                org.json.JSONObject dia = diasJson.getJSONObject(i);
+                                if (dia.getInt("dia") != i + 1 || dia.getJSONArray("actividades").length() != 3)
+                                    throw new org.json.JSONException("Se requieren tres actividades por día");
+                                org.json.JSONArray actividades = dia.getJSONArray("actividades");
+                                for (int j = 0; j < 3; j++) {
+                                    org.json.JSONObject actividad = actividades.getJSONObject(j);
+                                    actividad.getString("hora"); actividad.getString("nombre");
+                                    actividad.getString("descripcion"); actividad.getString("accesibilidad");
+                                }
+                            }
+                            intentJson = limpio;
+                        } catch (org.json.JSONException ex) {
+                            mostrarErrorViaje("Gemini devolvió un formato incompleto. Intentá generar el viaje nuevamente.");
+                            Log.e("VIAJAPP_GEMINI", "JSON inválido", ex);
+                            return;
+                        }
+                        Intent intent = new Intent(PlanearActivity.this, ItinerarioActivity.class);
+                        intent.putExtra("itinerario", intentJson);
+                        intent.putExtra("destino", destinoNombre);
+                        intent.putExtra("dias", cantidadDias);
+                        startActivity(intent);
                     });
                 }
 
@@ -832,13 +875,25 @@ public class PlanearActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+
+    // =========================================
+    // MENÚ MI CUENTA
+    // =========================================
     private void configurarMenuPerfil() {
         View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
+
         if (btnAbrirPerfil != null) {
             btnAbrirPerfil.setOnClickListener(v ->
-                    MenuPerfilUsuario.mostrar(this, btnAbrirPerfil, modoContraste, escalaTexto));
+                    MenuPerfilUsuario.mostrar(
+                            this,
+                            btnAbrirPerfil,
+                            modoContraste,
+                            escalaTexto
+                    )
+            );
         }
     }
+
 
     // ===================================================
     // NUEVO: CONFIGURAR MENÚ DE ACCESIBILIDAD

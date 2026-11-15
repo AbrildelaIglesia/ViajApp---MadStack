@@ -1,4 +1,3 @@
-
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
@@ -6,28 +5,37 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Map;
 
 public class AccesibilidadActivity extends AppCompatActivity {
 
     private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares, barraAccesibilidad;
 
-    private TextView btnAccesibilidad, btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnCrearViajeIA;
-
+    private TextView btnAccesibilidad, btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias;
+    private TextView btnCheckMovilidad, btnCheckCortos, btnCheckBanos, btnCheckVisual, btnCheckAuditiva;
     private View pantallaPrincipal, scrollContenido, header, bottomNav, tarjetaTamanoTexto;
+
+    private FirebaseAuth firebaseAuth;
+    private FirebaseUser currentUser;
+    private FirebaseFirestore firestore;
+    private String userId;
 
     // Guardado de los valores originales
     private final IdentityHashMap<View, Drawable> fondosOriginales =
@@ -44,18 +52,29 @@ public class AccesibilidadActivity extends AppCompatActivity {
     private int modoContraste = 0;
     private boolean controlesVisibles = true;
 
-    // 0 = Normal
-    // 1 = Crema
-    // 2 = Oscuro
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accesibilidad);
 
+
+        // Inicializar Firebase
+        firebaseAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+
+        if (currentUser == null) {
+            startActivity(new Intent(this, InicioActivity.class));
+            finish();
+            return;
+        }
+
+        userId = currentUser.getUid();
+
         // INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
+
 
         // ===================================================
         // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
@@ -76,22 +95,19 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         // NAVEGACIÓN INFERIOR ORIGINAL
         configurarNavegacion();
+        configurarBotonesSeleccion();
     }
 
 
     // NAVEGACIÓN INFERIOR
     private void configurarNavegacion() {
-
         navPlanear = findViewById(R.id.navPlanear);
         navAccesibilidad = findViewById(R.id.navAccesibilidad);
         navItinerario = findViewById(R.id.navItinerario);
         navLugares = findViewById(R.id.navLugares);
 
         navPlanear.setOnClickListener(v -> {
-            startActivity(new Intent(
-                    AccesibilidadActivity.this,
-                    PlanearActivity.class
-            ));
+            startActivity(new Intent(AccesibilidadActivity.this, PlanearActivity.class));
         });
 
         navAccesibilidad.setOnClickListener(v -> {
@@ -99,23 +115,56 @@ public class AccesibilidadActivity extends AppCompatActivity {
         });
 
         navItinerario.setOnClickListener(v -> {
-            startActivity(new Intent(
-                    AccesibilidadActivity.this,
-                    ItinerarioActivity.class
-            ));
+            startActivity(new Intent(AccesibilidadActivity.this, ItinerarioActivity.class));
         });
 
         navLugares.setOnClickListener(v -> {
-            startActivity(new Intent(
-                    AccesibilidadActivity.this,
-                    LugaresActivity.class
-            ));
+            startActivity(new Intent(AccesibilidadActivity.this, LugaresActivity.class));
         });
+    }
+
+    // CONFIGURACIÓN DE LOS 5 BOTONES DE SELECCIÓN
+    private void configurarBotonesSeleccion() {
+        btnCheckMovilidad = findViewById(R.id.btnCheckMovilidad);
+        btnCheckCortos = findViewById(R.id.btnCheckCortos);
+        btnCheckBanos = findViewById(R.id.btnCheckBanos);
+        btnCheckVisual = findViewById(R.id.btnCheckVisual);
+        btnCheckAuditiva = findViewById(R.id.btnCheckAuditiva);
+
+        // Todos comienzan en false (no seleccionados) al entrar
+        inicializarBoton(btnCheckMovilidad, false);
+        inicializarBoton(btnCheckCortos, false);
+        inicializarBoton(btnCheckBanos, false);
+        inicializarBoton(btnCheckVisual, false);
+        inicializarBoton(btnCheckAuditiva, false);
+    }
+
+    private void inicializarBoton(TextView boton, boolean seleccionadoInicial) {
+        if (boton == null) return;
+
+        boton.setTag(seleccionadoInicial);
+
+        boton.setOnClickListener(v -> {
+            boolean seleccionado = (Boolean) boton.getTag();
+            seleccionado = !seleccionado;
+            boton.setTag(seleccionado);
+
+            actualizarVistaBoton(boton, seleccionado);
+        });
+    }
+
+    private void actualizarVistaBoton(TextView boton, boolean seleccionado) {
+        if (seleccionado) {
+            boton.setBackgroundResource(R.drawable.bg_check_circle);
+            boton.setText("✓");
+        } else {
+            boton.setBackgroundResource(R.drawable.bg_uncheck_circle);
+            boton.setText("");
+        }
     }
 
     // CONFIGURACIÓN DE ACCESIBILIDAD
     private void configurarAccesibilidad() {
-
         pantallaPrincipal = findViewById(R.id.main);
         scrollContenido = findViewById(R.id.scrollContenido);
         header = findViewById(R.id.header);
@@ -129,19 +178,15 @@ public class AccesibilidadActivity extends AppCompatActivity {
         btnAumentarTexto = findViewById(R.id.btnAumentarTexto);
         btnContraste = findViewById(R.id.btnContraste);
         btnAudio = findViewById(R.id.btnAudio);
-        btnCrearViajeIA = findViewById(R.id.btnCrearViajeIA);
+        btnPreferencias = findViewById(R.id.btnPreferencias); // <--- Enlace correcto al ID del XML
 
         // Guardamos los valores originales de toda la pantalla
         guardarOriginales(pantallaPrincipal);
 
         // Mostrar u ocultar los controles
         btnAccesibilidad.setOnClickListener(v -> {
-
             controlesVisibles = !controlesVisibles;
-
-            int visibilidad = controlesVisibles
-                    ? View.VISIBLE
-                    : View.GONE;
+            int visibilidad = controlesVisibles ? View.VISIBLE : View.GONE;
 
             btnDisminuirTexto.setVisibility(visibilidad);
             btnAumentarTexto.setVisibility(visibilidad);
@@ -149,56 +194,85 @@ public class AccesibilidadActivity extends AppCompatActivity {
             btnAudio.setVisibility(visibilidad);
 
             btnAccesibilidad.setContentDescription(
-                    controlesVisibles
-                            ? "Cerrar menú de accesibilidad"
-                            : "Abrir menú de accesibilidad"
+                    controlesVisibles ? "Cerrar menú de accesibilidad" : "Abrir menú de accesibilidad"
             );
         });
 
         // Disminuir tamaño del texto
         btnDisminuirTexto.setOnClickListener(v -> {
-
             escalaTexto = Math.max(0.9f, escalaTexto - 0.1f);
-
             actualizarTamanoTextos(pantallaPrincipal);
         });
 
         // Aumentar tamaño del texto
         btnAumentarTexto.setOnClickListener(v -> {
-
             escalaTexto = Math.min(1.3f, escalaTexto + 0.1f);
-
             actualizarTamanoTextos(pantallaPrincipal);
         });
 
         // Cambiar modo de contraste
         btnContraste.setOnClickListener(v -> {
-
             modoContraste++;
-
             if (modoContraste > 2) {
                 modoContraste = 0;
             }
-
             aplicarTemaContraste();
         });
 
         // Botón de audio
         btnAudio.setOnClickListener(v -> {
-            Toast.makeText(
-                    this,
-                    "Función de audio próximamente",
-                    Toast.LENGTH_SHORT
-            ).show();
+            Toast.makeText(this, "Función de audio próximamente", Toast.LENGTH_SHORT).show();
         });
+
+        // Guardar preferencias en Firestore al hacer clic en btnPreferencias
+        if (btnPreferencias != null) {
+            btnPreferencias.setOnClickListener(v -> {
+                guardarPreferenciasEnCloud();
+            });
+        }
+    }
+
+    private void guardarPreferenciasEnCloud() {
+        if (currentUser == null) {
+            Toast.makeText(this, "Error: Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Recolectar el estado actual (true/false) de los 5 botones
+        boolean movilidad = btnCheckMovilidad != null && Boolean.TRUE.equals(btnCheckMovilidad.getTag());
+        boolean recorridosCortos = btnCheckCortos != null && Boolean.TRUE.equals(btnCheckCortos.getTag());
+        boolean banos = btnCheckBanos != null && Boolean.TRUE.equals(btnCheckBanos.getTag()); // Asegúrate de si este campo se llama así en tu Firestore
+        boolean visual = btnCheckVisual != null && Boolean.TRUE.equals(btnCheckVisual.getTag());
+        boolean auditiva = btnCheckAuditiva != null && Boolean.TRUE.equals(btnCheckAuditiva.getTag());
+
+        // Usamos exactamente el nombre del mapa que tienes en la base de datos ("accesibilidad")
+        Map<String, Object> actualizacion = new HashMap<>();
+        actualizacion.put("accesibilidad.sillaRuedas", movilidad);
+        actualizacion.put("accesibilidad.recorridosCortos", recorridosCortos);
+        actualizacion.put("accesibilidad.banosAdaptados", banos); // Cambia "banosAdaptados" si en Firestore se llama diferente
+        actualizacion.put("accesibilidad.visionReducida", visual);
+        actualizacion.put("accesibilidad.subtitulos", auditiva);
+
+        if (btnPreferencias != null) {
+            btnPreferencias.setEnabled(false);
+        }
+
+        // Actualizamos únicamente los campos internos dentro del mapa "accesibilidad"[cite: 1]
+        firestore.collection("usuarios").document(userId)
+                .update(actualizacion)
+                .addOnSuccessListener(aVoid -> {
+                    if (btnPreferencias != null) btnPreferencias.setEnabled(true);
+                    Toast.makeText(this, "¡Preferencias actualizadas!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    if (btnPreferencias != null) btnPreferencias.setEnabled(true);
+                    Toast.makeText(this, "Error al actualizar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     // GUARDAR DISEÑO ORIGINAL
     private void guardarOriginales(View vista) {
-
-        if (vista == null) {
-            return;
-        }
+        if (vista == null) return;
 
         fondosOriginales.put(
                 vista,
@@ -210,24 +284,13 @@ public class AccesibilidadActivity extends AppCompatActivity {
         );
 
         if (vista instanceof TextView) {
-
             TextView texto = (TextView) vista;
-
-            coloresOriginales.put(
-                    texto,
-                    texto.getTextColors()
-            );
-
-            tamanosOriginales.put(
-                    texto,
-                    texto.getTextSize()
-            );
+            coloresOriginales.put(texto, texto.getTextColors());
+            tamanosOriginales.put(texto, texto.getTextSize());
         }
 
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
                 guardarOriginales(grupo.getChildAt(i));
             }
@@ -236,19 +299,13 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
     // CAMBIAR TAMAÑO DE LOS TEXTOS
     private void actualizarTamanoTextos(View vista) {
-
-        if (vista == null) {
-            return;
-        }
+        if (vista == null) return;
 
         if (vista instanceof TextView) {
-
             TextView texto = (TextView) vista;
-
             Float tamanoOriginal = tamanosOriginales.get(texto);
 
             if (tamanoOriginal != null) {
-
                 texto.setTextSize(
                         TypedValue.COMPLEX_UNIT_PX,
                         tamanoOriginal * escalaTexto
@@ -257,9 +314,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
         }
 
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
                 actualizarTamanoTextos(grupo.getChildAt(i));
             }
@@ -268,23 +323,17 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
     // APLICAR CONTRASTE
     private void aplicarTemaContraste() {
-
-        // Primero restauramos los valores originales
         restaurarDisenoOriginal(pantallaPrincipal);
 
-        // MODO NORMAL
         if (modoContraste == 0) {
-
             btnContraste.setText("◐  Contraste");
-
+            sincronizarBotonesSeleccionDespuesDeRestaurar();
             return;
         }
 
         int fondoPantalla, fondoTarjeta, borde, textoPrincipal, textoSecundario;
 
-        // MODO CREMA
         if (modoContraste == 1) {
-
             fondoPantalla = Color.rgb(255, 247, 230);
             fondoTarjeta = Color.rgb(255, 253, 247);
             borde = Color.rgb(214, 199, 161);
@@ -292,25 +341,15 @@ public class AccesibilidadActivity extends AppCompatActivity {
             textoPrincipal = Color.rgb(59, 47, 32);
             textoSecundario = Color.rgb(102, 90, 74);
 
-            btnCrearViajeIA.setBackground(
-                    fondoRedondeado(
-                            Color.rgb(130, 85, 35),
-                            Color.rgb(100, 65, 30),
-                            12
-                    )
+            btnPreferencias.setBackground(
+                    fondoRedondeado(Color.rgb(130, 85, 35), Color.rgb(100, 65, 30), 12)
             );
             btnAudio.setBackground(
-                    fondoRedondeado(
-                            Color.rgb(245, 235, 215),
-                            Color.rgb(180, 160, 130),
-                            12
-                    )
+                    fondoRedondeado(Color.rgb(245, 235, 215), Color.rgb(180, 160, 130), 12)
             );
             btnContraste.setText("◐  Crema");
 
         } else {
-
-            // MODO OSCURO
             fondoPantalla = Color.rgb(18, 18, 18);
             fondoTarjeta = Color.rgb(30, 30, 30);
             borde = Color.rgb(85, 85, 85);
@@ -318,187 +357,107 @@ public class AccesibilidadActivity extends AppCompatActivity {
             textoPrincipal = Color.WHITE;
             textoSecundario = Color.rgb(210, 210, 210);
 
-            btnCrearViajeIA.setBackground(
-                    fondoRedondeado(
-                            Color.rgb(55, 55, 55),
-                            Color.rgb(120, 120, 120),
-                            12
-                    )
+            btnPreferencias.setBackground(
+                    fondoRedondeado(Color.rgb(55, 55, 55), Color.rgb(120, 120, 120), 12)
             );
             btnAudio.setBackground(
-                    fondoRedondeado(
-                            Color.rgb(55, 55, 55),
-                            Color.rgb(120, 120, 120),
-                            12
-                    )
+                    fondoRedondeado(Color.rgb(55, 55, 55), Color.rgb(120, 120, 120), 12)
             );
             btnContraste.setText("◐  Oscuro");
         }
 
-        // Fondo general
         pantallaPrincipal.setBackgroundColor(fondoPantalla);
         scrollContenido.setBackgroundColor(fondoPantalla);
 
-        // Encabezado y navegación
         header.setBackgroundColor(fondoTarjeta);
         bottomNav.setBackgroundColor(fondoTarjeta);
 
-        // Barra de accesibilidad
         barraAccesibilidad.setBackground(
                 fondoRedondeado(fondoTarjeta, borde, 16)
         );
 
-        btnAccesibilidad.setBackground(
-                fondoRedondeado(fondoTarjeta, borde, 12)
-        );
+        btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnDisminuirTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnAumentarTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
 
-        btnDisminuirTexto.setBackground(
-                fondoRedondeado(fondoTarjeta, borde, 12)
-        );
-
-        btnAumentarTexto.setBackground(
-                fondoRedondeado(fondoTarjeta, borde, 12)
-        );
-
-        btnContraste.setBackground(
-                fondoRedondeado(fondoTarjeta, borde, 12)
-        );
-
-        // Tarjetas del contenido
-        actualizarFondosTarjetas(
-                scrollContenido,
-                fondoTarjeta,
-                borde
-        );
-
-        // Cambiar los colores de los textos
-        actualizarColoresTextos(
-                pantallaPrincipal,
-                textoPrincipal,
-                textoSecundario
-        );
+        actualizarFondosTarjetas(scrollContenido, fondoTarjeta, borde);
+        actualizarColoresTextos(pantallaPrincipal, textoPrincipal, textoSecundario);
+        sincronizarBotonesSeleccionDespuesDeRestaurar();
     }
 
-    // ACTUALIZAR FONDOS DE LAS TARJETAS
-    private void actualizarFondosTarjetas(
-            View vista,
-            int colorFondo,
-            int colorBorde) {
+    private void sincronizarBotonesSeleccionDespuesDeRestaurar() {
+        if (btnCheckMovilidad != null) actualizarVistaBoton(btnCheckMovilidad, (Boolean) btnCheckMovilidad.getTag());
+        if (btnCheckCortos != null) actualizarVistaBoton(btnCheckCortos, (Boolean) btnCheckCortos.getTag());
+        if (btnCheckBanos != null) actualizarVistaBoton(btnCheckBanos, (Boolean) btnCheckBanos.getTag());
+        if (btnCheckVisual != null) actualizarVistaBoton(btnCheckVisual, (Boolean) btnCheckVisual.getTag());
+        if (btnCheckAuditiva != null) actualizarVistaBoton(btnCheckAuditiva, (Boolean) btnCheckAuditiva.getTag());
+    }
 
-        if (vista == null) {
-            return;
-        }
+    private void actualizarFondosTarjetas(View vista, int colorFondo, int colorBorde) {
+        if (vista == null) return;
 
         if (vista instanceof LinearLayout) {
-
             Drawable fondoOriginal = fondosOriginales.get(vista);
-
             if (fondoOriginal instanceof GradientDrawable) {
-
-                vista.setBackground(
-                        fondoRedondeado(colorFondo, colorBorde, 10)
-                );
+                vista.setBackground(fondoRedondeado(colorFondo, colorBorde, 10));
             }
         }
 
-        // Iconos marcados con tag="interest"
-        if (vista.getTag() != null
-                && "interest".equals(vista.getTag().toString())) {
-
-            int fondoIcono = modoContraste == 2
-                    ? Color.rgb(55, 55, 55)
-                    : Color.rgb(237, 227, 201);
-
-            vista.setBackground(
-                    fondoRedondeado(fondoIcono, colorBorde, 8)
-            );
+        if (vista.getTag() != null && "interest".equals(vista.getTag().toString())) {
+            int fondoIcono = modoContraste == 2 ? Color.rgb(55, 55, 55) : Color.rgb(237, 227, 201);
+            vista.setBackground(fondoRedondeado(fondoIcono, colorBorde, 8));
         }
 
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
-
-                actualizarFondosTarjetas(
-                        grupo.getChildAt(i),
-                        colorFondo,
-                        colorBorde
-                );
+                actualizarFondosTarjetas(grupo.getChildAt(i), colorFondo, colorBorde);
             }
         }
     }
 
-    // =====================================================
-    // ACTUALIZAR COLORES DE LOS TEXTOS
-    // =====================================================
-
-    private void actualizarColoresTextos(
-            View vista,
-            int colorPrincipal,
-            int colorSecundario) {
-
-        if (vista == null) {
-            return;
-        }
+    private void actualizarColoresTextos(View vista, int colorPrincipal, int colorSecundario) {
+        if (vista == null) return;
 
         if (vista instanceof TextView) {
-
             TextView texto = (TextView) vista;
-
             ColorStateList colorOriginal = coloresOriginales.get(texto);
 
             if (colorOriginal != null) {
-
                 int color = colorOriginal.getDefaultColor();
 
-                if ("Logo ViajAPP".equals(
-                        texto.getContentDescription())
-                        || "Perfil".equals(
-                        texto.getContentDescription())) {
+                if ("Logo ViajAPP".equals(texto.getContentDescription())
+                        || "Perfil".equals(texto.getContentDescription())
+                        || texto == btnCheckMovilidad || texto == btnCheckCortos
+                        || texto == btnCheckBanos || texto == btnCheckVisual
+                        || texto == btnCheckAuditiva) {
 
-                    texto.setTextColor(colorOriginal);
-                }
-
-                // Textos secundarios
-                else if (color == Color.rgb(100, 116, 139)
+                    if (Boolean.TRUE.equals(texto.getTag())) {
+                        texto.setTextColor(Color.WHITE);
+                    } else {
+                        texto.setTextColor(colorOriginal);
+                    }
+                } else if (color == Color.rgb(100, 116, 139)
                         || color == Color.rgb(67, 71, 77)
                         || color == Color.rgb(30, 41, 59)) {
-
                     texto.setTextColor(colorSecundario);
-                }
-
-                // Textos principales
-                else {
+                } else {
                     texto.setTextColor(colorPrincipal);
                 }
             }
         }
 
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
-
-                actualizarColoresTextos(
-                        grupo.getChildAt(i),
-                        colorPrincipal,
-                        colorSecundario
-                );
+                actualizarColoresTextos(grupo.getChildAt(i), colorPrincipal, colorSecundario);
             }
         }
     }
 
-    // =====================================================
-    // RESTAURAR DISEÑO ORIGINAL
-    // =====================================================
-
     private void restaurarDisenoOriginal(View vista) {
-
-        if (vista == null) {
-            return;
-        }
+        if (vista == null) return;
 
         Drawable fondoOriginal = fondosOriginales.get(vista);
 
@@ -506,60 +465,36 @@ public class AccesibilidadActivity extends AppCompatActivity {
             Drawable copia = fondoOriginal.getConstantState() != null
                     ? fondoOriginal.getConstantState().newDrawable().mutate()
                     : fondoOriginal.mutate();
-
             vista.setBackground(copia);
         } else {
             vista.setBackground(null);
         }
 
         if (vista instanceof TextView) {
-
             TextView texto = (TextView) vista;
-
             ColorStateList colorOriginal = coloresOriginales.get(texto);
-
             if (colorOriginal != null) {
                 texto.setTextColor(colorOriginal);
             }
         }
 
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
-
-                restaurarDisenoOriginal(
-                        grupo.getChildAt(i)
-                );
+                restaurarDisenoOriginal(grupo.getChildAt(i));
             }
         }
     }
 
-    // =====================================================
-    // CREAR FONDOS REDONDEADOS
-    // =====================================================
-
-    private GradientDrawable fondoRedondeado(
-            int colorFondo,
-            int colorBorde,
-            int radio) {
-
+    private GradientDrawable fondoRedondeado(int colorFondo, int colorBorde, int radio) {
         GradientDrawable drawable = new GradientDrawable();
-
         drawable.setColor(colorFondo);
         drawable.setCornerRadius(dp(radio));
         drawable.setStroke(dp(1), colorBorde);
-
         return drawable;
     }
 
-    // =====================================================
-    // CONVERTIR DP A PIXELES
-    // =====================================================
-
     private int dp(int valor) {
-
         return (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
                 valor,

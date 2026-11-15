@@ -1,6 +1,17 @@
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.api.net.SearchByTextRequest;
+import com.google.android.libraries.places.api.net.FetchResolvedPhotoUriRequest;
+import java.util.Arrays;
+import java.util.List;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,6 +36,12 @@ import android.widget.Toast;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.IdentityHashMap;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONException;
+import android.view.Gravity;
+import android.widget.HorizontalScrollView;
+import android.graphics.Typeface;
 
 public class ItinerarioActivity extends AppCompatActivity {
 
@@ -66,8 +83,9 @@ public class ItinerarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_itinerario);
 
-        // NUEVO: INICIAR ACCESIBILIDAD
+        // Guardar estilos originales antes de construir las tarjetas dinámicas.
         configurarAccesibilidad();
+        mostrarItinerarioRecibido(savedInstanceState);
 
         // ===================================================
         // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
@@ -114,8 +132,7 @@ public class ItinerarioActivity extends AppCompatActivity {
         navItinerario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ItinerarioActivity.this, ItinerarioActivity.class);
-                startActivity(intent);
+                // Ya estamos en esta pantalla; conservar el itinerario visible.
             }
         });
         navLugares.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +142,234 @@ public class ItinerarioActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private String textoItinerarioActual;
+    private String destinoActual;
+    private int diasActuales;
+    private JSONArray diasGenerados;
+    private LinearLayout barraDiasGenerados, tarjetasActividades;
+    private int diaSeleccionado = 0;
+    private PlacesClient clienteFotos;
+
+    private void mostrarItinerarioRecibido(Bundle estado) {
+        if (estado != null && estado.containsKey("itinerario")) {
+            textoItinerarioActual = estado.getString("itinerario");
+            destinoActual = estado.getString("destino");
+            diasActuales = estado.getInt("dias", 0);
+            diaSeleccionado = estado.getInt("diaSeleccionado", 0);
+        } else {
+            Intent datos = getIntent();
+            textoItinerarioActual = datos.getStringExtra("itinerario");
+            destinoActual = datos.getStringExtra("destino");
+            diasActuales = datos.getIntExtra("dias", 0);
+        }
+
+        LinearLayout contenidoGenerado = findViewById(R.id.contenidoGenerado);
+        LinearLayout contenidoEjemplo = findViewById(R.id.contenidoEjemplo);
+        if (textoItinerarioActual == null || textoItinerarioActual.trim().isEmpty()) {
+            contenidoEjemplo.setVisibility(View.GONE);
+            contenidoGenerado.setVisibility(View.VISIBLE);
+            TextView tituloVacio = findViewById(R.id.tvTituloItinerarioGenerado);
+            tituloVacio.setText("Todavía no generaste un itinerario. Creá un viaje desde Planear.");
+            return;
+        }
+
+        try {
+            JSONObject raiz = new JSONObject(textoItinerarioActual);
+            diasGenerados = raiz.getJSONArray("dias");
+            if (diasGenerados.length() == 0) throw new JSONException("Sin días");
+            for (int i = 0; i < diasGenerados.length(); i++) {
+                JSONObject dia = diasGenerados.getJSONObject(i);
+                if (dia.getInt("dia") != i + 1 || dia.getJSONArray("actividades").length() != 3)
+                    throw new JSONException("El día no contiene exactamente 3 actividades");
+            }
+        } catch (JSONException error) {
+            Toast.makeText(this, "El itinerario no tiene el formato esperado", Toast.LENGTH_LONG).show();
+            contenidoEjemplo.setVisibility(View.GONE);
+            contenidoGenerado.setVisibility(View.VISIBLE);
+            TextView tituloError = findViewById(R.id.tvTituloItinerarioGenerado);
+            tituloError.setText("No se pudo mostrar el itinerario. Generá uno nuevo desde Planear.");
+            return;
+        }
+
+        contenidoEjemplo.setVisibility(View.GONE);
+        contenidoGenerado.setVisibility(View.VISIBLE);
+        String nombre = destinoActual == null || destinoActual.trim().isEmpty() ? "tu viaje" : destinoActual;
+        TextView titulo = findViewById(R.id.tvTituloItinerarioGenerado);
+        titulo.setText("Itinerario de " + nombre + " - " + diasGenerados.length() + " días");
+        barraDiasGenerados = findViewById(R.id.barraDiasGenerados);
+        tarjetasActividades = findViewById(R.id.tarjetasActividades);
+        mostrarDia(Math.max(0, Math.min(diaSeleccionado, diasGenerados.length() - 1)));
+    }
+
+    private void mostrarDia(int indice) {
+        diaSeleccionado = indice;
+        barraDiasGenerados.removeAllViews();
+        tarjetasActividades.removeAllViews();
+        for (int i = 0; i < diasGenerados.length(); i++) {
+            final int posicion = i;
+            TextView boton = new TextView(this);
+            boton.setText("DÍA\n" + (i + 1));
+            boton.setGravity(Gravity.CENTER);
+            boton.setTextSize(14);
+            boton.setTypeface(null, Typeface.BOLD);
+            boton.setTextColor(i == indice ? Color.WHITE : Color.parseColor("#475569"));
+            boton.setBackgroundColor(i == indice ? Color.parseColor("#F43F5E") : Color.parseColor("#F1F5F9"));
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(dp(60), dp(60));
+            lp.setMargins(0, 0, dp(10), 0);
+            boton.setLayoutParams(lp);
+            boton.setContentDescription("Mostrar actividades del día " + (i + 1));
+            boton.setOnClickListener(v -> mostrarDia(posicion));
+            barraDiasGenerados.addView(boton);
+        }
+        try {
+            JSONArray actividades = diasGenerados.getJSONObject(indice).getJSONArray("actividades");
+            for (int i = 0; i < 3; i++) {
+                JSONObject actividad = actividades.getJSONObject(i);
+                LinearLayout tarjeta = new LinearLayout(this);
+                tarjeta.setOrientation(LinearLayout.VERTICAL);
+                tarjeta.setPadding(dp(16), dp(16), dp(16), dp(16));
+                tarjeta.setBackgroundColor(Color.WHITE);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.topMargin = dp(14);
+                tarjeta.setLayoutParams(params);
+                String nombreLugar = actividad.getString("nombre");
+                agregarTexto(tarjeta, actividad.getString("hora") + " - Actividad " + (i + 1), 13, "#2563EB", true);
+                ImageView foto = new ImageView(this);
+                foto.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                foto.setBackgroundColor(Color.parseColor("#EFF6FF"));
+                LinearLayout.LayoutParams fotoParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, dp(160));
+                fotoParams.topMargin = dp(10);
+                fotoParams.bottomMargin = dp(10);
+                tarjeta.addView(foto, fotoParams);
+                foto.setContentDescription("Fotografía pendiente de " + nombreLugar);
+                cargarFotoActividad(foto, nombreLugar);
+                agregarTexto(tarjeta, nombreLugar, 18, "#0F172A", true);
+                agregarTexto(tarjeta, actividad.getString("descripcion"), 14, "#475569", false);
+                agregarTexto(tarjeta, "Accesibilidad: " + actividad.getString("accesibilidad"), 13, "#166534", false);
+                Button botonMapa = new Button(this);
+                botonMapa.setText("Cómo llegar con Google Maps");
+                botonMapa.setAllCaps(false);
+                botonMapa.setTextColor(Color.WHITE);
+                botonMapa.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2563EB")));
+                LinearLayout.LayoutParams mapaParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, dp(56));
+                mapaParams.topMargin = dp(12);
+                tarjeta.addView(botonMapa, mapaParams);
+                botonMapa.setOnClickListener(v -> abrirIndicaciones(nombreLugar));
+                tarjetasActividades.addView(tarjeta);
+            }
+        } catch (JSONException error) {
+            Toast.makeText(this, "Error al mostrar las actividades", Toast.LENGTH_SHORT).show();
+        }
+        agregarBotonRecorrido(indice);
+        // Los nuevos TextView se agregan después de guardar los estilos originales.
+        // Registrar sus estilos permite usar A+/A- y restaurar el contraste.
+        guardarOriginales(tarjetasActividades);
+        guardarOriginales(barraDiasGenerados);
+        actualizarTamanoTextos(tarjetasActividades);
+        actualizarTamanoTextos(barraDiasGenerados);
+        if (modoContraste != 0) aplicarTemaContraste();
+    }
+
+    private String consultaLugar(String nombre) {
+        String destino = destinoActual == null ? "" : destinoActual;
+        return nombre + ", " + destino + ", Argentina";
+    }
+
+    private void cargarFotoActividad(ImageView imagen, String nombre) {
+        // No mostrar fotos de otra localidad como reemplazo.
+        try {
+            if (!Places.isInitialized()) {
+                String clave = BuildConfig.PLACES_API_KEY;
+                if (clave == null || clave.trim().isEmpty()) return;
+                Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), clave);
+            }
+            if (clienteFotos == null) clienteFotos = Places.createClient(this);
+            List<Place.Field> campos = Arrays.asList(
+                    Place.Field.ID, Place.Field.DISPLAY_NAME, Place.Field.PHOTO_METADATAS);
+            SearchByTextRequest solicitud = SearchByTextRequest.builder(consultaLugar(nombre), campos)
+                    .setMaxResultCount(1).setRegionCode("AR").build();
+            clienteFotos.searchByText(solicitud).addOnSuccessListener(resultado -> {
+                if (isFinishing() || isDestroyed() || resultado.getPlaces().isEmpty()) return;
+                Place lugar = resultado.getPlaces().get(0);
+                List<PhotoMetadata> fotos = lugar.getPhotoMetadatas();
+                if (fotos == null || fotos.isEmpty()) return;
+                FetchResolvedPhotoUriRequest pedido = FetchResolvedPhotoUriRequest.builder(fotos.get(0))
+                        .setMaxWidth(900).build();
+                clienteFotos.fetchResolvedPhotoUri(pedido).addOnSuccessListener(foto -> {
+                    if (isFinishing() || isDestroyed() || imagen.getParent() == null) return;
+                    if (foto.getUri() != null) {
+                        Glide.with(ItinerarioActivity.this).load(foto.getUri()).into(imagen);
+                        imagen.setContentDescription("Imagen de referencia de Google Places para " + nombre);
+                    }
+                });
+            });
+        } catch (Exception error) {
+            android.util.Log.w("VIAJAPP_FOTOS", "No se pudo buscar la foto de " + nombre, error);
+        }
+    }
+
+    private void abrirIndicaciones(String lugar) {
+        Uri url = Uri.parse("https://www.google.com/maps/dir/?api=1&destination="
+                + Uri.encode(consultaLugar(lugar)) + "&travelmode=walking");
+        abrirMaps(url);
+    }
+
+    private void agregarBotonRecorrido(int indice) {
+        try {
+            JSONArray actividades = diasGenerados.getJSONObject(indice).getJSONArray("actividades");
+            String[] paradas = new String[3];
+            for (int i = 0; i < 3; i++)
+                paradas[i] = consultaLugar(actividades.getJSONObject(i).getString("nombre"));
+            Button recorrido = new Button(this);
+            recorrido.setText("Ver recorrido del día en Google Maps");
+            recorrido.setAllCaps(false);
+            recorrido.setTextColor(Color.WHITE);
+            recorrido.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F43F5E")));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, dp(60));
+            params.topMargin = dp(16);
+            tarjetasActividades.addView(recorrido, params);
+            recorrido.setOnClickListener(v -> {
+                Uri url = Uri.parse("https://www.google.com/maps/dir/?api=1&origin="
+                        + Uri.encode(paradas[0]) + "&destination=" + Uri.encode(paradas[2])
+                        + "&waypoints=" + Uri.encode(paradas[1]) + "&travelmode=walking");
+                abrirMaps(url);
+            });
+        } catch (JSONException error) {
+            Toast.makeText(this, "No se pudo preparar el recorrido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void abrirMaps(Uri url) {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, url));
+        } catch (android.content.ActivityNotFoundException error) {
+            Toast.makeText(this, "No hay una aplicación para abrir Google Maps", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void agregarTexto(LinearLayout padre, String valor, int sp, String color, boolean negrita) {
+        TextView texto = new TextView(this);
+        texto.setText(valor);
+        texto.setTextSize(sp);
+        texto.setTextColor(Color.parseColor(color));
+        if (negrita) texto.setTypeface(null, Typeface.BOLD);
+        texto.setPadding(0, dp(5), 0, dp(5));
+        padre.addView(texto);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("itinerario", textoItinerarioActual);
+        outState.putString("destino", destinoActual);
+        outState.putInt("dias", diasActuales);
+        outState.putInt("diaSeleccionado", diaSeleccionado);
     }
 
     // ===================================================
