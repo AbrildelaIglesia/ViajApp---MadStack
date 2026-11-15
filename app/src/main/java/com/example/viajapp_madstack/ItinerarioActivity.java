@@ -1,6 +1,17 @@
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.widget.CheckBox;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import androidx.appcompat.app.AlertDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -94,7 +105,9 @@ public class ItinerarioActivity extends AppCompatActivity {
         // Guardar estilos originales antes de construir las tarjetas dinámicas.
         configurarAccesibilidad();
         mostrarItinerarioRecibido(savedInstanceState);
-        configurarAccesoGuardados();
+
+        configurarClima();
+        if (diasGenerados != null) consultarClimaDestino();
 
         // ===================================================
         // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
@@ -154,7 +167,7 @@ public class ItinerarioActivity extends AppCompatActivity {
     }
 
     private String itinerarioIdActual;
-    private Button btnMisItinerarios;
+
     private String textoItinerarioActual;
     private String destinoActual;
     private int diasActuales;
@@ -162,6 +175,24 @@ public class ItinerarioActivity extends AppCompatActivity {
     private LinearLayout barraDiasGenerados, tarjetasActividades;
     private int diaSeleccionado = 0;
     private PlacesClient clienteFotos;
+    private final ExecutorService ejecutorClima = Executors.newSingleThreadExecutor();
+    private TextView tvClimaTitulo, tvClimaDetalle;
+    private View tarjetaClima;
+    private TextView iconoClima;
+    private String ultimoDestinoClima = null;
+    private LinearLayout listaPreparativos;
+    private TextView tvProgresoPreparativos;
+    private static final String[] PREPARATIVOS_BASE = {
+            "Agua para hidratarse", "Documento y medio de pago", "Celular cargado",
+            "Calzado cómodo", "Medicación personal (si corresponde)",
+            "Elementos de apoyo o accesibilidad (si los necesitás)"
+    };
+    private final List<String> preparativosActuales = new ArrayList<>();
+    private Integer codigoClimaActual = null;
+    private Double temperaturaClimaActual = null;
+    private Double vientoClimaActual = null;
+    private String destinoChecklistClima = null;
+
 
     private void mostrarItinerarioRecibido(Bundle estado) {
         if (estado != null && estado.containsKey("itinerario")) {
@@ -219,13 +250,8 @@ public class ItinerarioActivity extends AppCompatActivity {
         barraDiasGenerados = findViewById(R.id.barraDiasGenerados);
         tarjetasActividades = findViewById(R.id.tarjetasActividades);
         mostrarDia(Math.max(0, Math.min(diaSeleccionado, diasGenerados.length() - 1)));
+        if (tarjetaClima != null) consultarClimaDestino();
     }
-
-    private void configurarAccesoGuardados() {
-        btnMisItinerarios = findViewById(R.id.btnMisItinerarios);
-        btnMisItinerarios.setOnClickListener(v -> mostrarListaItinerarios());
-    }
-
     private void cargarUltimoItinerario() {
         FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
         if (usuario == null) {
@@ -330,6 +356,7 @@ public class ItinerarioActivity extends AppCompatActivity {
 
     private void mostrarDia(int indice) {
         diaSeleccionado = indice;
+        mostrarChecklistPreparativos();
         barraDiasGenerados.removeAllViews();
         tarjetasActividades.removeAllViews();
         for (int i = 0; i < diasGenerados.length(); i++) {
@@ -398,6 +425,258 @@ public class ItinerarioActivity extends AppCompatActivity {
         actualizarTamanoTextos(tarjetasActividades);
         actualizarTamanoTextos(barraDiasGenerados);
         if (modoContraste != 0) aplicarTemaContraste();
+    }
+
+    // Preparativos básicos y adicionales según el clima actual consultado.
+    private void mostrarChecklistPreparativos() {
+        listaPreparativos = findViewById(R.id.listaPreparativos);
+        tvProgresoPreparativos = findViewById(R.id.tvProgresoPreparativos);
+        if (listaPreparativos == null || tvProgresoPreparativos == null) return;
+
+        preparativosActuales.clear();
+        preparativosActuales.addAll(Arrays.asList(PREPARATIVOS_BASE));
+        boolean climaValido = codigoClimaActual != null
+                && destinoActual != null && destinoActual.equals(destinoChecklistClima);
+        if (climaValido) {
+            int codigo = codigoClimaActual;
+            double temperatura = temperaturaClimaActual;
+            double viento = vientoClimaActual;
+            boolean tormenta = codigo >= 95;
+            boolean nieve = codigo >= 71 && codigo <= 77 || codigo == 85 || codigo == 86;
+            boolean lluvia = codigo >= 51 && codigo <= 67 || codigo >= 80 && codigo <= 82;
+            if (temperatura >= 28) {
+                agregarPreparativo("Agua extra para el calor");
+                agregarPreparativo("Protector solar");
+                agregarPreparativo("Gorra o sombrero");
+                agregarPreparativo("Anteojos de sol");
+            } else if (codigo <= 3) {
+                agregarPreparativo("Protector solar");
+                agregarPreparativo("Gorra o sombrero");
+            }
+            if (temperatura <= 12 || nieve) {
+                agregarPreparativo("Campera de abrigo");
+                agregarPreparativo("Guantes y bufanda");
+                agregarPreparativo("Ropa en capas");
+            }
+            if (lluvia || tormenta) {
+                agregarPreparativo("Piloto o campera impermeable");
+                agregarPreparativo("Calzado antideslizante");
+                agregarPreparativo("Protección impermeable para el celular");
+            }
+            if (nieve) {
+                agregarPreparativo("Calzado adecuado para nieve o hielo");
+                agregarPreparativo("Verificar hielo y estado de caminos");
+            }
+            if (viento >= 35) {
+                agregarPreparativo("Rompevientos");
+                agregarPreparativo("Asegurar objetos sueltos");
+                agregarPreparativo("Evitar zonas muy expuestas");
+            }
+        }
+
+        listaPreparativos.removeAllViews();
+        SharedPreferences preferencias = getSharedPreferences("preparativos_itinerario", MODE_PRIVATE);
+        String claveBase = claveChecklist();
+        for (String elemento : preparativosActuales) {
+            // La clave se basa en el texto, no en la posición: el estado no cambia
+            // cuando el clima agrega o quita opciones del checklist.
+            final String clave = claveBase + "_elemento_" + elemento;
+            CheckBox opcion = new CheckBox(this);
+            opcion.setText(elemento);
+            opcion.setTextSize(14);
+            opcion.setTextColor(Color.parseColor("#1E293B"));
+            opcion.setPadding(dp(4), dp(5), dp(4), dp(5));
+            opcion.setMinHeight(dp(48));
+            opcion.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#2563EB")));
+            opcion.setChecked(preferencias.getBoolean(clave, false));
+            opcion.setOnCheckedChangeListener((boton, marcado) -> {
+                preferencias.edit().putBoolean(clave, marcado).apply();
+                actualizarProgresoPreparativos();
+            });
+            listaPreparativos.addView(opcion);
+        }
+        actualizarProgresoPreparativos();
+        guardarOriginales(listaPreparativos);
+        actualizarTamanoTextos(listaPreparativos);
+        if (modoContraste != 0) aplicarTemaContraste();
+    }
+
+    private void agregarPreparativo(String elemento) {
+        if (!preparativosActuales.contains(elemento)) preparativosActuales.add(elemento);
+    }
+
+    private String claveChecklist() {
+        String identificador = itinerarioIdActual;
+        if (identificador == null || identificador.trim().isEmpty()) {
+            identificador = textoItinerarioActual == null ? "sin_itinerario" :
+                    Integer.toHexString(textoItinerarioActual.hashCode());
+        }
+        return identificador + "_dia_" + diaSeleccionado;
+    }
+
+    private void actualizarProgresoPreparativos() {
+        if (listaPreparativos == null || tvProgresoPreparativos == null) return;
+        int preparados = 0;
+        for (int i = 0; i < listaPreparativos.getChildCount(); i++) {
+            if (((CheckBox) listaPreparativos.getChildAt(i)).isChecked()) preparados++;
+        }
+        String estado = codigoClimaActual == null || !java.util.Objects.equals(destinoActual, destinoChecklistClima)
+                ? " · Extras según clima al consultar" : " · Adaptado al clima actual";
+        tvProgresoPreparativos.setText("Día " + (diaSeleccionado + 1) + " · " +
+                preparados + " de " + preparativosActuales.size() + " preparados" + estado);
+    }
+
+    // Consulta del clima actual usando Open-Meteo (geocoding + current weather).
+    private void configurarClima() {
+        tvClimaTitulo = findViewById(R.id.tvClimaTitulo);
+        tvClimaDetalle = findViewById(R.id.tvClimaDetalle);
+        tarjetaClima = findViewById(R.id.tarjetaClima);
+        iconoClima = findViewById(R.id.iconoClima);
+        tarjetaClima.setOnClickListener(v -> consultarClimaDestino());
+    }
+
+    private void consultarClimaDestino() {
+        if (tvClimaDetalle == null || tarjetaClima == null) return;
+        final String destino = destinoActual == null ? "" : destinoActual.trim();
+        if (destino.isEmpty()) {
+            tvClimaTitulo.setText("Clima no disponible");
+            tvClimaDetalle.setText("No hay un destino seleccionado.");
+            return;
+        }
+        ultimoDestinoClima = destino;
+        if (!destino.equals(destinoChecklistClima)) {
+            codigoClimaActual = null;
+            temperaturaClimaActual = null;
+            vientoClimaActual = null;
+            destinoChecklistClima = null;
+            mostrarChecklistPreparativos();
+        }
+        tvClimaTitulo.setText("Consultando clima en " + destino + "...");
+        tvClimaDetalle.setText("Obteniendo condiciones meteorológicas actuales.");
+        tarjetaClima.setEnabled(false);
+        ejecutorClima.execute(() -> {
+            String mensaje;
+            try {
+                String localidad = destino.split(",")[0].trim();
+                String geoUrl = "https://geocoding-api.open-meteo.com/v1/search?name="
+                        + URLEncoder.encode(localidad, "UTF-8")
+                        + "&count=20&language=es&format=json&countryCode=AR";
+                JSONObject geo = new JSONObject(leerUrlClima(geoUrl));
+                JSONArray lugares = geo.optJSONArray("results");
+                if (lugares == null || lugares.length() == 0) {
+                    throw new Exception("No se encontró el destino en el servicio meteorológico");
+                }
+                // Preferir coincidencia de provincia si el destino viene como "ciudad, provincia".
+                JSONObject lugar = lugares.getJSONObject(0);
+                String destinoNormalizado = destino.toLowerCase(Locale.ROOT);
+                for (int i = 0; i < lugares.length(); i++) {
+                    JSONObject candidato = lugares.getJSONObject(i);
+                    String provincia = candidato.optString("admin1", "").toLowerCase(Locale.ROOT);
+                    if (!provincia.isEmpty() && destinoNormalizado.contains(provincia)) {
+                        lugar = candidato;
+                        break;
+                    }
+                }
+                double lat = lugar.getDouble("latitude");
+                double lon = lugar.getDouble("longitude");
+                String pronosticoUrl = "https://api.open-meteo.com/v1/forecast?latitude="
+                        + lat + "&longitude=" + lon
+                        + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m"
+                        + "&timezone=auto";
+                JSONObject clima = new JSONObject(leerUrlClima(pronosticoUrl)).getJSONObject("current");
+                double temperatura = clima.getDouble("temperature_2m");
+                double sensacion = clima.getDouble("apparent_temperature");
+                double viento = clima.getDouble("wind_speed_10m");
+                int humedad = clima.getInt("relative_humidity_2m");
+                int codigo = clima.getInt("weather_code");
+                String estado = descripcionClima(codigo);
+                String vientoTexto = viento < 2 ? "Sin viento" :
+                        String.format(Locale.getDefault(), "Viento %.0f km/h", viento);
+                final String titulo = String.format(Locale.getDefault(),
+                        "%.0f°C • %s • %s", temperatura, estado, vientoTexto);
+                final String detalle = String.format(Locale.getDefault(),
+                        "Sensación térmica %.0f°C · Humedad %d%%. %s",
+                        sensacion, humedad, recomendacionClima(codigo, viento, temperatura));
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed() || !destino.equals(ultimoDestinoClima)) return;
+                    tvClimaTitulo.setText(titulo);
+                    tvClimaDetalle.setText(detalle);
+                    iconoClima.setText(iconoParaClima(codigo));
+                    codigoClimaActual = codigo;
+                    temperaturaClimaActual = temperatura;
+                    vientoClimaActual = viento;
+                    destinoChecklistClima = destino;
+                    mostrarChecklistPreparativos();
+                    tarjetaClima.setEnabled(true);
+                });
+                return;
+            } catch (Exception error) {
+                mensaje = "No se pudo consultar el clima actual. Revisá tu conexión o intentá nuevamente.";
+                android.util.Log.w("VIAJAPP_CLIMA", "Error consultando clima", error);
+            }
+            final String resultado = mensaje;
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed() || !destino.equals(ultimoDestinoClima)) return;
+                tvClimaTitulo.setText("Clima no disponible");
+                tvClimaDetalle.setText(resultado);
+                iconoClima.setText("☁");
+                tarjetaClima.setEnabled(true);
+            });
+        });
+    }
+
+    private String iconoParaClima(int codigo) {
+        if (codigo == 0) return "☀";
+        if (codigo <= 3) return "⛅";
+        if (codigo == 45 || codigo == 48) return "☁";
+        if (codigo >= 71 && codigo <= 77) return "❄";
+        if (codigo >= 95) return "⛈";
+        return "☂";
+    }
+
+    private String recomendacionClima(int codigo, double viento, double temperatura) {
+        if (codigo >= 95) return "Hay tormenta: consultá las alertas antes de salir.";
+        if (codigo >= 51 && codigo <= 82) return "Puede haber lluvia o nieve: llevá abrigo y verificá el estado de los caminos.";
+        if (viento >= 35) return "Hay viento fuerte: tomá precauciones en espacios abiertos.";
+        if (temperatura <= 5) return "Hace frío: llevá ropa de abrigo.";
+        if (temperatura >= 32) return "Hace calor: llevá agua y evitá la exposición prolongada al sol.";
+        return "Condiciones generales del destino. Verificá la accesibilidad y el estado de los senderos antes de salir.";
+    }
+
+    private String leerUrlClima(String direccion) throws Exception {
+        HttpURLConnection conexion = (HttpURLConnection) new URL(direccion).openConnection();
+        conexion.setConnectTimeout(10000);
+        conexion.setReadTimeout(10000);
+        conexion.setRequestProperty("Accept", "application/json");
+        try {
+            if (conexion.getResponseCode() != 200) throw new Exception("HTTP " + conexion.getResponseCode());
+            try (BufferedReader lector = new BufferedReader(
+                    new InputStreamReader(conexion.getInputStream(), StandardCharsets.UTF_8))) {
+                StringBuilder contenido = new StringBuilder();
+                String linea;
+                while ((linea = lector.readLine()) != null) contenido.append(linea);
+                return contenido.toString();
+            }
+        } finally {
+            conexion.disconnect();
+        }
+    }
+
+    private String descripcionClima(int codigo) {
+        if (codigo == 0) return "Despejado";
+        if (codigo <= 3) return "Parcialmente nublado";
+        if (codigo == 45 || codigo == 48) return "Niebla";
+        if (codigo >= 51 && codigo <= 67) return "Lluvia o llovizna";
+        if (codigo >= 71 && codigo <= 77) return "Nieve";
+        if (codigo >= 80 && codigo <= 82) return "Chaparrones";
+        if (codigo >= 95) return "Tormenta";
+        return "Condiciones variables";
+    }
+
+    @Override
+    protected void onDestroy() {
+        ejecutorClima.shutdownNow();
+        super.onDestroy();
     }
 
     private String consultaLugar(String nombre) {

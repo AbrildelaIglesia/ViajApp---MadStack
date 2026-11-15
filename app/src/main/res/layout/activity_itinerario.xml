@@ -206,17 +206,6 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <Button
-                    android:id="@+id/btnMisItinerarios"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:minHeight="52dp"
-                    android:backgroundTint="#2563EB"
-                    android:text="Mis itinerarios guardados"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
                 <TextView
                     android:id="@+id/tvTituloItinerarioGenerado"
                     android:layout_width="match_parent"
@@ -226,6 +215,58 @@
                     android:textColor="#1E293B"
                     android:textSize="23sp"
                     android:textStyle="bold" />
+
+                <!-- Clima actual: tarjeta compacta, estilo del ejemplo -->
+                <LinearLayout
+                    android:id="@+id/tarjetaClima"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:background="#F0F9FF"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Consultar nuevamente el clima del destino">
+
+                    <TextView
+                        android:id="@+id/iconoClima"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:gravity="center"
+                        android:background="#FED7AA"
+                        android:text="☀"
+                        android:textColor="#C2410C"
+                        android:textSize="28sp"
+                        android:importantForAccessibility="no" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvClimaTitulo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Consultando clima..."
+                            android:textColor="#0F172A"
+                            android:textStyle="bold"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvClimaDetalle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="Obteniendo condiciones meteorológicas del destino."
+                            android:textColor="#475569"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -248,6 +289,41 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal" />
                 </HorizontalScrollView>
+
+                <!-- Preparativos del paseo: selección independiente para cada día -->
+                <LinearLayout
+                    android:id="@+id/tarjetaPreparativos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="#EFF6FF">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Prepará tu paseo"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1E293B" />
+
+                    <TextView
+                        android:id="@+id/tvProgresoPreparativos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="0 de 8 elementos preparados"
+                        android:textSize="13sp"
+                        android:textColor="#475569" />
+
+                    <LinearLayout
+                        android:id="@+id/listaPreparativos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/tarjetasActividades"

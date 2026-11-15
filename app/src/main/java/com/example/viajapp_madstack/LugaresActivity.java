@@ -1,6 +1,8 @@
+
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
+import androidx.appcompat.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -249,7 +251,55 @@ public class LugaresActivity extends AppCompatActivity {
             intent.putExtra("itinerarioId", documento.getId());
             startActivity(intent);
         });
+        Button eliminar = new Button(this);
+        eliminar.setText("Eliminar itinerario");
+        eliminar.setAllCaps(false);
+        eliminar.setTextColor(Color.parseColor("#B91C1C"));
+        eliminar.setContentDescription("Eliminar itinerario de " + destino);
+        eliminar.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FEE2E2")));
+        LinearLayout.LayoutParams parametrosEliminar = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(48));
+        parametrosEliminar.topMargin = dp(8);
+        tarjeta.addView(eliminar, parametrosEliminar);
+        final String nombreDestino = destino;
+        eliminar.setOnClickListener(v -> confirmarEliminacion(documento.getId(), nombreDestino, eliminar));
+
         contenedorItinerarios.addView(tarjeta);
+    }
+
+    private void confirmarEliminacion(String itinerarioId, String destino, Button botonEliminar) {
+        new AlertDialog.Builder(this)
+                .setTitle("Eliminar itinerario")
+                .setMessage("¿Querés eliminar definitivamente el itinerario de " + destino
+                        + "? Esta acción no se puede deshacer.")
+                .setNegativeButton("Cancelar", (dialogo, cual) -> dialogo.dismiss())
+                .setPositiveButton("Eliminar", (dialogo, cual) -> {
+                    FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+                    if (usuario == null) {
+                        Toast.makeText(this, "Iniciá sesión para eliminar itinerarios.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    botonEliminar.setEnabled(false);
+                    FirebaseFirestore.getInstance()
+                            .collection("usuarios")
+                            .document(usuario.getUid())
+                            .collection("itinerarios")
+                            .document(itinerarioId)
+                            .delete()
+                            .addOnSuccessListener(v -> {
+                                if (isFinishing() || isDestroyed()) return;
+                                Toast.makeText(this, "Itinerario eliminado", Toast.LENGTH_SHORT).show();
+                                cargarItinerarios();
+                            })
+                            .addOnFailureListener(error -> {
+                                if (isFinishing() || isDestroyed()) return;
+                                botonEliminar.setEnabled(true);
+                                Log.e(TAG, "No se pudo eliminar el itinerario", error);
+                                Toast.makeText(this, "No se pudo eliminar el itinerario. Intentá nuevamente.",
+                                        Toast.LENGTH_LONG).show();
+                            });
+                })
+                .show();
     }
 
     // ===================================================
