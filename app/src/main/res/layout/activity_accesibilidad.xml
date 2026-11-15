@@ -735,6 +735,7 @@
             android:orientation="vertical"
             android:clickable="true"
             android:focusable="true">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -743,10 +744,11 @@
                 android:textColor="#64748B"
                 android:textSize="23sp"
                 android:clickable="false"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actividades"
+                android:text="Colección"
                 android:textColor="#64748B"
                 android:textSize="11sp"
                 android:clickable="false"/>

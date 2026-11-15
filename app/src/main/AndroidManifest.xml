@@ -17,6 +17,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${PLACES_API_KEY}" />
+        <activity
+            android:name=".ColeccionActivity"
+            android:exported="false" />
 
         <activity
             android:name=".RegistroActivity"

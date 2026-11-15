@@ -46,6 +46,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import java.util.HashMap;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.util.Map;
 
 import java.util.List;
@@ -356,11 +360,7 @@ public class PlanearActivity extends AppCompatActivity {
                             Log.e("VIAJAPP_GEMINI", "JSON inválido", ex);
                             return;
                         }
-                        Intent intent = new Intent(PlanearActivity.this, ItinerarioActivity.class);
-                        intent.putExtra("itinerario", intentJson);
-                        intent.putExtra("destino", destinoNombre);
-                        intent.putExtra("dias", cantidadDias);
-                        startActivity(intent);
+                        guardarItinerarioYMostrar(intentJson, boton);
                     });
                 }
 
@@ -379,6 +379,78 @@ public class PlanearActivity extends AppCompatActivity {
             restaurarBotonCrearViaje(boton);
             mostrarErrorViaje(error.toString());
         }
+    }
+
+    private void guardarItinerarioYMostrar(String itinerarioJson, Button boton) {
+        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuario == null) {
+            mostrarErrorViaje("Tu sesión terminó. Iniciá sesión nuevamente para guardar el viaje.");
+            return;
+        }
+
+        boton.setEnabled(false);
+        boton.setText("Guardando itinerario...");
+        try {
+            JSONObject raiz = new JSONObject(itinerarioJson);
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("destino", destinoNombre);
+            datos.put("provincia", destinoProvincia == null ? "" : destinoProvincia);
+            datos.put("cantidadDias", cantidadDias);
+            datos.put("cantidadViajeros", cantidadViajeros);
+            datos.put("itinerarioJson", itinerarioJson);
+            // Se guarda también la estructura de días y actividades para futuras consultas.
+            datos.put("dias", jsonArrayALista(raiz.getJSONArray("dias")));
+            datos.put("fechaCreacion", FieldValue.serverTimestamp());
+
+            FirebaseFirestore.getInstance()
+                    .collection("usuarios").document(usuario.getUid())
+                    .collection("itinerarios").add(datos)
+                    .addOnSuccessListener(documento -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        restaurarBotonCrearViaje(boton);
+                        Intent intent = new Intent(PlanearActivity.this, ItinerarioActivity.class);
+                        intent.putExtra("itinerarioId", documento.getId());
+                        intent.putExtra("itinerario", itinerarioJson);
+                        intent.putExtra("destino", destinoNombre);
+                        intent.putExtra("dias", cantidadDias);
+                        startActivity(intent);
+                    })
+                    .addOnFailureListener(error -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        restaurarBotonCrearViaje(boton);
+                        Log.e("VIAJAPP_FIRESTORE", "Error al guardar itinerario", error);
+                        mostrarErrorViaje("No se pudo guardar el itinerario en Firebase. "
+                                + "Revisá tu conexión y las reglas de Firestore. " + error.getMessage());
+                    });
+        } catch (org.json.JSONException error) {
+            restaurarBotonCrearViaje(boton);
+            Log.e("VIAJAPP_FIRESTORE", "Error al preparar el itinerario", error);
+            mostrarErrorViaje("El itinerario no pudo prepararse para guardar.");
+        }
+    }
+
+    private List<Object> jsonArrayALista(JSONArray arreglo) throws org.json.JSONException {
+        List<Object> lista = new ArrayList<>();
+        for (int i = 0; i < arreglo.length(); i++) {
+            lista.add(valorJsonAObjeto(arreglo.get(i)));
+        }
+        return lista;
+    }
+
+    private Object valorJsonAObjeto(Object valor) throws org.json.JSONException {
+        if (valor == JSONObject.NULL) return null;
+        if (valor instanceof JSONArray) return jsonArrayALista((JSONArray) valor);
+        if (valor instanceof JSONObject) {
+            JSONObject objeto = (JSONObject) valor;
+            Map<String, Object> mapa = new HashMap<>();
+            java.util.Iterator<String> claves = objeto.keys();
+            while (claves.hasNext()) {
+                String clave = claves.next();
+                mapa.put(clave, valorJsonAObjeto(objeto.get(clave)));
+            }
+            return mapa;
+        }
+        return valor;
     }
 
     private void restaurarBotonCrearViaje(Button boton) {
@@ -1585,3 +1657,4 @@ public class PlanearActivity extends AppCompatActivity {
         );
     }
 }
+

@@ -51,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ACTIVIDADES"
+                    android:text="COLECCIÓN"
                     android:textColor="#43474D"
                     android:textSize="10sp"
                     android:textStyle="bold" />
@@ -166,367 +166,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-
-    <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-
-            <!-- INFORMACIÓN DEL DESTINO -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <!-- UBICACIÓN Y DESTINO -->
-
-                <!-- VERIFICADOS -->
-
-                <!-- AUDITORÍA OFICIAL -->
-                <LinearLayout
-                    android:layout_width="137dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:contentDescription="Ubicación"
-                        android:src="@drawable/ic_location"
-                        app:tint="#3B82F6" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="3dp"
-                        android:text="Bariloche"
-                        android:textColor="#1E3A8A"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="116dp"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="4dp"
-                    android:background="@drawable/fondo_verificados"
-                    android:gravity="center"
-                    android:text="3 verificados"
-                    android:textColor="#2563EB"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_marginStart="12dp"
-                    android:layout_width="116dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/fondo_auditoria"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp">
-
-                    <TextView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:gravity="center"
-                        android:text="✓"
-                        android:textColor="#10B981"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
-                        android:text="Auditoría 100% oficial"
-                        android:textColor="#059669"
-                        android:textSize="9sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-            </LinearLayout>
+            android:padding="18dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="Seleccioná actividades para agregarlas a tu itinerario"
+                android:text="Mis itinerarios guardados"
                 android:textColor="#0C2340"
-                android:textSize="15sp"
-                android:textStyle="bold"/>
+                android:textSize="23sp"
+                android:textStyle="bold" />
 
-            <!-- TARJETA TELEFÉRICO CERRO OTTO -->
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="11dp"
-                android:orientation="vertical"
-                android:background="@drawable/fondo_buscador"
-                android:paddingBottom="14dp">
+                android:layout_marginTop="8dp"
+                android:text="Consultá los viajes que creaste con IA. Cada uno conserva sus días y actividades."
+                android:textColor="#64748B"
+                android:textSize="14sp" />
 
-                <!-- FOTO -->
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="170dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="6dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/fondo_imagen_tarjeta"
-                    android:clipToOutline="true">
+            <TextView
+                android:id="@+id/tvEstadoColeccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Cargando itinerarios..."
+                android:textColor="#475569"
+                android:textSize="14sp" />
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/teleferico_cerro_otto"
-                        android:scaleType="centerCrop"
-                        android:contentDescription="Teleférico Cerro Otto" />
-
-                    <!-- ETIQUETA TOTALMENTE ADAPTADO -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_gravity="top|start"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="12dp"
-                        android:background="@drawable/fondo_auditoria"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="12dp">
-
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:src="@drawable/ic_shield_check"
-                            app:tint="#059669"
-                            android:contentDescription="Accesibilidad verificada" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:text="Totalmente Adaptado"
-                            android:textColor="#047857"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </FrameLayout>
-
-                <!-- INFORMACIÓN -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp"
-                    android:paddingEnd="16dp">
-
-                    <!-- NOMBRE -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Teleférico Cerro Otto"
-                        android:textColor="#1E3A8A"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <!-- UBICACIÓN -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_location"
-                            app:tint="#3B82F6"
-                            android:contentDescription="Ubicación" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="Km 5 Av. de los Pioneros"
-                            android:textColor="#64748B"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                    <!-- DETALLES AUDITIVOS -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="14dp"
-                        android:background="@drawable/fondo_verificados"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔊"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="7dp"
-                            android:text="Escuchar detalles auditivos"
-                            android:textColor="#1E3A8A"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <!-- CARACTERÍSTICAS DE ACCESIBILIDAD -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/fondo_boton_accesibilidad"
-                        android:orientation="vertical"
-                        android:padding="12dp">
-
-                        <!-- CARACTERÍSTICA 1 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:src="@drawable/ic_shield_check"
-                                app:tint="#10B981"
-                                android:contentDescription="Disponible" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="8dp"
-                                android:text="Rampa de embarque especial y exclusiva para sillas de ruedas."
-                                android:textColor="#334155"
-                                android:textSize="12sp"
-                                android:lineSpacingExtra="3dp" />
-
-                        </LinearLayout>
-
-                        <!-- CARACTERÍSTICA 2 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:gravity="top"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:src="@drawable/ic_shield_check"
-                                app:tint="#10B981"
-                                android:contentDescription="Disponible" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="8dp"
-                                android:text="Ascensor panorámico adaptado hacia la confitería giratoria."
-                                android:textColor="#334155"
-                                android:textSize="12sp"
-                                android:lineSpacingExtra="3dp" />
-
-                        </LinearLayout>
-
-                        <!-- CARACTERÍSTICA 3 -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:gravity="top"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:src="@drawable/ic_shield_check"
-                                app:tint="#10B981"
-                                android:contentDescription="Disponible" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginStart="8dp"
-                                android:text="Sanitarios adaptados con barrales y puertas de 90 cm en la cima."
-                                android:textColor="#334155"
-                                android:textSize="12sp"
-                                android:lineSpacingExtra="3dp" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- BOTONES -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="14dp"
-                        android:orientation="horizontal">
-
-                        <!-- GUARDAR -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:layout_marginEnd="5dp"
-                            android:background="@drawable/fondo_verificados"
-                            android:gravity="center"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_favorite"
-                                app:tint="#F87171"
-                                android:contentDescription="Guardar" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="7dp"
-                                android:text="Seleccionar"
-                                android:textColor="#1E3A8A"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/contenedorItinerarios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical" />
 
         </LinearLayout>
-
     </ScrollView>
 
     <LinearLayout
@@ -647,7 +325,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actividades"
+                android:text="Colección"
                 android:textColor="#2563EB"
                 android:textSize="11sp"
                 android:clickable="false"

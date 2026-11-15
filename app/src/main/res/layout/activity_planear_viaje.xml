@@ -825,7 +825,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actividades"
+                android:text="Colección"
                 android:textColor="#64748B"
                 android:textSize="11sp"
                 android:clickable="false"/>
