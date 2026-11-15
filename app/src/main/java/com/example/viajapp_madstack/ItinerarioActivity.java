@@ -1,6 +1,14 @@
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
+import androidx.appcompat.app.AlertDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.DocumentSnapshot;
+import java.util.ArrayList;
+import java.text.DateFormat;
 import android.net.Uri;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
@@ -86,6 +94,7 @@ public class ItinerarioActivity extends AppCompatActivity {
         // Guardar estilos originales antes de construir las tarjetas dinámicas.
         configurarAccesibilidad();
         mostrarItinerarioRecibido(savedInstanceState);
+        configurarAccesoGuardados();
 
         // ===================================================
         // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
@@ -144,6 +153,8 @@ public class ItinerarioActivity extends AppCompatActivity {
         });
     }
 
+    private String itinerarioIdActual;
+    private Button btnMisItinerarios;
     private String textoItinerarioActual;
     private String destinoActual;
     private int diasActuales;
@@ -154,12 +165,14 @@ public class ItinerarioActivity extends AppCompatActivity {
 
     private void mostrarItinerarioRecibido(Bundle estado) {
         if (estado != null && estado.containsKey("itinerario")) {
+            itinerarioIdActual = estado.getString("itinerarioId");
             textoItinerarioActual = estado.getString("itinerario");
             destinoActual = estado.getString("destino");
             diasActuales = estado.getInt("dias", 0);
             diaSeleccionado = estado.getInt("diaSeleccionado", 0);
-        } else {
+        } else if (textoItinerarioActual == null || textoItinerarioActual.trim().isEmpty()) {
             Intent datos = getIntent();
+            itinerarioIdActual = datos.getStringExtra("itinerarioId");
             textoItinerarioActual = datos.getStringExtra("itinerario");
             destinoActual = datos.getStringExtra("destino");
             diasActuales = datos.getIntExtra("dias", 0);
@@ -171,7 +184,12 @@ public class ItinerarioActivity extends AppCompatActivity {
             contenidoEjemplo.setVisibility(View.GONE);
             contenidoGenerado.setVisibility(View.VISIBLE);
             TextView tituloVacio = findViewById(R.id.tvTituloItinerarioGenerado);
-            tituloVacio.setText("Todavía no generaste un itinerario. Creá un viaje desde Planear.");
+            tituloVacio.setText("Cargando tus itinerarios guardados...");
+            if (itinerarioIdActual != null && !itinerarioIdActual.isEmpty()) {
+                cargarItinerarioPorId(itinerarioIdActual);
+            } else {
+                cargarUltimoItinerario();
+            }
             return;
         }
 
@@ -201,6 +219,113 @@ public class ItinerarioActivity extends AppCompatActivity {
         barraDiasGenerados = findViewById(R.id.barraDiasGenerados);
         tarjetasActividades = findViewById(R.id.tarjetasActividades);
         mostrarDia(Math.max(0, Math.min(diaSeleccionado, diasGenerados.length() - 1)));
+    }
+
+    private void configurarAccesoGuardados() {
+        btnMisItinerarios = findViewById(R.id.btnMisItinerarios);
+        btnMisItinerarios.setOnClickListener(v -> mostrarListaItinerarios());
+    }
+
+    private void cargarUltimoItinerario() {
+        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuario == null) {
+            mostrarMensajeItinerario("Iniciá sesión para consultar tus itinerarios guardados.");
+            return;
+        }
+        FirebaseFirestore.getInstance().collection("usuarios").document(usuario.getUid())
+                .collection("itinerarios")
+                .orderBy("fechaCreacion", Query.Direction.DESCENDING).limit(1)
+                .get().addOnSuccessListener(resultado -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    if (resultado.isEmpty()) {
+                        mostrarMensajeItinerario("Todavía no tenés itinerarios guardados. Creá uno desde Planear.");
+                    } else {
+                        mostrarDocumentoGuardado(resultado.getDocuments().get(0));
+                    }
+                }).addOnFailureListener(error -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    mostrarMensajeItinerario("No se pudieron cargar tus viajes. Revisá tu conexión y permisos.");
+                });
+    }
+
+    private void cargarItinerarioPorId(String id) {
+        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuario == null) {
+            mostrarMensajeItinerario("Iniciá sesión para consultar tu itinerario.");
+            return;
+        }
+        FirebaseFirestore.getInstance().collection("usuarios").document(usuario.getUid())
+                .collection("itinerarios").document(id).get()
+                .addOnSuccessListener(documento -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    if (documento.exists()) mostrarDocumentoGuardado(documento);
+                    else mostrarMensajeItinerario("No se encontró el itinerario guardado.");
+                }).addOnFailureListener(error -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    mostrarMensajeItinerario("No se pudo recuperar el itinerario.");
+                });
+    }
+
+    private void mostrarDocumentoGuardado(DocumentSnapshot documento) {
+        String json = documento.getString("itinerarioJson");
+        if (json == null || json.trim().isEmpty()) {
+            mostrarMensajeItinerario("El itinerario guardado no tiene actividades disponibles.");
+            return;
+        }
+        itinerarioIdActual = documento.getId();
+        textoItinerarioActual = json;
+        destinoActual = documento.getString("destino");
+        Long cantidad = documento.getLong("cantidadDias");
+        diasActuales = cantidad == null ? 0 : cantidad.intValue();
+        diaSeleccionado = 0;
+        mostrarItinerarioRecibido(null);
+    }
+
+    private void mostrarMensajeItinerario(String mensaje) {
+        findViewById(R.id.contenidoEjemplo).setVisibility(View.GONE);
+        findViewById(R.id.contenidoGenerado).setVisibility(View.VISIBLE);
+        ((TextView) findViewById(R.id.tvTituloItinerarioGenerado)).setText(mensaje);
+    }
+
+    private void mostrarListaItinerarios() {
+        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        if (usuario == null) {
+            Toast.makeText(this, "Iniciá sesión para consultar tus viajes", Toast.LENGTH_LONG).show();
+            return;
+        }
+        FirebaseFirestore.getInstance().collection("usuarios").document(usuario.getUid())
+                .collection("itinerarios")
+                .orderBy("fechaCreacion", Query.Direction.DESCENDING)
+                .limit(50).get()
+                .addOnSuccessListener(resultado -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    if (resultado.isEmpty()) {
+                        new AlertDialog.Builder(this).setTitle("Mis itinerarios")
+                                .setMessage("Todavía no tenés viajes guardados.")
+                                .setPositiveButton("Aceptar", null).show();
+                        return;
+                    }
+                    List<DocumentSnapshot> documentos = resultado.getDocuments();
+                    String[] titulos = new String[documentos.size()];
+                    for (int i = 0; i < documentos.size(); i++) {
+                        DocumentSnapshot documento = documentos.get(i);
+                        String destino = documento.getString("destino");
+                        Long dias = documento.getLong("cantidadDias");
+                        String fecha = documento.getDate("fechaCreacion") == null ? "" :
+                                " - " + DateFormat.getDateInstance(DateFormat.SHORT)
+                                        .format(documento.getDate("fechaCreacion"));
+                        titulos[i] = (destino == null ? "Viaje" : destino) + " - "
+                                + (dias == null ? "?" : dias) + " días" + fecha;
+                    }
+                    new AlertDialog.Builder(this).setTitle("Mis itinerarios guardados")
+                            .setItems(titulos, (dialogo, posicion) ->
+                                    mostrarDocumentoGuardado(documentos.get(posicion)))
+                            .setNegativeButton("Cerrar", null).show();
+                }).addOnFailureListener(error -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Toast.makeText(this, "No se pudieron cargar tus itinerarios: "
+                            + error.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     private void mostrarDia(int indice) {
@@ -366,6 +491,7 @@ public class ItinerarioActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putString("itinerarioId", itinerarioIdActual);
         outState.putString("itinerario", textoItinerarioActual);
         outState.putString("destino", destinoActual);
         outState.putInt("dias", diasActuales);
@@ -1026,3 +1152,4 @@ public class ItinerarioActivity extends AppCompatActivity {
         );
     }
 }
+

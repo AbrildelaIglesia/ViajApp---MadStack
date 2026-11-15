@@ -206,6 +206,17 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
+                <Button
+                    android:id="@+id/btnMisItinerarios"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:minHeight="52dp"
+                    android:backgroundTint="#2563EB"
+                    android:text="Mis itinerarios guardados"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF" />
+
                 <TextView
                     android:id="@+id/tvTituloItinerarioGenerado"
                     android:layout_width="match_parent"
@@ -509,7 +520,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Actividades"
+                android:text="Colección"
                 android:textColor="#64748B"
                 android:textSize="11sp"
                 android:clickable="false"/>
@@ -517,3 +528,4 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

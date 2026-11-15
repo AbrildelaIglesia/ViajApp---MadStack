@@ -1,7 +1,20 @@
-
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Typeface;
+import android.util.Log;
+import android.widget.Button;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.text.DateFormat;
+import java.util.Date;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,6 +38,9 @@ import java.util.IdentityHashMap;
 public class LugaresActivity extends AppCompatActivity {
 
     private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares;
+    private LinearLayout contenedorItinerarios;
+    private TextView tvEstadoColeccion;
+    private static final String TAG = "VIAJAPP_COLECCION";
 
     // ===================================================
     // NUEVO: ACCESIBILIDAD (SIN CAMBIAR EL XML)
@@ -65,6 +81,9 @@ public class LugaresActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lugares_turisticos);
+
+        contenedorItinerarios = findViewById(R.id.contenedorItinerarios);
+        tvEstadoColeccion = findViewById(R.id.tvEstadoColeccion);
 
         // NUEVO: INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
@@ -125,10 +144,112 @@ public class LugaresActivity extends AppCompatActivity {
         navLugares.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LugaresActivity.this, LugaresActivity.class);
-                startActivity(intent);
+                cargarItinerarios();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarItinerarios();
+    }
+
+    private void cargarItinerarios() {
+        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+        contenedorItinerarios.removeAllViews();
+        if (usuario == null) {
+            tvEstadoColeccion.setText("Iniciá sesión para ver tus itinerarios guardados.");
+            return;
+        }
+        tvEstadoColeccion.setText("Cargando itinerarios...");
+        FirebaseFirestore.getInstance()
+                .collection("usuarios")
+                .document(usuario.getUid())
+                .collection("itinerarios")
+                .get()
+                .addOnSuccessListener(resultado -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    FirebaseUser actual = FirebaseAuth.getInstance().getCurrentUser();
+                    if (actual == null || !usuario.getUid().equals(actual.getUid())) return;
+                    contenedorItinerarios.removeAllViews();
+                    if (resultado.isEmpty()) {
+                        tvEstadoColeccion.setText("Todavía no tenés itinerarios guardados. Creá uno desde Planear.");
+                        return;
+                    }
+                    ArrayList<DocumentSnapshot> documentos = new ArrayList<>(resultado.getDocuments());
+                    // Ordenar en el dispositivo para incluir documentos antiguos sin fechaCreacion.
+                    documentos.sort((a, b) -> {
+                        Date fechaA = a.getDate("fechaCreacion");
+                        Date fechaB = b.getDate("fechaCreacion");
+                        if (fechaA == null && fechaB == null) return 0;
+                        if (fechaA == null) return 1;
+                        if (fechaB == null) return -1;
+                        return fechaB.compareTo(fechaA);
+                    });
+                    tvEstadoColeccion.setText(documentos.size() == 1
+                            ? "1 itinerario guardado" : documentos.size() + " itinerarios guardados");
+                    for (DocumentSnapshot documento : documentos) agregarTarjeta(documento);
+                    guardarOriginales(contenedorItinerarios);
+                    actualizarTamanoTextos(contenedorItinerarios);
+                    if (modoContraste != 0) aplicarTemaContraste();
+                })
+                .addOnFailureListener(error -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    Log.e(TAG, "Error al cargar itinerarios", error);
+                    tvEstadoColeccion.setText("No se pudieron cargar los itinerarios: "
+                            + (error.getMessage() == null ? "error desconocido" : error.getMessage()));
+                });
+    }
+
+    private void agregarTarjeta(DocumentSnapshot documento) {
+        String destino = documento.getString("destino");
+        if (destino == null || destino.trim().isEmpty()) destino = "Viaje sin nombre";
+        Long dias = documento.getLong("cantidadDias");
+        Date fecha = documento.getDate("fechaCreacion");
+
+        LinearLayout tarjeta = new LinearLayout(this);
+        tarjeta.setOrientation(LinearLayout.VERTICAL);
+        tarjeta.setPadding(dp(18), dp(16), dp(18), dp(16));
+        GradientDrawable fondo = new GradientDrawable();
+        fondo.setColor(Color.parseColor("#EFF6FF"));
+        fondo.setCornerRadius(dp(16));
+        fondo.setStroke(dp(1), Color.parseColor("#BFDBFE"));
+        tarjeta.setBackground(fondo);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.bottomMargin = dp(14);
+        tarjeta.setLayoutParams(params);
+
+        TextView titulo = new TextView(this);
+        titulo.setText(destino);
+        titulo.setTextColor(Color.parseColor("#1E3A8A"));
+        titulo.setTextSize(19);
+        titulo.setTypeface(null, Typeface.BOLD);
+        tarjeta.addView(titulo);
+
+        TextView detalle = new TextView(this);
+        String resumen = dias == null ? "Duración no informada" : dias + " días";
+        if (fecha != null) resumen += " · " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(fecha);
+        detalle.setText(resumen);
+        detalle.setTextColor(Color.parseColor("#475569"));
+        detalle.setTextSize(13);
+        detalle.setPadding(0, dp(8), 0, dp(12));
+        tarjeta.addView(detalle);
+
+        Button abrir = new Button(this);
+        abrir.setText("Ver itinerario y actividades");
+        abrir.setAllCaps(false);
+        abrir.setTextColor(Color.WHITE);
+        abrir.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2563EB")));
+        tarjeta.addView(abrir, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(52)));
+        abrir.setOnClickListener(v -> {
+            Intent intent = new Intent(LugaresActivity.this, ItinerarioActivity.class);
+            intent.putExtra("itinerarioId", documento.getId());
+            startActivity(intent);
+        });
+        contenedorItinerarios.addView(tarjeta);
     }
 
     // ===================================================
@@ -691,3 +812,4 @@ public class LugaresActivity extends AppCompatActivity {
         );
     }
 }
+
