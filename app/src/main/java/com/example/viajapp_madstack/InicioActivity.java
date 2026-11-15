@@ -28,6 +28,10 @@ import androidx.core.graphics.drawable.DrawableCompat;
 
 import java.util.IdentityHashMap;
 
+import android.content.SharedPreferences;
+import androidx.appcompat.app.AlertDialog;
+
+
 public class InicioActivity extends AppCompatActivity {
 
     private EditText etCorreo, etContrasena;
@@ -70,11 +74,15 @@ public class InicioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
 
         // NUEVO: INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
+
+        // MOSTRAR BIENVENIDA SOLO LA PRIMERA VEZ
+        mostrarBienvenidaInicial();
+
 
         mAuth = FirebaseAuth.getInstance();
         etCorreo = findViewById(R.id.etCorreo);
@@ -880,5 +888,77 @@ public class InicioActivity extends AppCompatActivity {
                         .getDisplayMetrics()
                         .density
         );
+    }
+
+
+    // ===================================================
+    // BIENVENIDA INICIAL - SOLO LA PRIMERA VEZ
+    // ===================================================
+
+    private void mostrarBienvenidaInicial() {
+
+        SharedPreferences preferencias =
+                getSharedPreferences(
+                        "ViajAppPreferencias",
+                        MODE_PRIVATE
+                );
+
+        boolean bienvenidaVista =
+                preferencias.getBoolean(
+                        "bienvenidaVista",
+                        false
+                );
+
+        // SI YA VIO LA BIENVENIDA, NO MOSTRARLA
+        if (bienvenidaVista) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("¡Bienvenido a ViajAPP! 🌍")
+                .setMessage(
+                        "Tu próxima aventura comienza acá.\n\n" +
+                                "En ViajAPP queremos que todos puedan viajar sin barreras.\n\n" +
+                                "¿Querés activar la asistencia por voz?\n\n" +
+                                "Podrás escuchar las indicaciones de la aplicación " +
+                                "y completar formularios mediante dictado.\n\n" +
+                                "Si preferís, también podrás activarla más adelante " +
+                                "desde la sección Accesibilidad."
+                )
+
+                // ACTIVAR ASISTENCIA POR VOZ
+                .setPositiveButton(
+                        "Activar asistencia por voz",
+                        (dialogo, opcion) -> {
+
+                            preferencias.edit()
+                                    .putBoolean("bienvenidaVista", true)
+                                    .putBoolean("asistenciaVozSolicitada", true)
+                                    .apply();
+
+                            Toast.makeText(
+                                    this,
+                                    "Preferencia guardada. La asistencia por voz estará disponible próximamente.",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
+                )
+
+                // AHORA NO
+                .setNegativeButton(
+                        "Ahora no, continuar",
+                        (dialogo, opcion) -> {
+
+                            preferencias.edit()
+                                    .putBoolean("bienvenidaVista", true)
+                                    .putBoolean("asistenciaVozSolicitada", false)
+                                    .apply();
+                        }
+                )
+
+                // IMPEDIR QUE SE CIERRE SIN ELEGIR UNA OPCIÓN
+                .setCancelable(false)
+
+                .show();
     }
 }
