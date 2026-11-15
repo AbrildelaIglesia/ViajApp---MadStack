@@ -58,18 +58,14 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-
-            <!-- ======================================= -->
-            <!-- BOTÓN PERFIL DE USUARIO                 -->
-            <!-- ======================================= -->
-
+            <!-- BOTÓN PERFIL DE USUARIO -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btnAbrirPerfil"
-                android:tooltipText="Perfil"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:tooltipText="Perfil"
                 android:contentDescription="Abrir menú de mi cuenta"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
@@ -87,7 +83,6 @@
                     android:importantForAccessibility="no" />
 
             </com.google.android.material.card.MaterialCardView>
-
         </LinearLayout>
     </LinearLayout>
 

@@ -54,6 +54,7 @@ public class MenuPerfilUsuario {
         popup.setFocusable(true);
         popup.setElevation(dp(actividad, 8));
         popup.setClippingEnabled(true);
+        popup.setAnimationStyle(android.R.style.Animation_Dialog);
 
         // ELEMENTOS DEL MENÚ
         TextView txtNombre =
@@ -85,31 +86,30 @@ public class MenuPerfilUsuario {
         // EDITAR PERFIL
         btnEditar.setOnClickListener(v -> {
 
+            // CERRAR MENÚ PRINCIPAL
             popup.dismiss();
 
-            // Se conectará con EditarPerfilActivity
-            // cuando creemos esa pantalla.
-
-            Toast.makeText(
+            // ABRIR FORMULARIO EDITAR PERFIL
+            MenuEditarPerfil.mostrar(
                     actividad,
-                    "Editar perfil",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    botonPerfil,
+                    modoContraste,
+                    escalaTexto
+            );
         });
 
         // SEGURIDAD
         btnSeguridad.setOnClickListener(v -> {
 
+            // CERRAR MENÚ PRINCIPAL
             popup.dismiss();
 
-            // Se conectará con SeguridadActivity
-            // cuando creemos esa pantalla.
-
-            Toast.makeText(
+            MenuSeguridad.mostrar(
                     actividad,
-                    "Seguridad - Cambiar contraseña",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    botonPerfil,
+                    modoContraste,
+                    escalaTexto
+            );
         });
 
         // CERRAR SESIÓN
@@ -162,11 +162,10 @@ public class MenuPerfilUsuario {
             return;
         }
 
-        // CORREO DESDE FIREBASE AUTHENTICATION
-        String correo = usuario.getEmail();
-
-        txtCorreo.setText(
-                correo != null ? correo : "Sin correo"
+        // ACTUALIZAR CORREO DESDE FIREBASE
+        SincronizarCorreoUsuario.actualizar(
+                actividad,
+                txtCorreo
         );
 
         // NOMBRE DESDE FIRESTORE
