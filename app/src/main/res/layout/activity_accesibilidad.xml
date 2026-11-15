@@ -118,7 +118,7 @@
             android:orientation="vertical">
 
 
-        <!-- Tarjeta de Tamaño de Texto Simplificada -->
+            <!-- Tarjeta de Tamaño de Texto Simplificada -->
             <LinearLayout
                 android:id="@+id/tarjetaTamanoTexto"
                 android:layout_width="match_parent"
@@ -275,7 +275,7 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-            </LinearLayout>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -323,10 +323,12 @@
 
                 <TextView
                     android:id="@+id/btnCheckMovilidad"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="6dp"
                     android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
                     android:text=""
                     android:textColor="#FFFFFF"
@@ -382,10 +384,12 @@
 
                 <TextView
                     android:id="@+id/btnCheckCortos"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="6dp"
                     android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
                     android:text=""
                     android:textColor="#FFFFFF"
@@ -435,10 +439,12 @@
 
                 <TextView
                     android:id="@+id/btnCheckBanos"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="6dp"
                     android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
                     android:text=""
                     android:textColor="#FFFFFF"
@@ -487,10 +493,12 @@
 
                 <TextView
                     android:id="@+id/btnCheckVisual"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="6dp"
                     android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
                     android:text=""
                     android:textColor="#FFFFFF"
@@ -539,10 +547,12 @@
 
                 <TextView
                     android:id="@+id/btnCheckAuditiva"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="6dp"
                     android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
                     android:text=""
                     android:textColor="#FFFFFF"
