@@ -135,7 +135,7 @@ public class PlanearActivity extends AppCompatActivity {
 
         inicializarVistas();
         configurarAccesibilidad();
-
+        configurarMenuPerfil();
 
         configurarNavegacion();
 
@@ -876,6 +876,24 @@ public class PlanearActivity extends AppCompatActivity {
     }
 
 
+    // =========================================
+    // MENÚ MI CUENTA
+    // =========================================
+    private void configurarMenuPerfil() {
+        View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
+
+        if (btnAbrirPerfil != null) {
+            btnAbrirPerfil.setOnClickListener(v ->
+                    MenuPerfilUsuario.mostrar(
+                            this,
+                            btnAbrirPerfil,
+                            modoContraste,
+                            escalaTexto
+                    )
+            );
+        }
+    }
+
 
     // ===================================================
     // NUEVO: CONFIGURAR MENÚ DE ACCESIBILIDAD
@@ -1359,6 +1377,7 @@ public class PlanearActivity extends AppCompatActivity {
                 && fondoOriginal != null
                 && vista instanceof TextView
                 && !(vista instanceof Button)
+                && !(vista instanceof EditText)
                 && vista != btnAccesibilidad
                 && vista != btnDisminuirTexto
                 && vista != btnAumentarTexto

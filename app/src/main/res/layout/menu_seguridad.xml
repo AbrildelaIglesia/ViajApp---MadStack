@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tarjetaSeguridad"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:strokeColor="#B6C6E3"
+    app:strokeWidth="2dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- VOLVER -->
+            <TextView
+                android:id="@+id/txtVolverSeguridad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:text="‹ Volver a mi cuenta"
+                android:textColor="#2563EB"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- TÍTULO -->
+            <TextView
+                android:id="@+id/txtTituloSeguridad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seguridad"
+                android:textColor="#111827"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <!-- SUBTÍTULO -->
+            <TextView
+                android:id="@+id/txtSubtituloSeguridad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Protegé tu cuenta actualizando tu contraseña."
+                android:textColor="#64748B"
+                android:textSize="14sp" />
+
+            <!-- SEPARADOR -->
+            <View
+                android:id="@+id/divisorSeguridad"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="18dp"
+                android:background="#E2E8F0" />
+
+            <!-- CONTRASEÑA ACTUAL -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Contraseña actual"
+                android:textColor="#111827"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutClaveActual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña actual"
+                android:layout_marginBottom="18dp"
+                app:boxBackgroundMode="outline"
+                app:boxBackgroundColor="#F8FAFC"
+                app:boxStrokeColor="#93C5FD"
+                app:boxCornerRadiusTopStart="18dp"
+                app:boxCornerRadiusTopEnd="18dp"
+                app:boxCornerRadiusBottomStart="18dp"
+                app:boxCornerRadiusBottomEnd="18dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtClaveActual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#111827"
+                    android:textSize="15sp"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- CONTRASEÑA NUEVA -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Nueva contraseña"
+                android:textColor="#111827"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutClaveNueva"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nueva contraseña"
+                android:layout_marginBottom="18dp"
+                app:boxBackgroundMode="outline"
+                app:boxBackgroundColor="#F8FAFC"
+                app:boxStrokeColor="#93C5FD"
+                app:boxCornerRadiusTopStart="18dp"
+                app:boxCornerRadiusTopEnd="18dp"
+                app:boxCornerRadiusBottomStart="18dp"
+                app:boxCornerRadiusBottomEnd="18dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtClaveNueva"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#111827"
+                    android:textSize="15sp"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- CONFIRMAR CONTRASEÑA -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Confirmar nueva contraseña"
+                android:textColor="#111827"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputLayoutConfirmarClave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Repetir nueva contraseña"
+                app:boxBackgroundMode="outline"
+                app:boxBackgroundColor="#F8FAFC"
+                app:boxStrokeColor="#93C5FD"
+                app:boxCornerRadiusTopStart="18dp"
+                app:boxCornerRadiusTopEnd="18dp"
+                app:boxCornerRadiusBottomStart="18dp"
+                app:boxCornerRadiusBottomEnd="18dp"
+                app:endIconMode="password_toggle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtConfirmarClave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:textColor="#111827"
+                    android:textSize="15sp"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- RECOMENDACIÓN -->
+            <TextView
+                android:id="@+id/txtConsejoSeguridad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="Usá una contraseña de al menos 8 caracteres, difícil de adivinar y diferente de las que utilizás en otras cuentas."
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+
+            <!-- BOTÓN GUARDAR -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuardarSeguridad"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="22dp"
+                android:text="Actualizar contraseña"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="#2563EB"
+                app:cornerRadius="18dp" />
+
+            <!-- TEXTO FINAL -->
+            <TextView
+                android:id="@+id/txtPieSeguridad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:text="Por tu seguridad, verificaremos tu contraseña actual antes de realizar el cambio."
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</com.google.android.material.card.MaterialCardView>
