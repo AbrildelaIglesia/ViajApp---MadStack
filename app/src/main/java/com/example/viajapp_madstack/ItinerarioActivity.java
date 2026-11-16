@@ -440,7 +440,7 @@ public class ItinerarioActivity extends AppCompatActivity {
 
                 final int indiceActividad = i;
                 Button cambiar = new Button(this);
-                cambiar.setText("Cambiar actividad con Gemini");
+                cambiar.setText("Cambiar actividad");
                 cambiar.setAllCaps(false);
                 cambiar.setTextColor(Color.WHITE);
                 cambiar.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0F766E")));
