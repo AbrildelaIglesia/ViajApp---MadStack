@@ -19,6 +19,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.text.DateFormat;
 import android.net.Uri;
 import android.widget.ImageView;
@@ -182,6 +186,10 @@ public class ItinerarioActivity extends AppCompatActivity {
         actualizarTamanoTextos(header);
         actualizarTamanoTextos(bottomNav);
     }
+
+    private final Map<String, Set<String>> actividadesDescartadas = new HashMap<>();
+    private boolean reemplazoEnCurso = false;
+    private GeminiService geminiService;
 
     private String itinerarioIdActual;
 
@@ -429,6 +437,20 @@ public class ItinerarioActivity extends AppCompatActivity {
                 mapaParams.topMargin = dp(12);
                 tarjeta.addView(botonMapa, mapaParams);
                 botonMapa.setOnClickListener(v -> abrirIndicaciones(nombreLugar));
+
+                final int indiceActividad = i;
+                Button cambiar = new Button(this);
+                cambiar.setText("Cambiar actividad con Gemini");
+                cambiar.setAllCaps(false);
+                cambiar.setTextColor(Color.WHITE);
+                cambiar.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#0F766E")));
+                cambiar.setContentDescription("Cambiar actividad " + (i + 1) + ": " + nombreLugar);
+                LinearLayout.LayoutParams cambiarParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, dp(56));
+                cambiarParams.topMargin = dp(8);
+                tarjeta.addView(cambiar, cambiarParams);
+                cambiar.setEnabled(!reemplazoEnCurso);
+                cambiar.setOnClickListener(v -> confirmarCambioActividad(indice, indiceActividad, cambiar));
                 tarjetasActividades.addView(tarjeta);
             }
         } catch (JSONException error) {
@@ -442,6 +464,147 @@ public class ItinerarioActivity extends AppCompatActivity {
         actualizarTamanoTextos(tarjetasActividades);
         actualizarTamanoTextos(barraDiasGenerados);
         if (modoContraste != 0) aplicarTemaContraste();
+    }
+
+    // Cambia una sola actividad y conserva el resto del itinerario.
+    private void confirmarCambioActividad(int dia, int posicion, Button boton) {
+        if (reemplazoEnCurso || diasGenerados == null) return;
+        try {
+            String nombre = diasGenerados.getJSONObject(dia).getJSONArray("actividades")
+                    .getJSONObject(posicion).optString("nombre", "esta actividad");
+            new AlertDialog.Builder(this)
+                    .setTitle("Cambiar actividad")
+                    .setMessage("¿Querés reemplazar " + nombre + " por otra sugerencia de Gemini?")
+                    .setNegativeButton("Cancelar", null)
+                    .setPositiveButton("Buscar alternativa", (dialogo, cual) ->
+                            cambiarActividadConGemini(dia, posicion, boton))
+                    .show();
+        } catch (JSONException e) {
+            Toast.makeText(this, "No se pudo seleccionar la actividad", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void cambiarActividadConGemini(int dia, int posicion, Button boton) {
+        if (reemplazoEnCurso || diasGenerados == null) return;
+        final String idItinerario = itinerarioIdActual;
+        final String destino = destinoActual == null ? "" : destinoActual;
+        final String clave = dia + "_" + posicion;
+        final JSONObject original;
+        final JSONArray actividades;
+        try {
+            actividades = diasGenerados.getJSONObject(dia).getJSONArray("actividades");
+            original = actividades.getJSONObject(posicion);
+        } catch (JSONException error) {
+            Toast.makeText(this, "No se pudo leer la actividad", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Set<String> rechazadas = actividadesDescartadas.computeIfAbsent(clave, k -> new HashSet<>());
+        Set<String> evitar = new HashSet<>(rechazadas);
+        evitar.add(original.optString("nombre", ""));
+        for (int i = 0; i < diasGenerados.length(); i++) {
+            JSONArray lista = diasGenerados.optJSONObject(i).optJSONArray("actividades");
+            if (lista == null) continue;
+            for (int j = 0; j < lista.length(); j++) {
+                JSONObject actividad = lista.optJSONObject(j);
+                if (actividad != null) evitar.add(actividad.optString("nombre", ""));
+            }
+        }
+        String instruccion = "Sos un asistente de turismo accesible en Argentina. "
+                + "Proponé UNA actividad turística REAL y diferente para el destino: " + destino + ". "
+                + "Día " + (dia + 1) + ", horario previsto: " + original.optString("hora") + ". "
+                + "Actividad rechazada: " + original.optString("nombre") + ". "
+                + "No repitas ninguno de estos lugares: " + evitar + ". "
+                + "Conservá el horario, ofrecé una descripción breve y detalles de accesibilidad "
+                + "sin afirmar que una instalación está verificada si no tenés evidencia. "
+                + "Respondé SOLO un objeto JSON válido, sin markdown ni explicaciones, "
+                + "con exactamente estas claves string: nombre, hora, descripcion, accesibilidad. "
+                + "En hora usá exactamente: " + original.optString("hora") + ".";
+
+        reemplazoEnCurso = true;
+        boton.setText("Buscando alternativa...");
+        boton.setEnabled(false);
+        if (geminiService == null) geminiService = new GeminiService(this);
+        geminiService.generarTexto(instruccion, new GeminiService.GeminiCallback() {
+            @Override public void onSuccess(String respuesta) {
+                if (isFinishing() || isDestroyed()) return;
+                try {
+                    String limpio = respuesta.trim();
+                    if (limpio.startsWith("```")) {
+                        limpio = limpio.replaceFirst("^```(?:json)?\\s*", "")
+                                .replaceFirst("\\s*```$", "").trim();
+                    }
+                    JSONObject propuesta = new JSONObject(limpio);
+                    String nombre = propuesta.optString("nombre", "").trim();
+                    String descripcion = propuesta.optString("descripcion", "").trim();
+                    String accesibilidad = propuesta.optString("accesibilidad", "").trim();
+                    if (nombre.isEmpty() || descripcion.isEmpty() || accesibilidad.isEmpty())
+                        throw new JSONException("Faltan datos en la propuesta");
+                    for (String prohibida : evitar) {
+                        if (nombre.equalsIgnoreCase(prohibida.trim()))
+                            throw new JSONException("Gemini repitió una actividad existente o descartada");
+                    }
+                    JSONObject nueva = new JSONObject();
+                    nueva.put("nombre", nombre);
+                    nueva.put("hora", original.optString("hora"));
+                    nueva.put("descripcion", descripcion);
+                    nueva.put("accesibilidad", accesibilidad);
+
+                    // Copia independiente: no modificar la pantalla si falla Firestore.
+                    JSONObject copia = new JSONObject(textoItinerarioActual);
+                    copia.getJSONArray("dias").getJSONObject(dia)
+                            .getJSONArray("actividades").put(posicion, nueva);
+                    String jsonActualizado = copia.toString();
+                    if (idItinerario != null && !idItinerario.isEmpty()) {
+                        FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
+                        if (usuario == null) {
+                            finalizarCambio(boton, "Iniciá sesión para guardar el cambio.");
+                            return;
+                        }
+                        FirebaseFirestore.getInstance().collection("usuarios")
+                                .document(usuario.getUid()).collection("itinerarios")
+                                .document(idItinerario).update("itinerarioJson", jsonActualizado)
+                                .addOnSuccessListener(v -> {
+                                    if (isFinishing() || isDestroyed()) return;
+                                    aplicarActividadReemplazada(jsonActualizado, dia, original.optString("nombre"), clave, boton);
+                                })
+                                .addOnFailureListener(error -> {
+                                    if (isFinishing() || isDestroyed()) return;
+                                    finalizarCambio(boton, "No se pudo guardar el cambio en Firebase.");
+                                });
+                    } else {
+                        aplicarActividadReemplazada(jsonActualizado, dia, original.optString("nombre"), clave, boton);
+                    }
+                } catch (Exception error) {
+                    finalizarCambio(boton, "Gemini no devolvió una actividad válida o diferente. Intentá otra vez.");
+                }
+            }
+            @Override public void onError(String error) {
+                if (isFinishing() || isDestroyed()) return;
+                finalizarCambio(boton, "No se pudo consultar Gemini. Revisá tu conexión.");
+            }
+        });
+    }
+
+    private void aplicarActividadReemplazada(String json, int dia, String descartada,
+                                             String clave, Button boton) {
+        try {
+            textoItinerarioActual = json;
+            diasGenerados = new JSONObject(json).getJSONArray("dias");
+            actividadesDescartadas.computeIfAbsent(clave, k -> new HashSet<>()).add(descartada);
+            reemplazoEnCurso = false;
+            mostrarDia(dia);
+            Toast.makeText(this, "Actividad reemplazada correctamente", Toast.LENGTH_SHORT).show();
+        } catch (JSONException error) {
+            finalizarCambio(boton, "No se pudo mostrar la actividad nueva.");
+        }
+    }
+
+    private void finalizarCambio(Button boton, String mensaje) {
+        reemplazoEnCurso = false;
+        boton.setText("Cambiar actividad con Gemini");
+        boton.setEnabled(true);
+        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show();
     }
 
     // Preparativos básicos y adicionales según el clima actual consultado.
@@ -1451,4 +1614,3 @@ public class ItinerarioActivity extends AppCompatActivity {
         );
     }
 }
-
