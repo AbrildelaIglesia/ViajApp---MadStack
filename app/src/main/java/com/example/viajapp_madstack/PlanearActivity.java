@@ -309,10 +309,17 @@ public class PlanearActivity extends AppCompatActivity {
                                 + "El campo sinAdaptaciones no tiene una interpretación definida: "
                                 + "no supongas su significado. "
                                 + "No confundas necesidades del usuario con características verificadas de lugares.\n"
-                                + "\nLUGARES OBTENIDOS DE GOOGLE PLACES:\n" + lugares
-                                + "\nUsá únicamente estos lugares como propuestas concretas. "
-                                + "Si son insuficientes, indicalo. "
-                                + "No afirmes que son accesibles sin datos comprobados.";
+                                + "\nLUGARES OBTENIDOS DE GOOGLE PLACES (ordenados por características de accesibilidad informadas):\n" + lugares
+                                + "\nPRIORIZACIÓN OBLIGATORIA: considerá primero los lugares con características "
+                                + "de accesibilidad positivas informadas por Google Places, especialmente cuando "
+                                + "se relacionen con las preferencias del usuario. También incluí lugares sin datos "
+                                + "de accesibilidad para mantener variedad, sin descartarlos automáticamente. "
+                                + "Si una característica está informada, describí solamente esa característica "
+                                + "y atribuísela a Google Places; no afirmes accesibilidad integral ni certificaciones. "
+                                + "Los valores desconocidos significan por verificar, no inaccesible. "
+                                + "Si hay características informadas como no disponibles, no las describas como accesibles. "
+                                + "Usá únicamente estos lugares como propuestas concretas. "
+                                + "Si son insuficientes, indicalo.";
                         generarItinerarioConGemini(prompt, boton);
                     });
                 }
@@ -1696,4 +1703,5 @@ public class PlanearActivity extends AppCompatActivity {
         );
     }
 }
+
 
