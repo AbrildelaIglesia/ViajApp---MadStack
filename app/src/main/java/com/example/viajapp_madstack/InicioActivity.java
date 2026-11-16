@@ -547,6 +547,46 @@ public class InicioActivity extends AppCompatActivity {
             }
         }
 
+        // CORREGIR EL FONDO COMPLETO DE CONTRASEÑA
+        EditText campoContrasena = findViewById(R.id.etContrasena);
+
+        if (campoContrasena != null) {
+
+            View contenedorContrasena =
+                    (View) campoContrasena.getParent();
+
+            ImageView ojoContrasena =
+                    findViewById(R.id.btnTogglePassword);
+
+            if (normal) {
+
+                // RECUPERAR LOS FONDOS ORIGINALES
+                restaurarFondo(contenedorContrasena);
+                restaurarFondo(campoContrasena);
+
+                if (ojoContrasena != null) {
+                    ojoContrasena.setImageTintList(null);
+                }
+
+            } else {
+
+                // EL FONDO SE APLICA AL CONTENEDOR COMPLETO
+                contenedorContrasena.setBackground(
+                        fondoRedondeado(fondoCampo, borde, 12)
+                );
+
+                // EVITAR QUE EL EDITTEXT TENGA OTRO FONDO
+                campoContrasena.setBackground(null);
+
+                // ADAPTAR EL COLOR DEL OJITO
+                if (ojoContrasena != null) {
+                    ojoContrasena.setImageTintList(
+                            ColorStateList.valueOf(colorIconos)
+                    );
+                }
+            }
+        }
+
         // 6. BOTÓN INICIAR SESIÓN
         LinearLayout boton =
                 findViewById(R.id.btnIniciarSesion);

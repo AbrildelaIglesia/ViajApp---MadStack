@@ -10,9 +10,6 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-
-
-
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
@@ -330,6 +327,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
+                    android:contentDescription="Silla de ruedas o movilidad reducida"
                     android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" android:textStyle="bold"/>
@@ -391,6 +389,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
+                    android:contentDescription="Silla de ruedas o movilidad reducida"
                     android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" android:textStyle="bold"/>
@@ -446,6 +445,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
+                    android:contentDescription="Silla de ruedas o movilidad reducida"
                     android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" android:textStyle="bold"/>
@@ -500,6 +500,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
+                    android:contentDescription="Silla de ruedas o movilidad reducida"
                     android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" android:textStyle="bold"/>
@@ -554,6 +555,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="@drawable/bg_uncheck_circle"
+                    android:contentDescription="Silla de ruedas o movilidad reducida"
                     android:text=""
                     android:textColor="#FFFFFF"
                     android:textSize="13sp" android:textStyle="bold"/>

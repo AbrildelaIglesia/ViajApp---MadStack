@@ -251,14 +251,19 @@
                         android:textColorHint="#8493AA"
                         android:textSize="12sp" />
 
+
                     <ImageView
                         android:id="@+id/btnTogglePassword"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:padding="10dp"
+                        android:scaleType="fitCenter"
                         android:clickable="true"
                         android:focusable="true"
                         android:src="@drawable/visible_false"
                         android:contentDescription="Mostrar contraseña" />
+
+
 
                 </LinearLayout>
 

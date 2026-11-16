@@ -184,7 +184,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="Usá una contraseña de al menos 8 caracteres, difícil de adivinar y diferente de las que utilizás en otras cuentas."
+                android:text="La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial."
                 android:textColor="#64748B"
                 android:textSize="12sp" />
 
