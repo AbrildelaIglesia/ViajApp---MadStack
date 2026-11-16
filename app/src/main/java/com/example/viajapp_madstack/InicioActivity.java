@@ -162,6 +162,23 @@ public class InicioActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        int contrasteGuardado =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        float escalaGuardada =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        modoContraste = contrasteGuardado;
+        escalaTexto = escalaGuardada;
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(scrollContenido);
+    }
+
     private boolean validarCorreo(String correo)
     {
         if (correo.isEmpty()) {
@@ -258,6 +275,7 @@ public class InicioActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // DISMINUIR TEXTO
@@ -269,6 +287,7 @@ public class InicioActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // CAMBIAR CONTRASTE
@@ -277,6 +296,7 @@ public class InicioActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 
@@ -544,6 +564,46 @@ public class InicioActivity extends AppCompatActivity {
 
                 campo.setTextColor(textoPrincipal);
                 campo.setHintTextColor(textoPista);
+            }
+        }
+
+        // CORREGIR EL FONDO COMPLETO DE CONTRASEÑA
+        EditText campoContrasena = findViewById(R.id.etContrasena);
+
+        if (campoContrasena != null) {
+
+            View contenedorContrasena =
+                    (View) campoContrasena.getParent();
+
+            ImageView ojoContrasena =
+                    findViewById(R.id.btnTogglePassword);
+
+            if (normal) {
+
+                // RECUPERAR LOS FONDOS ORIGINALES
+                restaurarFondo(contenedorContrasena);
+                restaurarFondo(campoContrasena);
+
+                if (ojoContrasena != null) {
+                    ojoContrasena.setImageTintList(null);
+                }
+
+            } else {
+
+                // EL FONDO SE APLICA AL CONTENEDOR COMPLETO
+                contenedorContrasena.setBackground(
+                        fondoRedondeado(fondoCampo, borde, 12)
+                );
+
+                // EVITAR QUE EL EDITTEXT TENGA OTRO FONDO
+                campoContrasena.setBackground(null);
+
+                // ADAPTAR EL COLOR DEL OJITO
+                if (ojoContrasena != null) {
+                    ojoContrasena.setImageTintList(
+                            ColorStateList.valueOf(colorIconos)
+                    );
+                }
             }
         }
 

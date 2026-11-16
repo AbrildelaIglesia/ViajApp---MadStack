@@ -152,6 +152,23 @@ public class PlanearActivity extends AppCompatActivity {
         configurarBotonCrearViaje();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+
+        actualizarTamanoTextos(scrollContenido);
+        actualizarTamanoTextos(header);
+        actualizarTamanoTextos(bottomNav);
+    }
+
     // --------------------------------------------------
     // CREAR VIAJE CON GEMINI
     // --------------------------------------------------
@@ -1075,6 +1092,7 @@ public class PlanearActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // ===================================================
@@ -1091,6 +1109,7 @@ public class PlanearActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // ===================================================
@@ -1102,6 +1121,7 @@ public class PlanearActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 

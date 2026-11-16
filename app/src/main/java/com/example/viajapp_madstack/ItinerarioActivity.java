@@ -166,6 +166,23 @@ public class ItinerarioActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+
+        actualizarTamanoTextos(scrollContenido);
+        actualizarTamanoTextos(header);
+        actualizarTamanoTextos(bottomNav);
+    }
+
     private String itinerarioIdActual;
 
     private String textoItinerarioActual;
@@ -864,6 +881,7 @@ public class ItinerarioActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // BOTÓN A-
@@ -877,6 +895,7 @@ public class ItinerarioActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // BOTÓN CONTRASTE
@@ -885,6 +904,7 @@ public class ItinerarioActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 

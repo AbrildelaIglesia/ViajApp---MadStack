@@ -154,6 +154,17 @@ public class LugaresActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(pantallaPrincipal);
+
+        // CONSERVAR LA CARGA ORIGINAL DESDE FIREBASE
         cargarItinerarios();
     }
 
@@ -388,6 +399,7 @@ public class LugaresActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(pantallaPrincipal);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // BOTÓN A-
@@ -400,6 +412,7 @@ public class LugaresActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(pantallaPrincipal);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // BOTÓN CONTRASTE
@@ -409,6 +422,7 @@ public class LugaresActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo = modoContraste == 0
                     ? "Normal"
