@@ -162,6 +162,23 @@ public class InicioActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        int contrasteGuardado =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        float escalaGuardada =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        modoContraste = contrasteGuardado;
+        escalaTexto = escalaGuardada;
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(scrollContenido);
+    }
+
     private boolean validarCorreo(String correo)
     {
         if (correo.isEmpty()) {
@@ -258,6 +275,7 @@ public class InicioActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // DISMINUIR TEXTO
@@ -269,6 +287,7 @@ public class InicioActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // CAMBIAR CONTRASTE
@@ -277,6 +296,7 @@ public class InicioActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 

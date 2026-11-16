@@ -36,7 +36,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
     private TextView btnAccesibilidad, btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias;
     private TextView btnCheckMovilidad, btnCheckCortos, btnCheckBanos, btnCheckVisual, btnCheckAuditiva;
-    private View pantallaPrincipal, scrollContenido, header, bottomNav, tarjetaTamanoTexto;
+    private View pantallaPrincipal, scrollContenido, header, bottomNav;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
@@ -104,6 +104,19 @@ public class AccesibilidadActivity extends AppCompatActivity {
         configurarBotonesSeleccion();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(pantallaPrincipal);
+    }
 
     // NAVEGACIÓN INFERIOR
     private void configurarNavegacion() {
@@ -235,7 +248,6 @@ public class AccesibilidadActivity extends AppCompatActivity {
         scrollContenido = findViewById(R.id.scrollContenido);
         header = findViewById(R.id.header);
         bottomNav = findViewById(R.id.bottomNav);
-        tarjetaTamanoTexto = findViewById(R.id.tarjetaTamanoTexto);
 
         barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
 
@@ -266,14 +278,22 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         // Disminuir tamaño del texto
         btnDisminuirTexto.setOnClickListener(v -> {
-            escalaTexto = Math.max(0.9f, escalaTexto - 0.1f);
+            escalaTexto = Math.max(0.9f,
+                    Math.round((escalaTexto - 0.1f) * 10f) / 10f);
+
             actualizarTamanoTextos(pantallaPrincipal);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // Aumentar tamaño del texto
         btnAumentarTexto.setOnClickListener(v -> {
-            escalaTexto = Math.min(1.3f, escalaTexto + 0.1f);
+            escalaTexto = Math.min(1.3f,
+                    Math.round((escalaTexto + 0.1f) * 10f) / 10f);
+
             actualizarTamanoTextos(pantallaPrincipal);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // Cambiar modo de contraste
@@ -283,6 +303,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
                 modoContraste = 0;
             }
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
         });
 
         // Botón de audio
@@ -397,46 +418,76 @@ public class AccesibilidadActivity extends AppCompatActivity {
             return;
         }
 
+
         int fondoPantalla, fondoTarjeta, borde, textoPrincipal, textoSecundario;
 
         if (modoContraste == 1) {
-            fondoPantalla = Color.rgb(255, 247, 230);
-            fondoTarjeta = Color.rgb(255, 253, 247);
-            borde = Color.rgb(214, 199, 161);
-
-            textoPrincipal = Color.rgb(59, 47, 32);
-            textoSecundario = Color.rgb(102, 90, 74);
+            // MODO CREMA
+            fondoPantalla = Color.parseColor("#FFF1D6");
+            fondoTarjeta = Color.parseColor("#EBD6B4");
+            borde = Color.parseColor("#C7AC88");
+            textoPrincipal = Color.parseColor("#222222");
+            textoSecundario = Color.parseColor("#5A5146");
 
             btnPreferencias.setBackground(
-                    fondoRedondeado(Color.rgb(130, 85, 35), Color.rgb(100, 65, 30), 12)
+                    fondoRedondeado(
+                            Color.rgb(130, 85, 35),
+                            Color.rgb(100, 65, 30),
+                            12
+                    )
             );
+
             btnAudio.setBackground(
-                    fondoRedondeado(Color.rgb(245, 235, 215), Color.rgb(180, 160, 130), 12)
+                    fondoRedondeado(
+                            Color.parseColor("#FFFAF0"),
+                            borde,
+                            12
+                    )
             );
+
             btnContraste.setText("◐  Crema");
 
         } else {
-            fondoPantalla = Color.rgb(18, 18, 18);
-            fondoTarjeta = Color.rgb(30, 30, 30);
-            borde = Color.rgb(85, 85, 85);
-
+            // MODO OSCURO
+            fondoPantalla = Color.parseColor("#111111");
+            fondoTarjeta = Color.parseColor("#222222");
+            borde = Color.parseColor("#444444");
             textoPrincipal = Color.WHITE;
-            textoSecundario = Color.rgb(210, 210, 210);
+            textoSecundario = Color.parseColor("#D0D0D0");
 
             btnPreferencias.setBackground(
-                    fondoRedondeado(Color.rgb(55, 55, 55), Color.rgb(120, 120, 120), 12)
+                    fondoRedondeado(
+                            Color.rgb(55, 55, 55),
+                            Color.rgb(120, 120, 120),
+                            12
+                    )
             );
+
             btnAudio.setBackground(
-                    fondoRedondeado(Color.rgb(55, 55, 55), Color.rgb(120, 120, 120), 12)
+                    fondoRedondeado(
+                            Color.parseColor("#252525"),
+                            borde,
+                            12
+                    )
             );
+
             btnContraste.setText("◐  Oscuro");
         }
+
 
         pantallaPrincipal.setBackgroundColor(fondoPantalla);
         scrollContenido.setBackgroundColor(fondoPantalla);
 
         header.setBackgroundColor(fondoTarjeta);
         bottomNav.setBackgroundColor(fondoTarjeta);
+
+        // CORREGIR EL FONDO DE LA OPCIÓN ACTIVA DEL MENÚ INFERIOR
+        navAccesibilidad.setBackgroundColor(
+                modoContraste == 1
+                        ? Color.parseColor("#E9D7B8")
+                        : Color.parseColor("#303030")
+        );
+
 
         barraAccesibilidad.setBackground(
                 fondoRedondeado(fondoTarjeta, borde, 16)
@@ -448,7 +499,36 @@ public class AccesibilidadActivity extends AppCompatActivity {
         btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
 
         actualizarFondosTarjetas(scrollContenido, fondoTarjeta, borde);
+
+        TextView[] opciones = {
+                btnCheckMovilidad,
+                btnCheckCortos,
+                btnCheckBanos,
+                btnCheckVisual,
+                btnCheckAuditiva
+        };
+
+        for (TextView opcion : opciones) {
+            if (opcion != null && opcion.getParent() instanceof View) {
+                View tarjeta = (View) opcion.getParent();
+
+                tarjeta.setBackground(
+                        fondoRedondeado(
+                                fondoTarjeta,
+                                borde,
+                                10
+                        )
+                );
+            }
+        }
+
         actualizarColoresTextos(pantallaPrincipal, textoPrincipal, textoSecundario);
+
+        // Mantener el texto blanco sobre el botón marrón en modo crema
+        if (modoContraste == 1 && btnPreferencias != null) {
+            btnPreferencias.setTextColor(Color.WHITE);
+        }
+
         sincronizarBotonesSeleccionDespuesDeRestaurar();
     }
 
