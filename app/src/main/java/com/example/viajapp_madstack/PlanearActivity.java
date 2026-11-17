@@ -485,6 +485,13 @@ public class PlanearActivity extends AppCompatActivity {
                     .collection("itinerarios").add(datos)
                     .addOnSuccessListener(documento -> {
                         if (isFinishing() || isDestroyed()) return;
+                        ItinerariosLocales.guardar(
+                                PlanearActivity.this,
+                                documento.getId(),
+                                destinoNombre,
+                                cantidadDias,
+                                itinerarioJson
+                        );
                         restaurarBotonCrearViaje(boton);
                         Intent intent = new Intent(PlanearActivity.this, ItinerarioActivity.class);
                         intent.putExtra("itinerarioId", documento.getId());
@@ -1757,5 +1764,3 @@ public class PlanearActivity extends AppCompatActivity {
         );
     }
 }
-
-

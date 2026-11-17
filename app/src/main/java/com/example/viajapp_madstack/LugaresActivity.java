@@ -1,4 +1,3 @@
-
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
@@ -175,6 +174,10 @@ public class LugaresActivity extends AppCompatActivity {
             tvEstadoColeccion.setText("Iniciá sesión para ver tus itinerarios guardados.");
             return;
         }
+        if (!ConexionUtils.hayInternet(this)) {
+            mostrarItinerariosLocales();
+            return;
+        }
         tvEstadoColeccion.setText("Cargando itinerarios...");
         FirebaseFirestore.getInstance()
                 .collection("usuarios")
@@ -202,7 +205,17 @@ public class LugaresActivity extends AppCompatActivity {
                     });
                     tvEstadoColeccion.setText(documentos.size() == 1
                             ? "1 itinerario guardado" : documentos.size() + " itinerarios guardados");
-                    for (DocumentSnapshot documento : documentos) agregarTarjeta(documento);
+                    for (DocumentSnapshot documento : documentos) {
+                        String json = documento.getString("itinerarioJson");
+                        if (json != null && !json.trim().isEmpty()) {
+                            Long cantidad = documento.getLong("cantidadDias");
+                            ItinerariosLocales.guardar(LugaresActivity.this, documento.getId(),
+                                    documento.getString("destino"),
+                                    cantidad == null ? 0 : cantidad.intValue(), json);
+                        }
+
+                        agregarTarjeta(documento);
+                    }
                     guardarOriginales(contenedorItinerarios);
                     actualizarTamanoTextos(contenedorItinerarios);
                     if (modoContraste != 0) aplicarTemaContraste();
@@ -210,9 +223,76 @@ public class LugaresActivity extends AppCompatActivity {
                 .addOnFailureListener(error -> {
                     if (isFinishing() || isDestroyed()) return;
                     Log.e(TAG, "Error al cargar itinerarios", error);
+                    if (!ItinerariosLocales.listar(this).isEmpty()) {
+                        mostrarItinerariosLocales();
+                        return;
+                    }
                     tvEstadoColeccion.setText("No se pudieron cargar los itinerarios: "
                             + (error.getMessage() == null ? "error desconocido" : error.getMessage()));
                 });
+    }
+
+    private void mostrarItinerariosLocales() {
+        contenedorItinerarios.removeAllViews();
+        java.util.List<org.json.JSONObject> guardados = ItinerariosLocales.listar(this);
+        tvEstadoColeccion.setText(guardados.isEmpty()
+                ? "No hay itinerarios descargados en este dispositivo. Conectate para guardarlos."
+                : guardados.size() + " itinerarios disponibles sin conexión");
+        for (org.json.JSONObject item : guardados) {
+            agregarTarjetaLocal(item);
+        }
+        guardarOriginales(contenedorItinerarios);
+        actualizarTamanoTextos(contenedorItinerarios);
+        if (modoContraste != 0) aplicarTemaContraste();
+    }
+
+    private void agregarTarjetaLocal(org.json.JSONObject item) {
+        String id = item.optString("id", "");
+        String destino = item.optString("destino", "Viaje sin nombre");
+        int dias = item.optInt("dias", 0);
+        LinearLayout tarjeta = new LinearLayout(this);
+        tarjeta.setOrientation(LinearLayout.VERTICAL);
+        tarjeta.setPadding(dp(18), dp(16), dp(18), dp(16));
+        GradientDrawable fondo = new GradientDrawable();
+        fondo.setColor(Color.parseColor("#EFF6FF"));
+        fondo.setCornerRadius(dp(16));
+        fondo.setStroke(dp(1), Color.parseColor("#BFDBFE"));
+        tarjeta.setBackground(fondo);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.bottomMargin = dp(14);
+        tarjeta.setLayoutParams(params);
+
+        TextView titulo = new TextView(this);
+        titulo.setText(destino);
+        titulo.setTextColor(Color.parseColor("#1E3A8A"));
+        titulo.setTextSize(19);
+        titulo.setTypeface(null, Typeface.BOLD);
+        tarjeta.addView(titulo);
+
+        TextView detalle = new TextView(this);
+        detalle.setText(dias > 0 ? dias + " días · Disponible offline" : "Disponible offline");
+        detalle.setTextColor(Color.parseColor("#475569"));
+        detalle.setTextSize(13);
+        detalle.setPadding(0, dp(8), 0, dp(12));
+        tarjeta.addView(detalle);
+
+        Button abrir = new Button(this);
+        abrir.setText("Ver itinerario y actividades");
+        abrir.setAllCaps(false);
+        abrir.setTextColor(Color.WHITE);
+        abrir.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#2563EB")));
+        tarjeta.addView(abrir, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(52)));
+        abrir.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ItinerarioActivity.class);
+            intent.putExtra("itinerarioId", id);
+            intent.putExtra("itinerario", item.optString("json", ""));
+            intent.putExtra("destino", item.optString("destino", ""));
+            intent.putExtra("dias", dias);
+            startActivity(intent);
+        });
+        contenedorItinerarios.addView(tarjeta);
     }
 
     private void agregarTarjeta(DocumentSnapshot documento) {
@@ -299,6 +379,7 @@ public class LugaresActivity extends AppCompatActivity {
                             .delete()
                             .addOnSuccessListener(v -> {
                                 if (isFinishing() || isDestroyed()) return;
+                                ItinerariosLocales.eliminar(this, itinerarioId);
                                 Toast.makeText(this, "Itinerario eliminado", Toast.LENGTH_SHORT).show();
                                 cargarItinerarios();
                             })

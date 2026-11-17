@@ -111,7 +111,7 @@ public class ItinerarioActivity extends AppCompatActivity {
         mostrarItinerarioRecibido(savedInstanceState);
 
         configurarClima();
-        if (diasGenerados != null) consultarClimaDestino();
+        if (diasGenerados != null && ConexionUtils.hayInternet(this)) consultarClimaDestino();
 
         // ===================================================
         // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
@@ -275,9 +275,19 @@ public class ItinerarioActivity extends AppCompatActivity {
         barraDiasGenerados = findViewById(R.id.barraDiasGenerados);
         tarjetasActividades = findViewById(R.id.tarjetasActividades);
         mostrarDia(Math.max(0, Math.min(diaSeleccionado, diasGenerados.length() - 1)));
-        if (tarjetaClima != null) consultarClimaDestino();
+        if (tarjetaClima != null && ConexionUtils.hayInternet(this)) consultarClimaDestino();
     }
     private void cargarUltimoItinerario() {
+        if (!ConexionUtils.hayInternet(this)) {
+            java.util.List<JSONObject> locales = ItinerariosLocales.listar(this);
+            if (locales.isEmpty()) {
+                mostrarMensajeItinerario("No hay itinerarios guardados en este dispositivo.");
+            } else {
+                mostrarItinerarioLocal(locales.get(0));
+            }
+            return;
+        }
+
         FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
         if (usuario == null) {
             mostrarMensajeItinerario("Iniciá sesión para consultar tus itinerarios guardados.");
@@ -300,6 +310,13 @@ public class ItinerarioActivity extends AppCompatActivity {
     }
 
     private void cargarItinerarioPorId(String id) {
+        if (!ConexionUtils.hayInternet(this)) {
+            JSONObject local = ItinerariosLocales.buscar(this, id);
+            if (local != null) mostrarItinerarioLocal(local);
+            else mostrarMensajeItinerario("Este itinerario todavía no está guardado offline.");
+            return;
+        }
+
         FirebaseUser usuario = FirebaseAuth.getInstance().getCurrentUser();
         if (usuario == null) {
             mostrarMensajeItinerario("Iniciá sesión para consultar tu itinerario.");
@@ -323,11 +340,23 @@ public class ItinerarioActivity extends AppCompatActivity {
             mostrarMensajeItinerario("El itinerario guardado no tiene actividades disponibles.");
             return;
         }
+        Long diasGuardados = documento.getLong("cantidadDias");
+        ItinerariosLocales.guardar(this, documento.getId(), documento.getString("destino"),
+                diasGuardados == null ? 0 : diasGuardados.intValue(), json);
         itinerarioIdActual = documento.getId();
         textoItinerarioActual = json;
         destinoActual = documento.getString("destino");
         Long cantidad = documento.getLong("cantidadDias");
         diasActuales = cantidad == null ? 0 : cantidad.intValue();
+        diaSeleccionado = 0;
+        mostrarItinerarioRecibido(null);
+    }
+
+    private void mostrarItinerarioLocal(JSONObject local) {
+        itinerarioIdActual = local.optString("id", "");
+        textoItinerarioActual = local.optString("json", "");
+        destinoActual = local.optString("destino", "");
+        diasActuales = local.optInt("dias", 0);
         diaSeleccionado = 0;
         mostrarItinerarioRecibido(null);
     }
@@ -485,6 +514,10 @@ public class ItinerarioActivity extends AppCompatActivity {
     }
 
     private void cambiarActividadConGemini(int dia, int posicion, Button boton) {
+        if (!ConexionUtils.hayInternet(this)) {
+            Toast.makeText(this, "Para cambiar actividades necesitás Internet.", Toast.LENGTH_LONG).show();
+            return;
+        }
         if (reemplazoEnCurso || diasGenerados == null) return;
         final String idItinerario = itinerarioIdActual;
         final String destino = destinoActual == null ? "" : destinoActual;
@@ -566,6 +599,13 @@ public class ItinerarioActivity extends AppCompatActivity {
                                 .document(idItinerario).update("itinerarioJson", jsonActualizado)
                                 .addOnSuccessListener(v -> {
                                     if (isFinishing() || isDestroyed()) return;
+                                    ItinerariosLocales.guardar(
+                                            ItinerarioActivity.this,
+                                            idItinerario,
+                                            destinoActual,
+                                            diasActuales,
+                                            textoItinerarioActual
+                                    );
                                     aplicarActividadReemplazada(jsonActualizado, dia, original.optString("nombre"), clave, boton);
                                 })
                                 .addOnFailureListener(error -> {
@@ -865,6 +905,8 @@ public class ItinerarioActivity extends AppCompatActivity {
     }
 
     private void cargarFotoActividad(ImageView imagen, String nombre) {
+        if (!ConexionUtils.hayInternet(this)) return;
+
         // No mostrar fotos de otra localidad como reemplazo.
         try {
             if (!Places.isInitialized()) {
