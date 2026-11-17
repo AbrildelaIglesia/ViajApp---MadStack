@@ -181,6 +181,7 @@ public class ItinerarioActivity extends AppCompatActivity {
         actualizarTamanoTextos(scrollContenido);
         actualizarTamanoTextos(header);
         actualizarTamanoTextos(bottomNav);
+        actualizarTamanoTextos(barraAccesibilidad);
     }
 
     private String itinerarioIdActual;
@@ -881,6 +882,8 @@ public class ItinerarioActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
@@ -895,6 +898,8 @@ public class ItinerarioActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 

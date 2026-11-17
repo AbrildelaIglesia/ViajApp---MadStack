@@ -177,6 +177,7 @@ public class InicioActivity extends AppCompatActivity {
 
         aplicarTemaContraste();
         actualizarTamanoTextos(scrollContenido);
+        actualizarTamanoTextos(barraAccesibilidad);
     }
 
     private boolean validarCorreo(String correo)
@@ -275,6 +276,8 @@ public class InicioActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
@@ -287,6 +290,8 @@ public class InicioActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 

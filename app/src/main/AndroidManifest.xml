@@ -43,6 +43,11 @@
             android:name=".PlanearActivity"
             android:exported="false" />
 
+        <!-- PANTALLA DE PRESUPUESTO Y GASTOS -->
+        <activity
+            android:name=".PresupuestoActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
@@ -59,6 +64,11 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".HistorialPresupuestosActivity"
+            android:exported="false" />
+
 
     </application>
 
