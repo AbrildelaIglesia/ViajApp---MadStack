@@ -19,33 +19,37 @@ public class DestinoRepository {
 
     public void buscarDestinos(String texto, DestinoCallback callback) {
         String busqueda = normalizar(texto);
-        if (busqueda.isEmpty()) {
-            callback.onResultadosVacios();
-            return;
-        }
-
-        // Los fragmentos de 1 o 2 caracteres pueden producir demasiados resultados.
-        // Este índice admite búsquedas desde 3 caracteres.
         if (busqueda.length() < 3) {
             callback.onResultadosVacios();
             return;
         }
 
+        // El índice fragmentosBusqueda debe incluir fragmentos de nombre Y provincia_nombre.
+        // Se consulta un índice de fragmentos, sin descargar la colección completa.
         db.collection("destinos")
                 .whereArrayContains("fragmentosBusqueda", busqueda)
-                .limit(50)
+                .limit(100)
                 .get()
                 .addOnSuccessListener(resultado -> {
                     List<DocumentSnapshot> coincidencias = new ArrayList<>();
                     for (DocumentSnapshot documento : resultado.getDocuments()) {
-                        String nombre = documento.getString("nombre");
-                        if (normalizar(nombre).contains(busqueda)) {
+                        String nombre = normalizar(documento.getString("nombre"));
+                        String provincia = normalizar(documento.getString("provincia_nombre"));
+                        if (nombre.contains(busqueda) || provincia.contains(busqueda)) {
                             coincidencias.add(documento);
                         }
                     }
 
-                    coincidencias.sort(Comparator.comparing(
-                            d -> normalizar(d.getString("nombre"))));
+                    coincidencias.sort(Comparator
+                            .comparingInt((DocumentSnapshot d) -> {
+                                String nombre = normalizar(d.getString("nombre"));
+                                return nombre.startsWith(busqueda) ? 0
+                                        : nombre.contains(busqueda) ? 1 : 2;
+                            })
+                            .thenComparing(d -> normalizar(d.getString("provincia_nombre")))
+                            .thenComparing(d -> normalizar(d.getString("nombre")))
+                            .thenComparing(DocumentSnapshot::getId));
+
                     if (coincidencias.size() > 15) {
                         coincidencias = new ArrayList<>(coincidencias.subList(0, 15));
                     }
@@ -58,7 +62,8 @@ public class DestinoRepository {
 
     public static String normalizar(String texto) {
         if (texto == null) return "";
-        String limpio = Normalizer.normalize(texto.trim().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
+        String limpio = Normalizer.normalize(
+                texto.trim().toLowerCase(Locale.ROOT), Normalizer.Form.NFD);
         return limpio.replaceAll("\\p{M}+", "").replaceAll("\\s+", " ");
     }
 
