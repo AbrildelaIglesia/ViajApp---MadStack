@@ -111,6 +111,8 @@ public class PlanearActivity extends AppCompatActivity {
     private TextView tvCantidadDias, tvCantidadViajeros, tvInteresesActivos;
     private int cantidadDias = 5;
     private int cantidadViajeros = 2;
+    // Presupuesto asociado al viaje que se está creando
+    private long presupuestoPlanificado = 0L;
     private final boolean[] interesesSeleccionados = {true, true, true};
     private LinearLayout interesNaturaleza, interesGastronomia, interesTrekking;
     private PlacesClient placesFotosClient;
@@ -171,6 +173,7 @@ public class PlanearActivity extends AppCompatActivity {
         actualizarTamanoTextos(scrollContenido);
         actualizarTamanoTextos(header);
         actualizarTamanoTextos(bottomNav);
+        actualizarTamanoTextos(barraAccesibilidad);
     }
 
     // --------------------------------------------------
@@ -208,6 +211,24 @@ public class PlanearActivity extends AppCompatActivity {
                 etPresupuesto.setError("Ingresá un presupuesto");
                 return;
             }
+
+            try {
+                presupuestoPlanificado = Long.parseLong(presupuesto);
+
+                if (presupuestoPlanificado <= 0) {
+                    etPresupuesto.setError(
+                            "El presupuesto debe ser mayor a cero"
+                    );
+                    return;
+                }
+
+            } catch (NumberFormatException e) {
+                etPresupuesto.setError(
+                        "Ingresá un presupuesto válido en pesos"
+                );
+                return;
+            }
+
 
             String promptBase = "Sos un asistente especializado en turismo accesible en Argentina.\n\n"
                     + "Creá un itinerario turístico orientativo con estos datos:\n"
@@ -475,6 +496,8 @@ public class PlanearActivity extends AppCompatActivity {
             datos.put("provincia", destinoProvincia == null ? "" : destinoProvincia);
             datos.put("cantidadDias", cantidadDias);
             datos.put("cantidadViajeros", cantidadViajeros);
+            // Guardar el presupuesto real del viaje
+            datos.put("presupuestoTotal", presupuestoPlanificado);
             datos.put("itinerarioJson", itinerarioJson);
             // Se guarda también la estructura de días y actividades para futuras consultas.
             datos.put("dias", jsonArrayALista(raiz.getJSONArray("dias")));
@@ -1160,6 +1183,8 @@ public class PlanearActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
@@ -1177,6 +1202,8 @@ public class PlanearActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 

@@ -185,6 +185,7 @@ public class ItinerarioActivity extends AppCompatActivity {
         actualizarTamanoTextos(scrollContenido);
         actualizarTamanoTextos(header);
         actualizarTamanoTextos(bottomNav);
+        actualizarTamanoTextos(barraAccesibilidad);
     }
 
     private final Map<String, Set<String>> actividadesDescartadas = new HashMap<>();
@@ -1086,6 +1087,8 @@ public class ItinerarioActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
@@ -1100,6 +1103,8 @@ public class ItinerarioActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 

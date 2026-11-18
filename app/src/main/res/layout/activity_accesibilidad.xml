@@ -113,6 +113,95 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
+            <!-- ======================================= -->
+            <!-- TARJETA DE PRESUPUESTO Y GASTOS         -->
+            <!-- ======================================= -->
+
+            <LinearLayout
+                android:id="@+id/tarjetaAccesoPresupuesto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="14dp"
+                android:orientation="vertical"
+                android:padding="18dp"
+                android:background="@drawable/fondo_tarjeta_presupuesto">
+
+                <!-- ÍCONO Y EXPLICACIÓN -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#DBEAFE">
+
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="0dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_wallet"
+                            android:contentDescription="Presupuesto y gastos" />
+
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="¿Querés controlar los gastos de tu viaje?"
+                            android:textColor="#0C2340"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="También podés registrar tus consumos, consultar cuánto gastaste, conocer tu saldo disponible y saber si superaste el presupuesto planificado."
+                            android:textColor="#475569"
+                            android:textSize="14sp"
+                            android:lineSpacingExtra="4dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- BOTÓN PARA ENTRAR A PRESUPUESTO -->
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnIrPresupuesto"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/fondo_boton_ir_presupuesto"
+                    android:backgroundTint="@null"
+                    android:text="Ir a Presupuesto y Gastos"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:contentDescription="Abrir la sección de presupuesto y gastos" />
+
+            </LinearLayout>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -99,13 +99,25 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         });
 
+
+
         // NAVEGACIÓN INFERIOR ORIGINAL
         configurarNavegacion();
         configurarBotonesSeleccion();
+
+        // ABRIR PANTALLA DE PRESUPUESTO Y GASTOS
+        findViewById(R.id.btnIrPresupuesto).setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    AccesibilidadActivity.this,
+                    PresupuestoActivity.class
+            );
+            startActivity(intent);
+        });
     }
 
     @Override
     protected void onResume() {
+
         super.onResume();
 
         modoContraste =
@@ -261,20 +273,60 @@ public class AccesibilidadActivity extends AppCompatActivity {
         // Guardamos los valores originales de toda la pantalla
         guardarOriginales(pantallaPrincipal);
 
-        // Mostrar u ocultar los controles
+        // ABRIR Y CERRAR EL MENÚ DE ACCESIBILIDAD
         btnAccesibilidad.setOnClickListener(v -> {
+
             controlesVisibles = !controlesVisibles;
-            int visibilidad = controlesVisibles ? View.VISIBLE : View.GONE;
+
+            int visibilidad = controlesVisibles
+                    ? View.VISIBLE
+                    : View.GONE;
 
             btnDisminuirTexto.setVisibility(visibilidad);
             btnAumentarTexto.setVisibility(visibilidad);
             btnContraste.setVisibility(visibilidad);
             btnAudio.setVisibility(visibilidad);
 
+            // AJUSTAR EL BOTÓN PRINCIPAL
+            LinearLayout.LayoutParams parametrosBoton =
+                    (LinearLayout.LayoutParams)
+                            btnAccesibilidad.getLayoutParams();
+
+            parametrosBoton.width = controlesVisibles
+                    ? 0
+                    : LinearLayout.LayoutParams.WRAP_CONTENT;
+
+            parametrosBoton.weight = controlesVisibles ? 1f : 0f;
+
+            btnAccesibilidad.setLayoutParams(parametrosBoton);
+
+            int espacio = dp(12);
+
+            btnAccesibilidad.setPadding(
+                    controlesVisibles ? 0 : espacio,
+                    0,
+                    controlesVisibles ? 0 : espacio,
+                    0
+            );
+
+            // HACER COMPACTA LA BARRA CUANDO SE CIERRA
+            androidx.constraintlayout.widget.ConstraintLayout.LayoutParams parametrosBarra =
+                    (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams)
+                            barraAccesibilidad.getLayoutParams();
+
+            parametrosBarra.width = controlesVisibles
+                    ? 0
+                    : androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTENT;
+
+            barraAccesibilidad.setLayoutParams(parametrosBarra);
+
             btnAccesibilidad.setContentDescription(
-                    controlesVisibles ? "Cerrar menú de accesibilidad" : "Abrir menú de accesibilidad"
+                    controlesVisibles
+                            ? "Cerrar menú de accesibilidad"
+                            : "Abrir menú de accesibilidad"
             );
         });
+
 
         // Disminuir tamaño del texto
         btnDisminuirTexto.setOnClickListener(v -> {

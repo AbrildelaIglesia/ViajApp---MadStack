@@ -205,6 +205,9 @@ public class RegistroActivity extends AppCompatActivity {
             actualizarTamanoTextos(
                     findViewById(R.id.scrollContenido)
             );
+
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
@@ -219,6 +222,9 @@ public class RegistroActivity extends AppCompatActivity {
             actualizarTamanoTextos(
                     findViewById(R.id.scrollContenido)
             );
+
+            actualizarTamanoTextos(barraAccesibilidad);
+
             PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
@@ -317,6 +323,8 @@ public class RegistroActivity extends AppCompatActivity {
         actualizarTamanoTextos(
                 findViewById(R.id.scrollContenido)
         );
+
+        actualizarTamanoTextos(barraAccesibilidad);
     }
 
     // ===================================================

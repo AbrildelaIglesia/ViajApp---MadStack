@@ -1,0 +1,1229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
+
+    <!-- ============================================= -->
+    <!-- ENCABEZADO ORIGINAL DE VIAJAPP                 -->
+    <!-- ============================================= -->
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FAF8FF"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:background="@drawable/logo_viajapp"
+                android:contentDescription="Logo ViajAPP" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ViajAPP"
+                    android:textColor="#001428"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PRESUPUESTO Y GASTOS"
+                    android:textColor="#43474D"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- PERFIL ORIGINAL DEL PROYECTO -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnAbrirPerfil"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:tooltipText="Perfil"
+                android:contentDescription="Abrir menú de mi cuenta"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#DBEAFE"
+                app:strokeColor="#93C5FD"
+                app:strokeWidth="2dp">
+
+                <ImageView
+                    android:id="@+id/imgIconoPerfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="#1D4ED8"
+                    android:importantForAccessibility="no" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ============================================= -->
+    <!-- BARRA DE ACCESIBILIDAD ORIGINAL                -->
+    <!-- ============================================= -->
+
+    <LinearLayout
+        android:id="@+id/barraAccesibilidad"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="14dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:background="@drawable/fondo_barra_accesibilidad"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/btnAccesibilidad"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:text=" ☰  ACCESIBILIDAD"
+            android:textColor="#1E5FA8"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:contentDescription="Cerrar menú de accesibilidad"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/btnDisminuirTexto"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:text="A-"
+            android:textColor="#111827"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnAumentarTexto"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:text="A+"
+            android:textColor="#111827"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnContraste"
+            android:layout_width="90dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:text="◐  Contraste"
+            android:textColor="#111827"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnAudio"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:background="@drawable/fondo_boton_audio"
+            android:text="🔊"
+            android:textSize="14sp"
+            android:contentDescription="Audio" />
+
+    </LinearLayout>
+
+    <!-- ============================================= -->
+    <!-- CONTENIDO DE PRESUPUESTO                      -->
+    <!-- ============================================= -->
+
+    <ScrollView
+        android:id="@+id/scrollContenido"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/barraAccesibilidad"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
+
+            <!-- TÍTULO -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Control de Presupuesto y Gastos"
+                android:textColor="#0C2340"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Controlá tus consumos durante el viaje y conocé cuánto dinero te queda disponible."
+                android:textColor="#64748B"
+                android:textSize="13sp"
+                android:lineSpacingExtra="3dp" />
+
+
+            <!-- ===================================== -->
+            <!-- SELECTOR DE VIAJE GUARDADO             -->
+            <!-- ===================================== -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tarjetaSeleccionViaje"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:strokeColor="#93C5FD"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTituloSeleccionViaje"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Seleccioná tu viaje"
+                        android:labelFor="@id/selectorViajes"
+                        android:textColor="#0C2340"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Elegí el viaje que querés administrar."
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/contenedorSelectorViaje"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        app:hintEnabled="false"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxStrokeColor="#60A5FA"
+                        app:boxBackgroundColor="#EFF6FF">
+
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                            android:id="@+id/selectorViajes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="56dp"
+                            android:inputType="none"
+                            android:singleLine="true"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="12dp"
+                            android:hint="Seleccioná un viaje"
+                            android:textColor="#0C2340"
+                            android:textColorHint="#64748B"
+                            android:textSize="15sp"
+                            android:importantForAccessibility="yes" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/tvAyudaSelectorViaje"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Cargando viajes guardados..."
+                        android:textColor="#64748B"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ===================================== -->
+            <!-- REGISTRO DE GASTO POR VOZ              -->
+            <!-- ===================================== -->
+
+            <LinearLayout
+                android:id="@+id/tarjetaRegistroVoz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="12dp"
+                android:background="@drawable/bg_ai_preview">
+
+
+                <ImageView
+                    android:id="@+id/imgMicrofonoPresupuesto"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_stepper_plus"
+                    android:src="@drawable/ic_mic"
+                    app:tint="#FFFFFF"
+                    android:contentDescription="Micrófono" />
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="¿Registrar gasto con voz?"
+                        android:textColor="#0C2340"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Ej.: Almuerzo en Bariloche $18.000"
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnRegistrarVoz"
+                    android:layout_width="72dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="4dp"
+                    android:text="Hablar"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/fondo_boton_ir_presupuesto"
+                    app:backgroundTint="@null"
+                    android:contentDescription="Registrar gasto utilizando la voz" />
+
+            </LinearLayout>
+
+            <!-- ===================================== -->
+            <!-- RESUMEN GENERAL DEL PRESUPUESTO        -->
+            <!-- ===================================== -->
+
+            <LinearLayout
+                android:id="@+id/tarjetaResumenPresupuesto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:background="@drawable/fondo_tarjeta_gastos"
+                android:elevation="3dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="●  Límite total planificado"
+                        android:textColor="#0C2340"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnEditarPresupuesto"
+                        android:layout_width="72dp"
+                        android:layout_height="48dp"
+                        android:text="Editar"
+                        android:textAllCaps="false"
+                        android:textColor="#1D4ED8"
+                        android:textSize="12sp"
+                        android:background="@drawable/fondo_boton_accesibilidad"
+                        app:backgroundTint="@null" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvLimiteTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Límite: $0"
+                    android:textColor="#0C2340"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <!-- TOTAL Y SALDO -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        app:cardCornerRadius="15dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#EFF6FF"
+                        app:strokeColor="#60A5FA"
+                        app:strokeWidth="2dp">
+
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Total gastado"
+                                android:textColor="#475569"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvTotalGastado"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="$0"
+                                android:textColor="#1E3A8A"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvPorcentajeConsumido"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="0% consumido"
+                                android:textColor="#64748B"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp"
+                        app:cardCornerRadius="15dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#FCE7ED"
+                        app:strokeColor="#F472B6"
+                        app:strokeWidth="2dp">
+
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Saldo restante"
+                                android:textColor="#475569"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvSaldoRestante"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:text="$0"
+                                android:textColor="#BE123C"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvEstadoSaldo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Sin gastos"
+                                android:textColor="#64748B"
+                                android:textSize="11sp" />
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <!-- PROGRESO DE PRESUPUESTO -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Capacidad utilizada"
+                        android:textColor="#475569"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvPorcentajeBarra"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0%"
+                        android:textColor="#1E3A8A"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progresoPresupuesto"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="14dp"
+                    android:layout_marginTop="9dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="#2563EB"
+                    android:progressBackgroundTint="#DBEAFE" />
+
+                <TextView
+                    android:id="@+id/tvAvisoPresupuesto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="✓  Ingresá tu presupuesto para comenzar"
+                    android:textColor="#15803D"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- ===================================== -->
+            <!-- ALERTA DE RITMO DE GASTOS              -->
+            <!-- ===================================== -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#E8EEFF"
+                app:strokeColor="#A5B4FC"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="◉  Ritmo de gasto actual"
+                        android:textColor="#1E3A8A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvRecomendacionGasto"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Cuando registres gastos, acá vas a ver recomendaciones para administrar mejor tu presupuesto."
+                        android:textColor="#475569"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="4dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===================================== -->
+            <!-- REGISTRAR UN NUEVO GASTO               -->
+            <!-- ===================================== -->
+
+            <LinearLayout
+                android:id="@+id/tarjetaNuevoGasto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/fondo_tarjeta_gastos"
+                android:elevation="3dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="✚  Registrar nuevo gasto"
+                    android:textColor="#0C2340"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <!-- MONTO -->
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="Monto en pesos (ARS) *"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etMontoGasto"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/fondo_campo"
+                    android:hint="Ej.: 18000"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#111827"
+                    android:textColorHint="#94A3B8"
+                    android:textSize="17sp" />
+
+                <!-- CONCEPTO -->
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Concepto o lugar *"
+                    android:textColor="#111827"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etConceptoGasto"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/fondo_campo"
+                    android:hint="Ej.: Almuerzo en Bariloche"
+                    android:inputType="textCapSentences"
+                    android:singleLine="true"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="#111827"
+                    android:textColorHint="#94A3B8"
+                    android:textSize="14sp" />
+
+                <!-- CATEGORÍAS -->
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="17dp"
+                    android:text="Categoría del gasto"
+                    android:textColor="#111827"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <RadioGroup
+                    android:id="@+id/rgCategoriaGasto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <RadioButton
+                            android:id="@+id/rbComida"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/fondo_categoria_gasto"
+                            android:padding="8dp"
+                            android:text="Comida"
+                            android:textColor="#0C2340"
+                            android:textSize="13sp"
+                            android:buttonTint="#2563EB"
+                            android:checked="true" />
+
+                        <RadioButton
+                            android:id="@+id/rbTransporte"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/fondo_categoria_gasto"
+                            android:padding="8dp"
+                            android:text="Transporte"
+                            android:textColor="#0C2340"
+                            android:textSize="13sp"
+                            android:buttonTint="#2563EB" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <RadioButton
+                            android:id="@+id/rbTours"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="5dp"
+                            android:background="@drawable/fondo_categoria_gasto"
+                            android:padding="8dp"
+                            android:text="Tours"
+                            android:textColor="#0C2340"
+                            android:textSize="13sp"
+                            android:buttonTint="#2563EB" />
+
+                        <RadioButton
+                            android:id="@+id/rbAlojamiento"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/fondo_categoria_gasto"
+                            android:padding="8dp"
+                            android:text="Alojamiento"
+                            android:textColor="#0C2340"
+                            android:textSize="13sp"
+                            android:buttonTint="#2563EB" />
+
+                    </LinearLayout>
+
+                    <RadioButton
+                        android:id="@+id/rbSouvenirs"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/fondo_categoria_gasto"
+                        android:padding="8dp"
+                        android:text="Souvenirs y recuerdos"
+                        android:textColor="#0C2340"
+                        android:textSize="13sp"
+                        android:buttonTint="#2563EB" />
+
+
+                    <!-- CATEGORÍA OTROS -->
+                    <RadioButton
+                        android:id="@+id/rbOtros"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/fondo_categoria_gasto"
+                        android:padding="8dp"
+                        android:text="Otros"
+                        android:textColor="#0C2340"
+                        android:textSize="13sp"
+                        android:buttonTint="#2563EB" />
+
+                    <!-- CATEGORÍA IMPREVISTO -->
+                    <RadioButton
+                        android:id="@+id/rbImprevisto"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/fondo_categoria_gasto"
+                        android:padding="8dp"
+                        android:text="Gasto no planificado o imprevisto"
+                        android:textColor="#0C2340"
+                        android:textSize="13sp"
+                        android:buttonTint="#2563EB" />
+
+                </RadioGroup>
+
+
+                <!-- BOTÓN REGISTRAR GASTO -->
+
+                <Button
+                    android:id="@+id/btnRegistrarGasto"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_button_ai"
+                    app:backgroundTint="@null"
+                    android:minHeight="0dp"
+                    android:stateListAnimator="@null"
+                    android:text="✚  Registrar gasto"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- ===================================== -->
+            <!-- HISTORIAL DE GASTOS                   -->
+            <!-- ===================================== -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Historial de gastos"
+                android:textColor="#0C2340"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Detalle de tus consumos durante el viaje"
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/contenedorHistorialGastos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="15dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <TextView
+                        android:id="@+id/tvHistorialVacio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="18dp"
+                        android:text="Todavía no registraste gastos para este viaje."
+                        android:textColor="#475569"
+                        android:textSize="13sp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- ===================================== -->
+            <!-- FORMATOS INCLUSIVOS DE RESUMEN         -->
+            <!-- ===================================== -->
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#EFF6FF"
+                app:strokeColor="#60A5FA"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- ÍCONO Y TÍTULO -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/imgDocumentoPdf"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:padding="11dp"
+                            android:background="@drawable/fondo_boton_accesibilidad"
+                            android:src="@drawable/ic_documento_descarga"
+                            android:contentDescription="Documento con flecha de descarga" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:text="Formatos inclusivos de resumen"
+                            android:textColor="#0C2340"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- DESCRIPCIÓN -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Descargá un resumen de tus gastos para consultar o imprimir."
+                        android:textColor="#475569"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
+
+                    <!-- BOTÓN PDF -->
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnDescargarPdf"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/fondo_boton_ir_presupuesto"
+                        android:backgroundTint="@null"
+                        android:text="Descargar PDF accesible"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Descargar resumen de gastos en PDF" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ===================================== -->
+            <!-- HISTORIAL GENERAL DE PRESUPUESTOS     -->
+            <!-- ===================================== -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/tarjetaHistorialGeneral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#EFF6FF"
+                app:strokeColor="#93C5FD"
+                app:strokeWidth="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+
+                    <!-- ENCABEZADO CON ICONO Y TITULO -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- FONDO CELESTE DEL ICONO -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="54dp"
+                            android:layout_height="54dp"
+                            android:layout_marginEnd="12dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#DBEAFE">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="13dp"
+                                android:src="@drawable/ic_historial_gastos_nuevo"
+                                app:tint="#2563EB"
+                                android:contentDescription="Historial de presupuestos y gastos" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- TITULO Y SUBTITULO -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Tus gastos de otros viajes"
+                                android:textColor="#0C2340"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Consultá tus presupuestos anteriores"
+                                android:textColor="#475569"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="¿Querés consultar cuánto presupuestaste y gastaste en tus viajes anteriores? Encontrá todos tus registros en un mismo lugar."
+                        android:textColor="#475569"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnVerHistorialGeneral"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="56dp"
+                        android:layout_marginTop="16dp"
+                        android:padding="10dp"
+                        android:background="@drawable/fondo_boton_ir_presupuesto"
+                        android:backgroundTint="@null"
+                        android:text="Ver historial de presupuestos y gastos"
+                        android:textAllCaps="false"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Consultar el historial de presupuestos y gastos de todos mis viajes" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- ============================================= -->
+    <!-- MENÚ INFERIOR ORIGINAL DE VIAJAPP             -->
+    <!-- ============================================= -->
+
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="72dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="#FAF8FF"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- ACCESIBILIDAD -->
+
+        <LinearLayout
+            android:id="@+id/navAccesibilidad"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="♿︎"
+                android:textColor="#64748B"
+                android:textSize="23sp"
+                android:clickable="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accesibilidad"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- PLANEAR -->
+
+        <LinearLayout
+            android:id="@+id/navPlanear"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="◎"
+                android:textColor="#64748B"
+                android:textSize="23sp"
+                android:clickable="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Planear"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- ITINERARIO -->
+
+        <LinearLayout
+            android:id="@+id/navItinerario"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="▦"
+                android:textColor="#64748B"
+                android:textSize="23sp"
+                android:clickable="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Itinerario"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- COLECCIÓN -->
+
+        <LinearLayout
+            android:id="@+id/navLugares"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="⌖"
+                android:textColor="#64748B"
+                android:textSize="23sp"
+                android:clickable="false" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Colección"
+                android:textColor="#64748B"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
