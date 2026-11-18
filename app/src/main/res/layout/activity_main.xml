@@ -38,7 +38,7 @@
             android:textColor="#1E5FA8"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:contentDescription="Cerrar menú de accesibilidad"
+            android:contentDescription="Menú de accesibilidad"
             android:clickable="true"
             android:focusable="true" />
 
@@ -53,7 +53,8 @@
             android:text="A-"
             android:textColor="#111827"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
         <!-- AUMENTAR TEXTO -->
         <TextView
@@ -66,7 +67,8 @@
             android:text="A+"
             android:textColor="#111827"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
         <!-- CONTRASTE -->
         <TextView
@@ -79,7 +81,8 @@
             android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cambiar contraste de pantalla"/>
 
         <!-- AUDIO -->
         <TextView
@@ -91,7 +94,7 @@
             android:gravity="center"
             android:text="🔊"
             android:textSize="14sp"
-            android:contentDescription="Audio" />
+            android:contentDescription="Cambiar lectura de pantalla por voz"/>
 
     </LinearLayout>
 
@@ -125,15 +128,17 @@
                 android:background="@drawable/fondo_logo"
                 android:padding="8dp"
                 android:src="@drawable/logo_viajapp"
-                android:contentDescription="Logo de ViajAPP"
-                android:scaleType="fitCenter" />
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:contentDescription="ViajAPP">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -141,7 +146,8 @@
                     android:text="Viaj"
                     android:textColor="#0B1F3A"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -149,7 +155,8 @@
                     android:text="APP"
                     android:textColor="#F04462"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
             </LinearLayout>
 
             <TextView
@@ -159,7 +166,8 @@
                 android:text="Accesible"
                 android:textColor="#1E5FA8"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -168,7 +176,8 @@
                 android:gravity="center"
                 android:text="Turismo sin barreras: viaja cómodo, libre e&#10;informado."
                 android:textColor="#4B5563"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:contentDescription="Turismo sin barreras: viaja cómodo, libre e informado."/>
 
             <TextView
                 android:id="@+id/txtCompatibilidadLectores"
@@ -182,7 +191,8 @@
                 android:paddingEnd="10dp"
                 android:text="100% compatible con lectores de pantalla"
                 android:textColor="#059669"
-                android:textSize="10sp" />
+                android:textSize="10sp"
+                android:importantForAccessibility="no"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -192,6 +202,7 @@
                 android:elevation="2dp">
 
                 <TextView
+                    android:id="@+id/lblCorreo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
@@ -200,23 +211,45 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/etCorreo"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/fondo_campo"
-                    android:drawableStart="@drawable/ic_email"
-                    android:drawablePadding="10dp"
-                    android:hint="ejemplo@viajapp.org"
-                    android:inputType="textEmailAddress"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:singleLine="true"
-                    android:textColor="#111827"
-                    android:textColorHint="#8493AA"
-                    android:textSize="12sp" />
+                    android:paddingEnd="8dp">
 
+                    <EditText
+                        android:id="@+id/etCorreo"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:drawableStart="@drawable/ic_email"
+                        android:drawablePadding="10dp"
+                        android:hint="Escribí tu correo"
+                        android:inputType="textEmailAddress"
+                        android:autofillHints="emailAddress"
+                        android:singleLine="true"
+                        android:textColor="#111827"
+                        android:textColorHint="#8493AA"
+                        android:textSize="12sp" />
+
+                    <!-- BOTÓN DE MICRÓFONO PARA CORREO -->
+                    <ImageView
+                        android:id="@+id/btnMicCorreo"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_mic"
+                        android:contentDescription="Dictar correo electrónico" />
+                </LinearLayout>
+
+                <!-- CONTRASEÑA CON OJITO Y MICRÓFONO INDIVIDUAL -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -234,7 +267,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingStart="12dp"
-                    android:paddingEnd="12dp">
+                    android:paddingEnd="8dp">
 
                     <EditText
                         android:id="@+id/etContrasena"
@@ -244,27 +277,37 @@
                         android:background="@null"
                         android:drawableStart="@drawable/ic_lock"
                         android:drawablePadding="10dp"
-                        android:hint="***********"
+                        android:hint="Escribí tu contraseña"
                         android:inputType="textPassword"
+                        android:autofillHints="password"
                         android:singleLine="true"
                         android:textColor="#111827"
                         android:textColorHint="#8493AA"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:contentDescription="Contraseña, campo de texto seguro, obligatorio"/>
 
-
+                    <!-- BOTÓN MOSTRAR/OCULTAR CONTRASEÑA -->
                     <ImageView
                         android:id="@+id/btnTogglePassword"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:padding="10dp"
-                        android:scaleType="fitCenter"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:clickable="true"
                         android:focusable="true"
+                        android:padding="4dp"
                         android:src="@drawable/visible_false"
                         android:contentDescription="Mostrar contraseña" />
 
-
-
+                    <!-- BOTÓN DE MICRÓFONO PARA CONTRASEÑA -->
+                    <ImageView
+                        android:id="@+id/btnMicContrasena"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="4dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_mic"
+                        android:contentDescription="Dictar contraseña" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -303,9 +346,10 @@
                     android:text="O INGRESA DE FORMA ACCESIBLE CON"
                     android:textColor="#52647A"
                     android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
 
-                <LinearLayout
+                <!--<LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -320,12 +364,13 @@
                         android:layout_marginEnd="5dp"
                         android:background="@drawable/fondo_campo"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:src="@drawable/ic_fingerprint"
+                        android:contentDescription="Iniciar sesión con biometría, huella o reconocimiento facial"
+                        android:importantForAccessibility="no">
                         <ImageView
                             android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_fingerprint"
-                            android:contentDescription="Huella digital" />
+                            android:layout_height="20dp"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -336,27 +381,35 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/btnDictadoVoz"
                         android:layout_width="0dp"
                         android:layout_height="46dp"
-                        android:layout_weight="1"
                         android:layout_marginStart="5dp"
+                        android:layout_weight="1"
                         android:background="@drawable/fondo_campo"
+                        android:contentDescription="Iniciar sesión o completar campos mediante dictado por voz"
                         android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
                         android:orientation="horizontal">
+
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_mic"
-                            android:contentDescription="Micrófono" />
+                            android:importantForAccessibility="no" />
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
                             android:text="Dictado por voz"
                             android:textColor="#0B1F3A"
-                            android:textSize="10sp" />
+                            android:textSize="10sp"
+                            android:importantForAccessibility="no" />
                     </LinearLayout>
-                </LinearLayout>
+                </LinearLayout>-->
 
                 <TextView
                     android:layout_width="match_parent"
@@ -365,7 +418,9 @@
                     android:gravity="center"
                     android:text="Tus datos están protegidos y tus adaptaciones son privadas."
                     android:textColor="#6B7280"
-                    android:textSize="10sp" />
+                    android:textSize="10sp"
+                    android:src="@drawable/ic_fingerprint"
+                    android:contentDescription="Tus datos están protegidos y tus adaptaciones son privadas." />
             </LinearLayout>
 
             <!-- Pie de pantalla -->
@@ -384,20 +439,22 @@
                     android:layout_height="wrap_content"
                     android:text="¿Aún no tenés una cuenta? "
                     android:textColor="#4B5563"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:id="@+id/txtRegistrarse"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
                     android:gravity="center_vertical"
                     android:text="Registrate acá"
                     android:textColor="#F04462"
                     android:textSize="11sp"
                     android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"/>
+                    android:contentDescription="¿Aún no tenés una cuenta? Registrate acá, enlace"/>
             </LinearLayout>
 
         </LinearLayout>
