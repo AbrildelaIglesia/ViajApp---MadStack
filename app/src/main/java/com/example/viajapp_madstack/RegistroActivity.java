@@ -205,6 +205,10 @@ public class RegistroActivity extends AppCompatActivity {
             actualizarTamanoTextos(
                     findViewById(R.id.scrollContenido)
             );
+
+            actualizarTamanoTextos(barraAccesibilidad);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // BOTÓN A-
@@ -218,6 +222,10 @@ public class RegistroActivity extends AppCompatActivity {
             actualizarTamanoTextos(
                     findViewById(R.id.scrollContenido)
             );
+
+            actualizarTamanoTextos(barraAccesibilidad);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // BOTÓN CONTRASTE
@@ -226,6 +234,7 @@ public class RegistroActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 
@@ -299,7 +308,24 @@ public class RegistroActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+
+        actualizarTamanoTextos(
+                findViewById(R.id.scrollContenido)
+        );
+
+        actualizarTamanoTextos(barraAccesibilidad);
+    }
 
     // ===================================================
     // AUMENTAR Y DISMINUIR TAMAÑO DE TEXTOS

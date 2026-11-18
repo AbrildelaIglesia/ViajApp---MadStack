@@ -123,18 +123,27 @@ public class MenuEditarPerfil {
             });
         });
 
+        // GUARDAR EL NOMBRE ORIGINAL DEL PERFIL
+        final String[] nombreOriginal = {null};
+
         // CARGAR DATOS EXISTENTES
         cargarDatosUsuario(
                 actividad,
                 edtNombre,
-                edtCorreo
+                edtCorreo,
+                nombre -> nombreOriginal[0] = nombre
         );
 
         // GUARDAR CAMBIOS
         btnGuardar.setOnClickListener(v -> {
 
+
             layoutNombre.setError(null);
+            layoutNombre.setErrorEnabled(false);
+
             layoutCorreo.setError(null);
+            layoutCorreo.setErrorEnabled(false);
+
 
             String nombreCompleto =
                     obtenerTexto(edtNombre).trim();
@@ -198,6 +207,30 @@ public class MenuEditarPerfil {
                             correoNuevo
                     );
 
+            // COMPROBAR QUE EL NOMBRE ORIGINAL YA SE CARGÓ
+            if (nombreOriginal[0] == null) {
+                mostrarMensaje(
+                        actividad,
+                        "Esperá a que se carguen los datos del perfil"
+                );
+                return;
+            }
+
+            // COMPROBAR SI CAMBIÓ EL NOMBRE
+            boolean cambioNombre =
+                    !nombreCompleto.equals(nombreOriginal[0]);
+
+            // SI NO CAMBIÓ NADA, NO GUARDAR EN FIREBASE
+            if (!cambioNombre && !cambioCorreo) {
+
+                mostrarMensaje(
+                        actividad,
+                        "No se detectaron cambios en tu perfil"
+                );
+
+                return;
+            }
+
             // EVITAR DOBLE ENVÍO
             btnGuardar.setEnabled(false);
             btnGuardar.setText("Guardando...");
@@ -215,6 +248,10 @@ public class MenuEditarPerfil {
                         if (actividad.isFinishing()
                                 || actividad.isDestroyed()) {
                             return;
+                        }
+
+                        if (cambioNombre) {
+                            nombreOriginal[0] = nombreCompleto;
                         }
 
                         // SI EL CORREO NO CAMBIÓ,
@@ -309,7 +346,7 @@ public class MenuEditarPerfil {
                                                             popup.dismiss();
 
                                                             new androidx.appcompat.app.AlertDialog.Builder(actividad)
-                                                                    .setTitle("¡Correo actualizado correctamente!")
+                                                                    .setTitle("¡Verificación completada!")
                                                                     .setMessage(
                                                                             "Tu nueva dirección de correo electrónico "
                                                                                     + "fue verificada y actualizada.\n\n"
@@ -453,7 +490,8 @@ public class MenuEditarPerfil {
     private static void cargarDatosUsuario(
             Activity actividad,
             TextInputEditText edtNombre,
-            TextInputEditText edtCorreo) {
+            TextInputEditText edtCorreo,
+            java.util.function.Consumer<String> alCargarNombre) {
 
         FirebaseUser usuario =
                 FirebaseAuth.getInstance().getCurrentUser();
@@ -513,11 +551,15 @@ public class MenuEditarPerfil {
                                 usuario.getDisplayName();
                     }
 
-                    edtNombre.setText(
+                    String nombreCargado =
                             nombreCompleto != null
                                     ? nombreCompleto
-                                    : ""
-                    );
+                                    : "";
+
+                    edtNombre.setText(nombreCargado);
+
+                    // RECORDAR EL VALOR ORIGINAL PARA COMPARARLO
+                    alCargarNombre.accept(nombreCargado.trim());
                 })
 
                 .addOnFailureListener(error -> {

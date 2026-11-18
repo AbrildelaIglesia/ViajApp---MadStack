@@ -125,6 +125,44 @@ public class MenuSeguridad {
                 return;
             }
 
+
+            // VALIDAR LETRA MAYÚSCULA
+            if (!nueva.matches(".*[A-Z].*")) {
+                layoutNueva.setError(
+                        "Debe contener al menos una letra mayúscula"
+                );
+                edtNueva.requestFocus();
+                return;
+            }
+
+            // VALIDAR LETRA MINÚSCULA
+            if (!nueva.matches(".*[a-z].*")) {
+                layoutNueva.setError(
+                        "Debe contener al menos una letra minúscula"
+                );
+                edtNueva.requestFocus();
+                return;
+            }
+
+            // VALIDAR NÚMERO
+            if (!nueva.matches(".*[0-9].*")) {
+                layoutNueva.setError(
+                        "Debe contener al menos un número"
+                );
+                edtNueva.requestFocus();
+                return;
+            }
+
+            // VALIDAR CARÁCTER ESPECIAL
+            if (!nueva.matches(".*[^a-zA-Z0-9].*")) {
+                layoutNueva.setError(
+                        "Debe contener al menos un carácter especial"
+                );
+                edtNueva.requestFocus();
+                return;
+            }
+
+
             // EVITAR REUTILIZAR LA MISMA CONTRASEÑA
             if (actual.equals(nueva)) {
                 layoutNueva.setError(

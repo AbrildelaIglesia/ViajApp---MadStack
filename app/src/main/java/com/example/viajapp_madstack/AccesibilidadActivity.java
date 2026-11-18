@@ -1,3 +1,4 @@
+
 package com.example.viajapp_madstack;
 
 import android.content.Intent;
@@ -23,6 +24,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -34,7 +36,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
     private TextView btnAccesibilidad, btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias;
     private TextView btnCheckMovilidad, btnCheckCortos, btnCheckBanos, btnCheckVisual, btnCheckAuditiva;
-    private View pantallaPrincipal, scrollContenido, header, bottomNav, tarjetaTamanoTexto;
+    private View pantallaPrincipal, scrollContenido, header, bottomNav;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser currentUser;
@@ -58,8 +60,10 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accesibilidad);
+
 
         // Inicializar Firebase
         firebaseAuth = FirebaseAuth.getInstance();
@@ -71,27 +75,59 @@ public class AccesibilidadActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         userId = currentUser.getUid();
 
+        // INICIAR ACCESIBILIDAD
         configurarAccesibilidad();
+
+
+        // ===================================================
+        // MENÚ DESPLEGABLE DEL PERFIL DE USUARIO
+        // ===================================================
+
+        View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
+
+        btnAbrirPerfil.setOnClickListener(v -> {
+
+            MenuPerfilUsuario.mostrar(
+                    AccesibilidadActivity.this,
+                    btnAbrirPerfil,
+                    modoContraste,
+                    escalaTexto
+            );
+
+        });
+
+
+
+        // NAVEGACIÓN INFERIOR ORIGINAL
         configurarNavegacion();
         configurarBotonesSeleccion();
 
-        // Menú desplegable del perfil de usuario
-        View btnAbrirPerfil = findViewById(R.id.btnAbrirPerfil);
-        if (btnAbrirPerfil != null) {
-            btnAbrirPerfil.setOnClickListener(v -> {
-                MenuPerfilUsuario.mostrar(
-                        AccesibilidadActivity.this,
-                        btnAbrirPerfil,
-                        modoContraste,
-                        escalaTexto
-                );
-            });
-        }
+        // ABRIR PANTALLA DE PRESUPUESTO Y GASTOS
+        findViewById(R.id.btnIrPresupuesto).setOnClickListener(v -> {
+            Intent intent = new Intent(
+                    AccesibilidadActivity.this,
+                    PresupuestoActivity.class
+            );
+            startActivity(intent);
+        });
+    }
 
-        // Cargar las preferencias guardadas de Firestore al iniciar (Versión B)
-        cargarPreferenciasDesdeCloud();
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(pantallaPrincipal);
     }
 
     // NAVEGACIÓN INFERIOR
@@ -101,15 +137,21 @@ public class AccesibilidadActivity extends AppCompatActivity {
         navItinerario = findViewById(R.id.navItinerario);
         navLugares = findViewById(R.id.navLugares);
 
-        if (navPlanear != null) {
-            navPlanear.setOnClickListener(v -> startActivity(new Intent(AccesibilidadActivity.this, PlanearActivity.class)));
-        }
-        if (navItinerario != null) {
-            navItinerario.setOnClickListener(v -> startActivity(new Intent(AccesibilidadActivity.this, ItinerarioActivity.class)));
-        }
-        if (navLugares != null) {
-            navLugares.setOnClickListener(v -> startActivity(new Intent(AccesibilidadActivity.this, LugaresActivity.class)));
-        }
+        navPlanear.setOnClickListener(v -> {
+            startActivity(new Intent(AccesibilidadActivity.this, PlanearActivity.class));
+        });
+
+        navAccesibilidad.setOnClickListener(v -> {
+            // Ya estamos en esta pantalla
+        });
+
+        navItinerario.setOnClickListener(v -> {
+            startActivity(new Intent(AccesibilidadActivity.this, ItinerarioActivity.class));
+        });
+
+        navLugares.setOnClickListener(v -> {
+            startActivity(new Intent(AccesibilidadActivity.this, LugaresActivity.class));
+        });
     }
 
     // CONFIGURACIÓN DE LOS 5 BOTONES DE SELECCIÓN
@@ -120,10 +162,11 @@ public class AccesibilidadActivity extends AppCompatActivity {
         btnCheckVisual = findViewById(R.id.btnCheckVisual);
         btnCheckAuditiva = findViewById(R.id.btnCheckAuditiva);
 
+        // Todos comienzan en false (no seleccionados) al entrar
         inicializarBoton(btnCheckMovilidad, false);
         inicializarBoton(btnCheckCortos, false);
         inicializarBoton(btnCheckBanos, false);
-        inicializarBotonVisual(false); // <--- Lógica especial con TalkBack (Versión A)
+        inicializarBotonVisual(false);
         inicializarBoton(btnCheckAuditiva, false);
     }
 
@@ -192,54 +235,13 @@ public class AccesibilidadActivity extends AppCompatActivity {
                     try {
                         startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
                     } catch (Exception e) {
-                        Toast.makeText(this, "No se pudo abrir la configuración de accesibilidad", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this,
+                                "No se pudo abrir la configuración de accesibilidad",
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Ahora no", null)
                 .show();
-    }
-
-    // CARGAR PREFERENCIAS DESDE FIRESTORE (Versión B)
-    private void cargarPreferenciasDesdeCloud() {
-        firestore.collection("usuarios").document(userId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Map<String, Object> accesibilidad = (Map<String, Object>) documentSnapshot.get("accesibilidad");
-
-                        if (accesibilidad != null) {
-                            boolean movilidad = Boolean.TRUE.equals(accesibilidad.get("sillaRuedas"));
-                            boolean cortos = Boolean.TRUE.equals(accesibilidad.get("recorridosCortos"));
-                            boolean banos = Boolean.TRUE.equals(accesibilidad.get("banosAdaptados"));
-                            boolean visual = Boolean.TRUE.equals(accesibilidad.get("visionReducida"));
-                            boolean auditiva = Boolean.TRUE.equals(accesibilidad.get("subtitulos"));
-
-                            if (btnCheckMovilidad != null) {
-                                btnCheckMovilidad.setTag(movilidad);
-                                actualizarVistaBoton(btnCheckMovilidad, movilidad);
-                            }
-                            if (btnCheckCortos != null) {
-                                btnCheckCortos.setTag(cortos);
-                                actualizarVistaBoton(btnCheckCortos, cortos);
-                            }
-                            if (btnCheckBanos != null) {
-                                btnCheckBanos.setTag(banos);
-                                actualizarVistaBoton(btnCheckBanos, banos);
-                            }
-                            if (btnCheckVisual != null) {
-                                btnCheckVisual.setTag(visual);
-                                actualizarVistaBoton(btnCheckVisual, visual);
-                            }
-                            if (btnCheckAuditiva != null) {
-                                btnCheckAuditiva.setTag(auditiva);
-                                actualizarVistaBoton(btnCheckAuditiva, auditiva);
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al cargar preferencias: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void actualizarVistaBoton(TextView boton, boolean seleccionado) {
@@ -258,7 +260,6 @@ public class AccesibilidadActivity extends AppCompatActivity {
         scrollContenido = findViewById(R.id.scrollContenido);
         header = findViewById(R.id.header);
         bottomNav = findViewById(R.id.bottomNav);
-        tarjetaTamanoTexto = findViewById(R.id.tarjetaTamanoTexto);
 
         barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
 
@@ -267,58 +268,106 @@ public class AccesibilidadActivity extends AppCompatActivity {
         btnAumentarTexto = findViewById(R.id.btnAumentarTexto);
         btnContraste = findViewById(R.id.btnContraste);
         btnAudio = findViewById(R.id.btnAudio);
-        btnPreferencias = findViewById(R.id.btnPreferencias);
+        btnPreferencias = findViewById(R.id.btnPreferencias); // <--- Enlace correcto al ID del XML
 
+        // Guardamos los valores originales de toda la pantalla
         guardarOriginales(pantallaPrincipal);
 
-        if (btnAccesibilidad != null) {
-            btnAccesibilidad.setOnClickListener(v -> {
-                controlesVisibles = !controlesVisibles;
-                int visibilidad = controlesVisibles ? View.VISIBLE : View.GONE;
+        // ABRIR Y CERRAR EL MENÚ DE ACCESIBILIDAD
+        btnAccesibilidad.setOnClickListener(v -> {
 
-                if (btnDisminuirTexto != null) btnDisminuirTexto.setVisibility(visibilidad);
-                if (btnAumentarTexto != null) btnAumentarTexto.setVisibility(visibilidad);
-                if (btnContraste != null) btnContraste.setVisibility(visibilidad);
-                if (btnAudio != null) btnAudio.setVisibility(visibilidad);
+            controlesVisibles = !controlesVisibles;
 
-                btnAccesibilidad.setContentDescription(
-                        controlesVisibles ? "Cerrar menú de accesibilidad" : "Abrir menú de accesibilidad"
-                );
-            });
-        }
+            int visibilidad = controlesVisibles
+                    ? View.VISIBLE
+                    : View.GONE;
 
-        if (btnDisminuirTexto != null) {
-            btnDisminuirTexto.setOnClickListener(v -> {
-                escalaTexto = Math.max(0.9f, escalaTexto - 0.1f);
-                actualizarTamanoTextos(pantallaPrincipal);
-            });
-        }
+            btnDisminuirTexto.setVisibility(visibilidad);
+            btnAumentarTexto.setVisibility(visibilidad);
+            btnContraste.setVisibility(visibilidad);
+            btnAudio.setVisibility(visibilidad);
 
-        if (btnAumentarTexto != null) {
-            btnAumentarTexto.setOnClickListener(v -> {
-                escalaTexto = Math.min(1.3f, escalaTexto + 0.1f);
-                actualizarTamanoTextos(pantallaPrincipal);
-            });
-        }
+            // AJUSTAR EL BOTÓN PRINCIPAL
+            LinearLayout.LayoutParams parametrosBoton =
+                    (LinearLayout.LayoutParams)
+                            btnAccesibilidad.getLayoutParams();
 
-        if (btnContraste != null) {
-            btnContraste.setOnClickListener(v -> {
-                modoContraste++;
-                if (modoContraste > 2) {
-                    modoContraste = 0;
-                }
-                aplicarTemaContraste();
-            });
-        }
+            parametrosBoton.width = controlesVisibles
+                    ? 0
+                    : LinearLayout.LayoutParams.WRAP_CONTENT;
 
-        if (btnAudio != null) {
-            btnAudio.setOnClickListener(v -> {
-                Toast.makeText(this, "Función de audio próximamente", Toast.LENGTH_SHORT).show();
-            });
-        }
+            parametrosBoton.weight = controlesVisibles ? 1f : 0f;
 
+            btnAccesibilidad.setLayoutParams(parametrosBoton);
+
+            int espacio = dp(12);
+
+            btnAccesibilidad.setPadding(
+                    controlesVisibles ? 0 : espacio,
+                    0,
+                    controlesVisibles ? 0 : espacio,
+                    0
+            );
+
+            // HACER COMPACTA LA BARRA CUANDO SE CIERRA
+            androidx.constraintlayout.widget.ConstraintLayout.LayoutParams parametrosBarra =
+                    (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams)
+                            barraAccesibilidad.getLayoutParams();
+
+            parametrosBarra.width = controlesVisibles
+                    ? 0
+                    : androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTENT;
+
+            barraAccesibilidad.setLayoutParams(parametrosBarra);
+
+            btnAccesibilidad.setContentDescription(
+                    controlesVisibles
+                            ? "Cerrar menú de accesibilidad"
+                            : "Abrir menú de accesibilidad"
+            );
+        });
+
+
+        // Disminuir tamaño del texto
+        btnDisminuirTexto.setOnClickListener(v -> {
+            escalaTexto = Math.max(0.9f,
+                    Math.round((escalaTexto - 0.1f) * 10f) / 10f);
+
+            actualizarTamanoTextos(pantallaPrincipal);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
+        });
+
+        // Aumentar tamaño del texto
+        btnAumentarTexto.setOnClickListener(v -> {
+            escalaTexto = Math.min(1.3f,
+                    Math.round((escalaTexto + 0.1f) * 10f) / 10f);
+
+            actualizarTamanoTextos(pantallaPrincipal);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
+        });
+
+        // Cambiar modo de contraste
+        btnContraste.setOnClickListener(v -> {
+            modoContraste++;
+            if (modoContraste > 2) {
+                modoContraste = 0;
+            }
+            aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
+        });
+
+        // Botón de audio
+        btnAudio.setOnClickListener(v -> {
+            Toast.makeText(this, "Función de audio próximamente", Toast.LENGTH_SHORT).show();
+        });
+
+        // Guardar preferencias en Firestore al hacer clic en btnPreferencias
         if (btnPreferencias != null) {
-            btnPreferencias.setOnClickListener(v -> guardarPreferenciasEnCloud());
+            btnPreferencias.setOnClickListener(v -> {
+                guardarPreferenciasEnCloud();
+            });
         }
     }
 
@@ -328,16 +377,18 @@ public class AccesibilidadActivity extends AppCompatActivity {
             return;
         }
 
+        // Recolectar el estado actual (true/false) de los 5 botones
         boolean movilidad = btnCheckMovilidad != null && Boolean.TRUE.equals(btnCheckMovilidad.getTag());
         boolean recorridosCortos = btnCheckCortos != null && Boolean.TRUE.equals(btnCheckCortos.getTag());
-        boolean banos = btnCheckBanos != null && Boolean.TRUE.equals(btnCheckBanos.getTag());
+        boolean banos = btnCheckBanos != null && Boolean.TRUE.equals(btnCheckBanos.getTag()); // Asegúrate de si este campo se llama así en tu Firestore
         boolean visual = btnCheckVisual != null && Boolean.TRUE.equals(btnCheckVisual.getTag());
         boolean auditiva = btnCheckAuditiva != null && Boolean.TRUE.equals(btnCheckAuditiva.getTag());
 
+        // Usamos exactamente el nombre del mapa que tienes en la base de datos ("accesibilidad")
         Map<String, Object> actualizacion = new HashMap<>();
         actualizacion.put("accesibilidad.sillaRuedas", movilidad);
         actualizacion.put("accesibilidad.recorridosCortos", recorridosCortos);
-        actualizacion.put("accesibilidad.banosAdaptados", banos);
+        actualizacion.put("accesibilidad.banosAdaptados", banos); // Cambia "banosAdaptados" si en Firestore se llama diferente
         actualizacion.put("accesibilidad.visionReducida", visual);
         actualizacion.put("accesibilidad.subtitulos", auditiva);
 
@@ -345,6 +396,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
             btnPreferencias.setEnabled(false);
         }
 
+        // Actualizamos únicamente los campos internos dentro del mapa "accesibilidad"[cite: 1]
         firestore.collection("usuarios").document(userId)
                 .update(actualizacion)
                 .addOnSuccessListener(aVoid -> {
@@ -357,6 +409,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
                 });
     }
 
+    // GUARDAR DISEÑO ORIGINAL
     private void guardarOriginales(View vista) {
         if (vista == null) return;
 
@@ -383,6 +436,7 @@ public class AccesibilidadActivity extends AppCompatActivity {
         }
     }
 
+    // CAMBIAR TAMAÑO DE LOS TEXTOS
     private void actualizarTamanoTextos(View vista) {
         if (vista == null) return;
 
@@ -406,72 +460,136 @@ public class AccesibilidadActivity extends AppCompatActivity {
         }
     }
 
+    // APLICAR CONTRASTE
     private void aplicarTemaContraste() {
         restaurarDisenoOriginal(pantallaPrincipal);
 
         if (modoContraste == 0) {
-            if (btnContraste != null) btnContraste.setText("◐  Contraste");
+            btnContraste.setText("◐  Contraste");
             sincronizarBotonesSeleccionDespuesDeRestaurar();
             return;
         }
 
+
         int fondoPantalla, fondoTarjeta, borde, textoPrincipal, textoSecundario;
 
         if (modoContraste == 1) {
-            fondoPantalla = Color.rgb(255, 247, 230);
-            fondoTarjeta = Color.rgb(255, 253, 247);
-            borde = Color.rgb(214, 199, 161);
+            // MODO CREMA
+            fondoPantalla = Color.parseColor("#FFF1D6");
+            fondoTarjeta = Color.parseColor("#EBD6B4");
+            borde = Color.parseColor("#C7AC88");
+            textoPrincipal = Color.parseColor("#222222");
+            textoSecundario = Color.parseColor("#5A5146");
 
-            textoPrincipal = Color.rgb(59, 47, 32);
-            textoSecundario = Color.rgb(102, 90, 74);
+            btnPreferencias.setBackground(
+                    fondoRedondeado(
+                            Color.rgb(130, 85, 35),
+                            Color.rgb(100, 65, 30),
+                            12
+                    )
+            );
 
-            if (btnPreferencias != null) {
-                btnPreferencias.setBackground(fondoRedondeado(Color.rgb(130, 85, 35), Color.rgb(100, 65, 30), 12));
-            }
-            if (btnAudio != null) {
-                btnAudio.setBackground(fondoRedondeado(Color.rgb(245, 235, 215), Color.rgb(180, 160, 130), 12));
-            }
-            if (btnContraste != null) btnContraste.setText("◐  Crema");
+            btnAudio.setBackground(
+                    fondoRedondeado(
+                            Color.parseColor("#FFFAF0"),
+                            borde,
+                            12
+                    )
+            );
+
+            btnContraste.setText("◐  Crema");
 
         } else {
-            fondoPantalla = Color.rgb(18, 18, 18);
-            fondoTarjeta = Color.rgb(30, 30, 30);
-            borde = Color.rgb(85, 85, 85);
-
+            // MODO OSCURO
+            fondoPantalla = Color.parseColor("#111111");
+            fondoTarjeta = Color.parseColor("#222222");
+            borde = Color.parseColor("#444444");
             textoPrincipal = Color.WHITE;
-            textoSecundario = Color.rgb(210, 210, 210);
+            textoSecundario = Color.parseColor("#D0D0D0");
 
-            if (btnPreferencias != null) {
-                btnPreferencias.setBackground(fondoRedondeado(Color.rgb(55, 55, 55), Color.rgb(120, 120, 120), 12));
-            }
-            if (btnAudio != null) {
-                btnAudio.setBackground(fondoRedondeado(Color.rgb(55, 55, 55), Color.rgb(120, 120, 120), 12));
-            }
-            if (btnContraste != null) btnContraste.setText("◐  Oscuro");
+            btnPreferencias.setBackground(
+                    fondoRedondeado(
+                            Color.rgb(55, 55, 55),
+                            Color.rgb(120, 120, 120),
+                            12
+                    )
+            );
+
+            btnAudio.setBackground(
+                    fondoRedondeado(
+                            Color.parseColor("#252525"),
+                            borde,
+                            12
+                    )
+            );
+
+            btnContraste.setText("◐  Oscuro");
         }
 
-        if (pantallaPrincipal != null) pantallaPrincipal.setBackgroundColor(fondoPantalla);
-        if (scrollContenido != null) scrollContenido.setBackgroundColor(fondoPantalla);
-        if (header != null) header.setBackgroundColor(fondoTarjeta);
-        if (bottomNav != null) bottomNav.setBackgroundColor(fondoTarjeta);
-        if (barraAccesibilidad != null) barraAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 16));
 
-        if (btnAccesibilidad != null) btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
-        if (btnDisminuirTexto != null) btnDisminuirTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
-        if (btnAumentarTexto != null) btnAumentarTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
-        if (btnContraste != null) btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        pantallaPrincipal.setBackgroundColor(fondoPantalla);
+        scrollContenido.setBackgroundColor(fondoPantalla);
 
-        if (scrollContenido != null) actualizarFondosTarjetas(scrollContenido, fondoTarjeta, borde);
-        if (pantallaPrincipal != null) actualizarColoresTextos(pantallaPrincipal, textoPrincipal, textoSecundario);
+        header.setBackgroundColor(fondoTarjeta);
+        bottomNav.setBackgroundColor(fondoTarjeta);
+
+        // CORREGIR EL FONDO DE LA OPCIÓN ACTIVA DEL MENÚ INFERIOR
+        navAccesibilidad.setBackgroundColor(
+                modoContraste == 1
+                        ? Color.parseColor("#E9D7B8")
+                        : Color.parseColor("#303030")
+        );
+
+
+        barraAccesibilidad.setBackground(
+                fondoRedondeado(fondoTarjeta, borde, 16)
+        );
+
+        btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnDisminuirTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnAumentarTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+
+        actualizarFondosTarjetas(scrollContenido, fondoTarjeta, borde);
+
+        TextView[] opciones = {
+                btnCheckMovilidad,
+                btnCheckCortos,
+                btnCheckBanos,
+                btnCheckVisual,
+                btnCheckAuditiva
+        };
+
+        for (TextView opcion : opciones) {
+            if (opcion != null && opcion.getParent() instanceof View) {
+                View tarjeta = (View) opcion.getParent();
+
+                tarjeta.setBackground(
+                        fondoRedondeado(
+                                fondoTarjeta,
+                                borde,
+                                10
+                        )
+                );
+            }
+        }
+
+        actualizarColoresTextos(pantallaPrincipal, textoPrincipal, textoSecundario);
+
+        // Mantener el texto blanco sobre el botón marrón en modo crema
+        if (modoContraste == 1 && btnPreferencias != null) {
+            btnPreferencias.setTextColor(Color.WHITE);
+        }
+
         sincronizarBotonesSeleccionDespuesDeRestaurar();
     }
 
     private void sincronizarBotonesSeleccionDespuesDeRestaurar() {
-        if (btnCheckMovilidad != null) actualizarVistaBoton(btnCheckMovilidad, Boolean.TRUE.equals(btnCheckMovilidad.getTag()));
-        if (btnCheckCortos != null) actualizarVistaBoton(btnCheckCortos, Boolean.TRUE.equals(btnCheckCortos.getTag()));
-        if (btnCheckBanos != null) actualizarVistaBoton(btnCheckBanos, Boolean.TRUE.equals(btnCheckBanos.getTag()));
-        if (btnCheckVisual != null) actualizarVistaBoton(btnCheckVisual, Boolean.TRUE.equals(btnCheckVisual.getTag()));
-        if (btnCheckAuditiva != null) actualizarVistaBoton(btnCheckAuditiva, Boolean.TRUE.equals(btnCheckAuditiva.getTag()));
+        if (btnCheckMovilidad != null) actualizarVistaBoton(btnCheckMovilidad, (Boolean) btnCheckMovilidad.getTag());
+        if (btnCheckCortos != null) actualizarVistaBoton(btnCheckCortos, (Boolean) btnCheckCortos.getTag());
+        if (btnCheckBanos != null) actualizarVistaBoton(btnCheckBanos, (Boolean) btnCheckBanos.getTag());
+        if (btnCheckVisual != null) actualizarVistaBoton(btnCheckVisual, (Boolean) btnCheckVisual.getTag());
+        if (btnCheckAuditiva != null) actualizarVistaBoton(btnCheckAuditiva, (Boolean) btnCheckAuditiva.getTag());
     }
 
     private void actualizarFondosTarjetas(View vista, int colorFondo, int colorBorde) {

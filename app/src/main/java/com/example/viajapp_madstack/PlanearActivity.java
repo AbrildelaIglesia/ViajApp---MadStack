@@ -48,6 +48,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.text.Normalizer;
+import java.util.Locale;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.Map;
@@ -107,6 +111,8 @@ public class PlanearActivity extends AppCompatActivity {
     private TextView tvCantidadDias, tvCantidadViajeros, tvInteresesActivos;
     private int cantidadDias = 5;
     private int cantidadViajeros = 2;
+    // Presupuesto asociado al viaje que se está creando
+    private long presupuestoPlanificado = 0L;
     private final boolean[] interesesSeleccionados = {true, true, true};
     private LinearLayout interesNaturaleza, interesGastronomia, interesTrekking;
     private PlacesClient placesFotosClient;
@@ -152,6 +158,24 @@ public class PlanearActivity extends AppCompatActivity {
         configurarBotonCrearViaje();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+
+        actualizarTamanoTextos(scrollContenido);
+        actualizarTamanoTextos(header);
+        actualizarTamanoTextos(bottomNav);
+        actualizarTamanoTextos(barraAccesibilidad);
+    }
+
     // --------------------------------------------------
     // CREAR VIAJE CON GEMINI
     // --------------------------------------------------
@@ -188,6 +212,24 @@ public class PlanearActivity extends AppCompatActivity {
                 return;
             }
 
+            try {
+                presupuestoPlanificado = Long.parseLong(presupuesto);
+
+                if (presupuestoPlanificado <= 0) {
+                    etPresupuesto.setError(
+                            "El presupuesto debe ser mayor a cero"
+                    );
+                    return;
+                }
+
+            } catch (NumberFormatException e) {
+                etPresupuesto.setError(
+                        "Ingresá un presupuesto válido en pesos"
+                );
+                return;
+            }
+
+
             String promptBase = "Sos un asistente especializado en turismo accesible en Argentina.\n\n"
                     + "Creá un itinerario turístico orientativo con estos datos:\n"
                     + "Destino: " + ubicacion + "\n"
@@ -213,6 +255,16 @@ public class PlanearActivity extends AppCompatActivity {
                     + "No inventes verificaciones, reservas, clima, fotos ni servicios. "
                     + "Si no hay tres lugares distintos comprobables, podés proponer descansos o actividades genéricas "
                     + "sin atribuirles un establecimiento inventado.\n";
+
+            // Evitar que Gemini repita establecimientos entre días.
+            promptBase += "\nREGLA OBLIGATORIA DE UNICIDAD: cada lugar turístico o establecimiento "
+                    + "concreto debe aparecer como máximo una vez en TODO el itinerario, "
+                    + "incluyendo días distintos. No lo repitas con otro nombre, sinónimos "
+                    + "o una descripción diferente. No repitas tampoco el nombre de actividades "
+                    + "genéricas. Si faltan lugares reales, completá con actividades genéricas "
+                    + "distintas, sin inventar nombres de establecimientos.\n";
+
+            final String promptFinal = promptBase;
 
             btnCrearViajeIA.setEnabled(false);
             btnCrearViajeIA.setText("Buscando lugares turísticos...");
@@ -247,7 +299,7 @@ public class PlanearActivity extends AppCompatActivity {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> preferencias = (Map<String, Object>) datos;
                         String preferenciasTexto = construirPreferencias(preferencias);
-                        consultarPlacesYGenerar(ubicacion, promptBase, preferenciasTexto, btnCrearViajeIA);
+                        consultarPlacesYGenerar(ubicacion, promptFinal, preferenciasTexto, btnCrearViajeIA);
                     })
                     .addOnFailureListener(error -> {
                         if (isFinishing() || isDestroyed()) return;
@@ -292,10 +344,17 @@ public class PlanearActivity extends AppCompatActivity {
                                 + "El campo sinAdaptaciones no tiene una interpretación definida: "
                                 + "no supongas su significado. "
                                 + "No confundas necesidades del usuario con características verificadas de lugares.\n"
-                                + "\nLUGARES OBTENIDOS DE GOOGLE PLACES:\n" + lugares
-                                + "\nUsá únicamente estos lugares como propuestas concretas. "
-                                + "Si son insuficientes, indicalo. "
-                                + "No afirmes que son accesibles sin datos comprobados.";
+                                + "\nLUGARES OBTENIDOS DE GOOGLE PLACES (ordenados por características de accesibilidad informadas):\n" + lugares
+                                + "\nPRIORIZACIÓN OBLIGATORIA: considerá primero los lugares con características "
+                                + "de accesibilidad positivas informadas por Google Places, especialmente cuando "
+                                + "se relacionen con las preferencias del usuario. También incluí lugares sin datos "
+                                + "de accesibilidad para mantener variedad, sin descartarlos automáticamente. "
+                                + "Si una característica está informada, describí solamente esa característica "
+                                + "y atribuísela a Google Places; no afirmes accesibilidad integral ni certificaciones. "
+                                + "Los valores desconocidos significan por verificar, no inaccesible. "
+                                + "Si hay características informadas como no disponibles, no las describas como accesibles. "
+                                + "Usá únicamente estos lugares como propuestas concretas. "
+                                + "Si son insuficientes, indicalo.";
                         generarItinerarioConGemini(prompt, boton);
                     });
                 }
@@ -317,56 +376,87 @@ public class PlanearActivity extends AppCompatActivity {
         }
     }
 
+    private static final int MAX_CORRECCIONES_DUPLICADOS = 2;
+
     private void generarItinerarioConGemini(String prompt, Button boton) {
+        generarItinerarioConGemini(prompt, boton, 0);
+    }
+
+    private void generarItinerarioConGemini(String prompt, Button boton, int intento) {
         try {
             GeminiService geminiService = new GeminiService(this);
             geminiService.generarTexto(prompt, new GeminiService.GeminiCallback() {
                 @Override
                 public void onSuccess(String respuesta) {
                     runOnUiThread(() -> {
-                        Log.d("VIAJAPP_GEMINI", "Respuesta completa: " + respuesta);
-                        Log.d("VIAJAPP_GEMINI", "Longitud: " +
-                                (respuesta == null ? 0 : respuesta.length()));
                         if (isFinishing() || isDestroyed()) return;
-                        restaurarBotonCrearViaje(boton);
                         if (respuesta == null || respuesta.trim().isEmpty()) {
+                            restaurarBotonCrearViaje(boton);
                             mostrarErrorViaje("Gemini no devolvió un itinerario.");
                             return;
                         }
-                        String intentJson;
                         try {
                             String limpio = respuesta.trim();
                             if (limpio.startsWith("```")) {
                                 limpio = limpio.replaceFirst("(?s)^```(?:json)?\\s*", "")
                                         .replaceFirst("(?s)\\s*```$", "").trim();
                             }
-                            org.json.JSONObject raiz = new org.json.JSONObject(limpio);
-                            org.json.JSONArray diasJson = raiz.getJSONArray("dias");
-                            if (diasJson.length() != cantidadDias) throw new org.json.JSONException("Cantidad de días incorrecta");
+                            JSONObject raiz = new JSONObject(limpio);
+                            JSONArray diasJson = raiz.getJSONArray("dias");
+                            if (diasJson.length() != cantidadDias)
+                                throw new org.json.JSONException("Cantidad de días incorrecta");
+
+                            Set<String> nombres = new HashSet<>();
+                            List<String> repetidos = new ArrayList<>();
                             for (int i = 0; i < diasJson.length(); i++) {
-                                org.json.JSONObject dia = diasJson.getJSONObject(i);
+                                JSONObject dia = diasJson.getJSONObject(i);
                                 if (dia.getInt("dia") != i + 1 || dia.getJSONArray("actividades").length() != 3)
                                     throw new org.json.JSONException("Se requieren tres actividades por día");
-                                org.json.JSONArray actividades = dia.getJSONArray("actividades");
+                                JSONArray actividades = dia.getJSONArray("actividades");
                                 for (int j = 0; j < 3; j++) {
-                                    org.json.JSONObject actividad = actividades.getJSONObject(j);
-                                    actividad.getString("hora"); actividad.getString("nombre");
-                                    actividad.getString("descripcion"); actividad.getString("accesibilidad");
+                                    JSONObject actividad = actividades.getJSONObject(j);
+                                    actividad.getString("hora");
+                                    String nombre = actividad.getString("nombre");
+                                    actividad.getString("descripcion");
+                                    actividad.getString("accesibilidad");
+                                    String clave = normalizarNombreActividad(nombre);
+                                    if (clave.isEmpty())
+                                        throw new org.json.JSONException("Actividad sin nombre");
+                                    if (!nombres.add(clave)) repetidos.add(nombre);
                                 }
                             }
-                            intentJson = limpio;
+
+                            if (!repetidos.isEmpty()) {
+                                if (intento < MAX_CORRECCIONES_DUPLICADOS) {
+                                    boton.setText("Corrigiendo actividades repetidas...");
+                                    String correccion = prompt
+                                            + "\nCORRECCIÓN OBLIGATORIA: el itinerario anterior repitió estas actividades: "
+                                            + android.text.TextUtils.join(", ", repetidos)
+                                            + ". Generá nuevamente TODO el JSON, manteniendo los días "
+                                            + "y las tres actividades por día. Ningún nombre de lugar o "
+                                            + "actividad puede repetirse entre días ni dentro de un día. "
+                                            + "Usá lugares reales de la lista de Google Places; cuando no "
+                                            + "alcancen, usá actividades genéricas distintas. "
+                                            + "No inventes establecimientos.\nJSON anterior a corregir:\n" + limpio;
+                                    generarItinerarioConGemini(correccion, boton, intento + 1);
+                                } else {
+                                    restaurarBotonCrearViaje(boton);
+                                    mostrarErrorViaje("No se pudo generar un itinerario sin actividades "
+                                            + "repetidas después de varios intentos. Probá nuevamente.");
+                                }
+                                return;
+                            }
+                            guardarItinerarioYMostrar(limpio, boton);
                         } catch (org.json.JSONException ex) {
-                            mostrarErrorViaje("Gemini devolvió un formato incompleto. Intentá generar el viaje nuevamente.");
+                            restaurarBotonCrearViaje(boton);
                             Log.e("VIAJAPP_GEMINI", "JSON inválido", ex);
-                            return;
+                            mostrarErrorViaje("Gemini devolvió un formato incompleto. Intentá generar el viaje nuevamente.");
                         }
-                        guardarItinerarioYMostrar(intentJson, boton);
                     });
                 }
 
                 @Override
                 public void onError(String error) {
-                    Log.e("VIAJAPP_GEMINI", "Error al generar itinerario: " + error);
                     runOnUiThread(() -> {
                         if (isFinishing() || isDestroyed()) return;
                         restaurarBotonCrearViaje(boton);
@@ -375,10 +465,19 @@ public class PlanearActivity extends AppCompatActivity {
                 }
             });
         } catch (Exception error) {
-            Log.e("VIAJAPP_GEMINI", "Error al iniciar Gemini", error);
             restaurarBotonCrearViaje(boton);
+            Log.e("VIAJAPP_GEMINI", "Error al iniciar Gemini", error);
             mostrarErrorViaje(error.toString());
         }
+    }
+
+    private String normalizarNombreActividad(String nombre) {
+        if (nombre == null) return "";
+        String limpio = Normalizer.normalize(nombre.toLowerCase(Locale.ROOT).trim(),
+                Normalizer.Form.NFD);
+        limpio = limpio.replaceAll("\\p{M}+", "");
+        limpio = limpio.replaceAll("[^a-z0-9 ]", " ").replaceAll("\\s+", " ").trim();
+        return limpio;
     }
 
     private void guardarItinerarioYMostrar(String itinerarioJson, Button boton) {
@@ -397,6 +496,8 @@ public class PlanearActivity extends AppCompatActivity {
             datos.put("provincia", destinoProvincia == null ? "" : destinoProvincia);
             datos.put("cantidadDias", cantidadDias);
             datos.put("cantidadViajeros", cantidadViajeros);
+            // Guardar el presupuesto real del viaje
+            datos.put("presupuestoTotal", presupuestoPlanificado);
             datos.put("itinerarioJson", itinerarioJson);
             // Se guarda también la estructura de días y actividades para futuras consultas.
             datos.put("dias", jsonArrayALista(raiz.getJSONArray("dias")));
@@ -407,6 +508,13 @@ public class PlanearActivity extends AppCompatActivity {
                     .collection("itinerarios").add(datos)
                     .addOnSuccessListener(documento -> {
                         if (isFinishing() || isDestroyed()) return;
+                        ItinerariosLocales.guardar(
+                                PlanearActivity.this,
+                                documento.getId(),
+                                destinoNombre,
+                                cantidadDias,
+                                itinerarioJson
+                        );
                         restaurarBotonCrearViaje(boton);
                         Intent intent = new Intent(PlanearActivity.this, ItinerarioActivity.class);
                         intent.putExtra("itinerarioId", documento.getId());
@@ -1075,6 +1183,9 @@ public class PlanearActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // ===================================================
@@ -1091,6 +1202,9 @@ public class PlanearActivity extends AppCompatActivity {
             actualizarTamanoTextos(scrollContenido);
             actualizarTamanoTextos(header);
             actualizarTamanoTextos(bottomNav);
+            actualizarTamanoTextos(barraAccesibilidad);
+
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // ===================================================
@@ -1102,6 +1216,7 @@ public class PlanearActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 
@@ -1676,4 +1791,3 @@ public class PlanearActivity extends AppCompatActivity {
         );
     }
 }
-

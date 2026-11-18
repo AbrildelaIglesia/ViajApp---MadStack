@@ -72,6 +72,20 @@ public class ErrorActivity extends AppCompatActivity {
         configurarAccesibilidad();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        modoContraste =
+                PreferenciasAccesibilidad.obtenerContraste(this);
+
+        escalaTexto =
+                PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(scrollContenido);
+    }
+
     // ===================================================
     // NUEVO: CONFIGURAR MENÚ DE ACCESIBILIDAD
     // ===================================================
@@ -210,6 +224,7 @@ public class ErrorActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // DISMINUIR TEXTO
@@ -223,6 +238,7 @@ public class ErrorActivity extends AppCompatActivity {
             );
 
             actualizarTamanoTextos(scrollContenido);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         // CAMBIAR CONTRASTE
@@ -231,6 +247,7 @@ public class ErrorActivity extends AppCompatActivity {
             modoContraste = (modoContraste + 1) % 3;
 
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo;
 
