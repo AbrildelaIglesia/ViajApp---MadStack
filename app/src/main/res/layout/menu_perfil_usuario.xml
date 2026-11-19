@@ -40,7 +40,8 @@
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#DBEAFE"
                 app:strokeColor="#93C5FD"
-                app:strokeWidth="2dp">
+                app:strokeWidth="2dp"
+                android:importantForAccessibility="no">
 
                 <ImageView
                     android:id="@+id/imgAvatarPerfil"
@@ -49,7 +50,7 @@
                     android:padding="12dp"
                     android:src="@drawable/ic_person"
                     app:tint="#1D4ED8"
-                    android:contentDescription="Avatar del usuario" />
+                    android:importantForAccessibility="no" />
 
             </com.google.android.material.card.MaterialCardView>
 

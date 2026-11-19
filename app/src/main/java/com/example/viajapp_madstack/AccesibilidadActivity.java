@@ -32,9 +32,9 @@ import java.util.Map;
 
 public class AccesibilidadActivity extends AppCompatActivity {
 
-    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares, barraAccesibilidad;
+    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares; //barraAccesibilidad;
 
-    private TextView btnAccesibilidad, btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias;
+    private TextView btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias; //btnAccesibilidad
     private TextView btnCheckMovilidad, btnCheckCortos, btnCheckBanos, btnCheckVisual, btnCheckAuditiva;
     private View pantallaPrincipal, scrollContenido, header, bottomNav;
 
@@ -128,6 +128,15 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         aplicarTemaContraste();
         actualizarTamanoTextos(pantallaPrincipal);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (MenuSeguridad.manejarResultadoDictado(requestCode, resultCode, data)
+                || MenuEditarPerfil.manejarResultadoDictado(requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // NAVEGACIÓN INFERIOR
@@ -261,9 +270,9 @@ public class AccesibilidadActivity extends AppCompatActivity {
         header = findViewById(R.id.header);
         bottomNav = findViewById(R.id.bottomNav);
 
-        barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
+        //barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
 
-        btnAccesibilidad = findViewById(R.id.btnAccesibilidad);
+        //btnAccesibilidad = findViewById(R.id.btnAccesibilidad);
         btnDisminuirTexto = findViewById(R.id.btnDisminuirTexto);
         btnAumentarTexto = findViewById(R.id.btnAumentarTexto);
         btnContraste = findViewById(R.id.btnContraste);
@@ -272,60 +281,6 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         // Guardamos los valores originales de toda la pantalla
         guardarOriginales(pantallaPrincipal);
-
-        // ABRIR Y CERRAR EL MENÚ DE ACCESIBILIDAD
-        btnAccesibilidad.setOnClickListener(v -> {
-
-            controlesVisibles = !controlesVisibles;
-
-            int visibilidad = controlesVisibles
-                    ? View.VISIBLE
-                    : View.GONE;
-
-            btnDisminuirTexto.setVisibility(visibilidad);
-            btnAumentarTexto.setVisibility(visibilidad);
-            btnContraste.setVisibility(visibilidad);
-            btnAudio.setVisibility(visibilidad);
-
-            // AJUSTAR EL BOTÓN PRINCIPAL
-            LinearLayout.LayoutParams parametrosBoton =
-                    (LinearLayout.LayoutParams)
-                            btnAccesibilidad.getLayoutParams();
-
-            parametrosBoton.width = controlesVisibles
-                    ? 0
-                    : LinearLayout.LayoutParams.WRAP_CONTENT;
-
-            parametrosBoton.weight = controlesVisibles ? 1f : 0f;
-
-            btnAccesibilidad.setLayoutParams(parametrosBoton);
-
-            int espacio = dp(12);
-
-            btnAccesibilidad.setPadding(
-                    controlesVisibles ? 0 : espacio,
-                    0,
-                    controlesVisibles ? 0 : espacio,
-                    0
-            );
-
-            // HACER COMPACTA LA BARRA CUANDO SE CIERRA
-            androidx.constraintlayout.widget.ConstraintLayout.LayoutParams parametrosBarra =
-                    (androidx.constraintlayout.widget.ConstraintLayout.LayoutParams)
-                            barraAccesibilidad.getLayoutParams();
-
-            parametrosBarra.width = controlesVisibles
-                    ? 0
-                    : androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.WRAP_CONTENT;
-
-            barraAccesibilidad.setLayoutParams(parametrosBarra);
-
-            btnAccesibilidad.setContentDescription(
-                    controlesVisibles
-                            ? "Cerrar menú de accesibilidad"
-                            : "Abrir menú de accesibilidad"
-            );
-        });
 
 
         // Disminuir tamaño del texto
@@ -360,7 +315,15 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         // Botón de audio
         btnAudio.setOnClickListener(v -> {
-            Toast.makeText(this, "Función de audio próximamente", Toast.LENGTH_SHORT).show();
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
         });
 
         // Guardar preferencias en Firestore al hacer clic en btnPreferencias
@@ -541,11 +504,11 @@ public class AccesibilidadActivity extends AppCompatActivity {
         );
 
 
-        barraAccesibilidad.setBackground(
+        /*barraAccesibilidad.setBackground(
                 fondoRedondeado(fondoTarjeta, borde, 16)
-        );
+        );*/
 
-        btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        //btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
         btnDisminuirTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
         btnAumentarTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
         btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));

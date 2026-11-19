@@ -2,6 +2,7 @@ package com.example.viajapp_madstack;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.widget.CheckBox;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -186,6 +187,15 @@ public class ItinerarioActivity extends AppCompatActivity {
         actualizarTamanoTextos(header);
         actualizarTamanoTextos(bottomNav);
         actualizarTamanoTextos(barraAccesibilidad);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (MenuSeguridad.manejarResultadoDictado(requestCode, resultCode, data)
+                || MenuEditarPerfil.manejarResultadoDictado(requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private final Map<String, Set<String>> actividadesDescartadas = new HashMap<>();
@@ -1133,7 +1143,17 @@ public class ItinerarioActivity extends AppCompatActivity {
             ).show();
         });
 
-        // AUDIO SE PROGRAMARÁ DESPUÉS
+        btnAudio.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
 
     // ===================================================

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -174,6 +175,14 @@ public class PlanearActivity extends AppCompatActivity {
         actualizarTamanoTextos(header);
         actualizarTamanoTextos(bottomNav);
         actualizarTamanoTextos(barraAccesibilidad);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (MenuSeguridad.manejarResultadoDictado(requestCode, resultCode, data)
+                || MenuEditarPerfil.manejarResultadoDictado(requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // --------------------------------------------------
@@ -1235,7 +1244,17 @@ public class PlanearActivity extends AppCompatActivity {
             ).show();
         });
 
-        // AUDIO SE IMPLEMENTARÁ DESPUÉS
+        btnAudio.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
 
     // ===================================================
