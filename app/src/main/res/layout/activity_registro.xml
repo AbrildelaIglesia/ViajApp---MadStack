@@ -11,7 +11,6 @@
     <!-- BARRA DE ACCESIBILIDAD FIJA -->
     <LinearLayout
         android:id="@+id/barraAccesibilidad"
-        app:layout_constraintHorizontal_bias="0"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginStart="14dp"
@@ -22,6 +21,7 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:background="@drawable/fondo_barra_accesibilidad"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -38,12 +38,11 @@
             android:textColor="#1E5FA8"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:contentDescription="Cerrar menú de accesibilidad"
+            android:contentDescription="Menú de accesibilidad"
             android:clickable="true"
             android:focusable="true" />
 
-
-        <!-- A- -->
+        <!-- DISMINUIR TEXTO -->
         <TextView
             android:id="@+id/btnDisminuirTexto"
             android:layout_width="44dp"
@@ -54,9 +53,10 @@
             android:text="A-"
             android:textColor="#111827"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
-        <!-- A+ -->
+        <!-- AUMENTAR TEXTO -->
         <TextView
             android:id="@+id/btnAumentarTexto"
             android:layout_width="44dp"
@@ -67,7 +67,8 @@
             android:text="A+"
             android:textColor="#111827"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
         <!-- CONTRASTE -->
         <TextView
@@ -80,7 +81,8 @@
             android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cambiar contraste de pantalla"/>
 
         <!-- AUDIO -->
         <TextView
@@ -91,7 +93,8 @@
             android:background="@drawable/fondo_boton_audio"
             android:gravity="center"
             android:text="🔊"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:contentDescription="Cambiar lectura de pantalla por voz"/>
 
     </LinearLayout>
 
@@ -125,7 +128,7 @@
                 android:background="@drawable/fondo_logo"
                 android:padding="10dp"
                 android:src="@drawable/logo_viajapp"
-                android:contentDescription="Logo de ViajApp"
+                android:importantForAccessibility="no"
                 android:scaleType="fitCenter" />
 
             <!-- TURISMO INCLUSIVO -->
@@ -141,7 +144,7 @@
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:src="@drawable/ic_shield_check"
-                    android:contentDescription="Escudo de accesibilidad" />
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -150,8 +153,7 @@
                     android:text="Turismo 100% Inclusivo"
                     android:textColor="#0B1F3A"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
-
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <!-- TITULO REGISTRO -->
@@ -162,7 +164,7 @@
                 android:layout_marginTop="18dp"
                 android:text="Crea tu cuenta en ViajAPP"
                 android:textColor="#111827"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
             <!-- DESCRIPCION -->
             <TextView
@@ -172,7 +174,8 @@
                 android:gravity="center"
                 android:text="Planifica aventuras seguras, cómodas y sin&#10;barreras en cada destino."
                 android:textColor="#111827"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:contentDescription="Planifica aventuras seguras, cómodas y sin barreras en cada destino."/>
 
             <!-- NOMBRE Y APELLIDOS - ENCABEZADO -->
             <LinearLayout
@@ -195,27 +198,48 @@
                     android:layout_height="wrap_content"
                     android:text="Requerido"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:importantForAccessibility="no"/>
 
             </LinearLayout>
 
-            <!-- CAMPO NOMBRE Y APELLIDOS -->
-            <EditText
-                android:id="@+id/etNombreApellidos"
+            <LinearLayout
+                android:id="@+id/contenedorNombre"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/fondo_campo"
-                android:drawableStart="@drawable/ic_person"
-                android:drawablePadding="12dp"
-                android:hint="Ej.Carmen Rodríguez Silva"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:textSize="14sp"
-                android:inputType="textPersonName"
-                android:singleLine="true" />
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp">
+
+                <EditText
+                    android:id="@+id/etNombreApellidos"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableStart="@drawable/ic_person"
+                    android:drawablePadding="10dp"
+                    android:hint="Escribí tu nombre"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:textSize="14sp"
+                    android:inputType="textPersonName"
+                    android:singleLine="true" />
+
+                <!-- BOTÓN DE MICRÓFONO PARA NOMBRE -->
+                <ImageView
+                    android:id="@+id/btnMicNombre"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_mic"
+                    android:contentDescription="Dictar nombre y apellidos"/>
+
+            </LinearLayout>
 
             <!-- CORREO ELECTRÓNICO - ENCABEZADO -->
             <LinearLayout
@@ -238,27 +262,46 @@
                     android:layout_height="wrap_content"
                     android:text="Tu correo activo"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
-
+                    android:textSize="14sp"
+                    android:importantForAccessibility="no"/>
             </LinearLayout>
 
-            <!-- CAMPO CORREO ELECTRÓNICO -->
-            <EditText
-                android:id="@+id/etCorreo"
+            <LinearLayout
+                android:id="@+id/contenedorCorreo"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/fondo_campo"
-                android:drawableStart="@drawable/ic_email"
-                android:drawablePadding="12dp"
-                android:hint="ejemplo@viajapp.org"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:textSize="14sp"
-                android:inputType="textEmailAddress"
-                android:singleLine="true" />
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp">
+
+                <!-- BOTÓN DE MICRÓFONO PARA NOMBRE -->
+                <EditText
+                    android:id="@+id/etCorreo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:drawableStart="@drawable/ic_email"
+                    android:drawablePadding="10dp"
+                    android:hint="Escribí tu correo"
+                    android:inputType="textPersonName"
+                    android:singleLine="true"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/btnMicCorreo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_mic"
+                    android:contentDescription="Dictar correo electrónico"/>
+            </LinearLayout>
 
             <!-- CONTRASEÑA - ENCABEZADO -->
             <LinearLayout
@@ -287,42 +330,58 @@
 
 
             <!-- CAMPO CONTRASEÑA -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxBackgroundMode="none"
-                app:hintEnabled="false"
-                app:endIconMode="password_toggle">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etContrasena"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@drawable/fondo_campo"
-                    android:drawableStart="@drawable/ic_lock"
-                    android:drawablePadding="12dp"
-                    android:hint="Introduce tu contraseña"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="18dp"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:textSize="14sp"
-                    android:inputType="textPassword"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
 
             <!-- SEGURIDAD DE LA CONTRASEÑA -->
-            <TextView
+            <LinearLayout
+                android:id="@+id/contenedorContrasena"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginTop="6dp"
-                android:gravity="end"
-                android:text="Seguridad"
-                android:textColor="#111827"
-                android:textSize="14sp" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp">
+
+                <EditText
+                    android:id="@+id/etContrasena"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:autofillHints="password"
+                    android:background="@null"
+                    android:contentDescription="Contraseña, campo de texto seguro, obligatorio"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="10dp"
+                    android:hint="Escribí tu contraseña"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:textSize="14sp" />
+
+                <!-- BOTÓN MOSTRAR/OCULTAR CONTRASEÑA -->
+                <ImageView
+                    android:id="@+id/btnTogglePassword"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:clickable="true"
+                    android:contentDescription="Mostrar contraseña"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/visible_false" />
+
+                <!-- BOTÓN DE MICRÓFONO PARA CONTRASEÑA -->
+                <ImageView
+                    android:id="@+id/btnMicContrasena"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:clickable="true"
+                    android:contentDescription="Dictar contraseña"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_mic" />
+            </LinearLayout>
 
             <!-- CONFIRMAR CONTRASEÑA - ENCABEZADO -->
             <LinearLayout
@@ -351,31 +410,56 @@
 
 
             <!-- CAMPO CONFIRMAR CONTRASEÑA -->
-            <com.google.android.material.textfield.TextInputLayout
+            <LinearLayout
+                android:id="@+id/contenedorConfirmarContrasena"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:boxBackgroundMode="none"
-                app:hintEnabled="false"
-                app:endIconMode="password_toggle">
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="8dp">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <EditText
                     android:id="@+id/etConfirmarContrasena"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="@drawable/fondo_campo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
                     android:drawableStart="@drawable/ic_lock"
-                    android:drawablePadding="12dp"
-                    android:hint="Repite tu contraseña"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="18dp"
+                    android:drawablePadding="10dp"
+                    android:hint="Escribí nuevamente tu contraseña"
+                    android:inputType="textPassword"
+                    android:autofillHints="password"
+                    android:singleLine="true"
                     android:textColor="#111827"
                     android:textColorHint="#6B7280"
                     android:textSize="14sp"
-                    android:inputType="textPassword"
-                    android:singleLine="true" />
+                    android:contentDescription="Confirmar contraseña, campo de texto seguro, obligatorio"/>
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <!-- BOTÓN MOSTRAR/OCULTAR CONTRASEÑA -->
+                <ImageView
+                    android:id="@+id/btnToggleConfPassword"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/visible_false"
+                    android:contentDescription="Mostrar confirmación de contraseña" />
+
+                <!-- BOTÓN DE MICRÓFONO PARA CONTRASEÑA -->
+                <ImageView
+                    android:id="@+id/btnMicConfirmacionContrasena"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_mic"
+                    android:contentDescription="Dictar la confirmación de contraseña" />
+            </LinearLayout>
 
 
             <!-- PREFERENCIAS DE ACCESIBILIDAD -->
@@ -418,7 +502,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_wheelchair"
-                    android:contentDescription="Silla de ruedas" />
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -432,7 +516,8 @@
                 <CheckBox
                     android:id="@+id/cbSillaRuedas"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Seleccionar silla de ruedas y rampas prioritarias"/>
 
             </LinearLayout>
 
@@ -448,7 +533,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_walk"
-                    android:contentDescription="Recorridos cortos" />
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -462,7 +547,8 @@
                 <CheckBox
                     android:id="@+id/cbRecorridosCortos"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Seleccionar recorridos cortos y descansos frecuentes"/>
 
             </LinearLayout>
 
@@ -475,24 +561,25 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
+                    android:layout_width="18dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_visibility"
-                    android:contentDescription="Visión reducida" />
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_visibility" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp"
-                    android:text="Visión reducida y TalkBack optimizado"
+                    android:text="Visión reducida y TalkBack"
                     android:textColor="#111827"
                     android:textSize="14sp" />
 
                 <CheckBox
                     android:id="@+id/cbVisionReducida"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Seleccionar visión reducida y TalkBack"/>
 
             </LinearLayout>
 
@@ -508,7 +595,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_hearing"
-                    android:contentDescription="Accesibilidad auditiva" />
+                    android:importantForAccessibility="no" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -522,7 +609,8 @@
                 <CheckBox
                     android:id="@+id/cbSubtitulos"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Seleccionar subtítulos y avisos con vibración"/>
 
             </LinearLayout>
 
@@ -535,10 +623,10 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
+                    android:layout_width="14dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_travel_explore"
-                    android:contentDescription="Sin adaptaciones específicas" />
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_travel_explore" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -552,7 +640,8 @@
                 <CheckBox
                     android:id="@+id/cbSinAdaptaciones"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Seleccionar sin adaptaciones específicas"/>
 
             </LinearLayout>
 
@@ -567,7 +656,8 @@
                 <CheckBox
                     android:id="@+id/cbTerminos"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Aceptar términos y condiciones"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -601,67 +691,6 @@
                 android:clickable="true"
                 android:focusable="true" />
 
-
-            <!-- TÍTULO REGISTRO ASISTIDO -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="O REGÍSTRATE ASISTIDO CON"
-                android:textColor="#111827"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <!-- REGISTRO POR DICTADO DE VOZ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_mic"
-                    android:contentDescription="Micrófono" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Registro por Dictado de Voz"
-                    android:textColor="#111827"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <!-- HUELLA O RECONOCIMIENTO FACIAL -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_fingerprint"
-                    android:contentDescription="Huella digital" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="Vincular Huella o Reconocimiento Facial"
-                    android:textColor="#111827"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
             <!-- INFORMACIÓN DE PRIVACIDAD -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -676,7 +705,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_privacy"
-                    android:contentDescription="Privacidad" />
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -703,7 +732,8 @@
                     android:layout_height="wrap_content"
                     android:text="¿Ya tienes una cuenta? "
                     android:textColor="#4B5563"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:id="@+id/txtIniciarSesion"
@@ -714,7 +744,8 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:contentDescription="¿Ya tienes una cuenta? Inicia sesión"/>
 
             </LinearLayout>
 

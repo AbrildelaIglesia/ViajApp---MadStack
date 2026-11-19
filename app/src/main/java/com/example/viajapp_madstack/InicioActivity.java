@@ -29,10 +29,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import java.util.IdentityHashMap;
-import java.util.Locale;
 import java.util.ArrayList;
 import android.speech.RecognizerIntent;
-import android.content.ActivityNotFoundException;
 
 import android.content.SharedPreferences;
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +38,7 @@ import androidx.appcompat.app.AlertDialog;
 public class InicioActivity extends AppCompatActivity {
 
     private EditText etCorreo, etContrasena;
+    private View contenedorCorreo, contenedorContrasena;
     private ImageView btnTogglePassword, btnMicCorreo, btnMicContrasena;
     private TextView txtRegistrarse;
     private LinearLayout btnIniciarSesion;
@@ -59,6 +58,7 @@ public class InicioActivity extends AppCompatActivity {
     private final IdentityHashMap<TextView, ColorStateList> coloresOriginales = new IdentityHashMap<>();
     private final IdentityHashMap<EditText, ColorStateList> pistasOriginales = new IdentityHashMap<>();
     private final IdentityHashMap<TextView, Float> tamanosOriginales = new IdentityHashMap<>();
+    private final IdentityHashMap<ImageView, ColorStateList> tintsOriginales = new IdentityHashMap<>();
 
     private float escalaTexto = 1.0f;
     private int modoContraste = 0; // 0 = NORMAL, 1 = CREMA, 2 = OSCURO
@@ -67,6 +67,10 @@ public class InicioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // LEER LAS PREFERENCIAS AL INICIO PARA EVITAR ESTADOS DESINCRONIZADOS
+        modoContraste = PreferenciasAccesibilidad.obtenerContraste(this);
+        escalaTexto = PreferenciasAccesibilidad.obtenerEscalaTexto(this);
 
         etCorreo = findViewById(R.id.etCorreo);
         etContrasena = findViewById(R.id.etContrasena);
@@ -118,38 +122,25 @@ public class InicioActivity extends AppCompatActivity {
                     btnTogglePassword.setImageResource(R.drawable.visible_false);
                     btnTogglePassword.setContentDescription("Mostrar contraseña");
                 }
+                aplicarTintBotonIcono(btnTogglePassword, modoContraste == 1
+                        ? Color.parseColor("#272727")
+                        : Color.parseColor("#FFFFFF"));
                 etContrasena.setSelection(etContrasena.getText().length());
             });
         }
 
-        // DICTADO POR VOZ INDIVIDUAL - CORREO
+        // USANDO LA FUNCIÓN GLOBAL: DICTADO CORREO
         if (btnMicCorreo != null) {
-            btnMicCorreo.setOnClickListener(v -> {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Dicta tu correo electrónico...");
-                try {
-                    startActivityForResult(intent, REQUEST_CODE_VOICE_CORREO);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(this, "Dictado por voz no disponible.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            btnMicCorreo.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(this, REQUEST_CODE_VOICE_CORREO, "Dicta tu correo electrónico")
+            );
         }
 
-        // DICTADO POR VOZ INDIVIDUAL - CONTRASEÑA
+        // USANDO LA FUNCIÓN GLOBAL: DICTADO CONTRASEÑA
         if (btnMicContrasena != null) {
-            btnMicContrasena.setOnClickListener(v -> {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-                intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Dicta tu contraseña...");
-                try {
-                    startActivityForResult(intent, REQUEST_CODE_VOICE_PASSWORD);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(this, "Dictado por voz no disponible.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            btnMicContrasena.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(this, REQUEST_CODE_VOICE_PASSWORD, "Dicta tu contraseña")
+            );
         }
 
         // BOTÓN INICIAR SESIÓN
@@ -188,7 +179,19 @@ public class InicioActivity extends AppCompatActivity {
         });
     }
 
-    // CAPTURAR RESPUESTA DE VOZ Y APLICAR FILTRADO INTELIGENTE
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        modoContraste = PreferenciasAccesibilidad.obtenerContraste(this);
+        escalaTexto = PreferenciasAccesibilidad.obtenerEscalaTexto(this);
+
+        aplicarTemaContraste();
+        actualizarTamanoTextos(scrollContenido);
+        actualizarTamanoTextos(barraAccesibilidad);
+    }
+
+    // CAPTURAR RESPUESTA DE VOZ USANDO EL PROCESADOR GLOBAL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -196,24 +199,17 @@ public class InicioActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && data != null) {
             ArrayList<String> resultado = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (resultado != null && !resultado.isEmpty()) {
-                String textoHablado = resultado.get(0).toLowerCase(); // Todo a minúsculas
+                String textoHablado = resultado.get(0);
 
                 if (requestCode == REQUEST_CODE_VOICE_CORREO) {
-                    // TRADUCCIÓN INTELIGENTE DE VOZ A FORMATO EMAIL
-                    String correoLimpio = textoHablado
-                            .replace(" arroba ", "@")
-                            .replace(" a la arroba ", "@")
-                            .replace(" punto ", ".")
-                            .replaceAll("\\s+", ""); // Borra cualquier espacio sobrante
-
+                    String correoLimpio = VoiceUtils.procesarTextoDictado(textoHablado, VoiceUtils.TIPO_CORREO);
                     etCorreo.setText(correoLimpio);
                     etCorreo.setSelection(correoLimpio.length());
 
                 } else if (requestCode == REQUEST_CODE_VOICE_PASSWORD) {
-                    // Para la contraseña quitamos espacios por si dictó separada
-                    String passLimpias = textoHablado.replaceAll("\\s+", "");
-                    etContrasena.setText(passLimpias);
-                    etContrasena.setSelection(passLimpias.length());
+                    String passLimpia = VoiceUtils.procesarTextoDictado(textoHablado, VoiceUtils.TIPO_PASSWORD);
+                    etContrasena.setText(passLimpia);
+                    etContrasena.setSelection(passLimpia.length());
                 }
             }
         }
@@ -238,6 +234,8 @@ public class InicioActivity extends AppCompatActivity {
         pantallaInicio = findViewById(R.id.main);
         scrollContenido = findViewById(R.id.scrollContenido);
         barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
+        contenedorCorreo = findViewById(R.id.contenedorCorreo);
+        contenedorContrasena = findViewById(R.id.contenedorContrasena);
 
         btnAccesibilidad = findViewById(R.id.btnAccesibilidad);
         btnDisminuirTexto = findViewById(R.id.btnDisminuirTexto);
@@ -271,19 +269,26 @@ public class InicioActivity extends AppCompatActivity {
             btnAccesibilidad.setContentDescription(mostrar ? "Cerrar menú de accesibilidad" : "Abrir menú de accesibilidad");
         });
 
+        // APLICAR CAMBIOS DE TAMAÑO DINÁMICAMENTE Y GUARDAR PREFERENCIA
         btnAumentarTexto.setOnClickListener(v -> {
             escalaTexto = Math.min(1.3f, Math.round((escalaTexto + 0.1f) * 10f) / 10f);
             actualizarTamanoTextos(scrollContenido);
+            actualizarTamanoTextos(barraAccesibilidad);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
         btnDisminuirTexto.setOnClickListener(v -> {
             escalaTexto = Math.max(0.9f, Math.round((escalaTexto - 0.1f) * 10f) / 10f);
             actualizarTamanoTextos(scrollContenido);
+            actualizarTamanoTextos(barraAccesibilidad);
+            PreferenciasAccesibilidad.guardarEscalaTexto(this, escalaTexto);
         });
 
+        // CICLAR CONTRASTE Y GUARDAR PREFERENCIA
         btnContraste.setOnClickListener(v -> {
             modoContraste = (modoContraste + 1) % 3;
             aplicarTemaContraste();
+            PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
             String nombreModo = (modoContraste == 0) ? "Normal" : (modoContraste == 1) ? "Crema" : "Oscuro";
             Toast.makeText(this, "Contraste: " + nombreModo, Toast.LENGTH_SHORT).show();
@@ -306,6 +311,12 @@ public class InicioActivity extends AppCompatActivity {
             EditText campo = (EditText) vista;
             if (!pistasOriginales.containsKey(campo)) {
                 pistasOriginales.put(campo, campo.getHintTextColors());
+            }
+        }
+        if (vista instanceof ImageView) {
+            ImageView imagen = (ImageView) vista;
+            if (!tintsOriginales.containsKey(imagen)) {
+                tintsOriginales.put(imagen, imagen.getImageTintList());
             }
         }
         if (vista instanceof ViewGroup) {
@@ -386,17 +397,31 @@ public class InicioActivity extends AppCompatActivity {
             }
         }
 
+        // Aplicar fondo de campo a los contenedores para no cortar los íconos laterales
+        int fondoNormalCampo = Color.parseColor("#FFFFFF");
+        int bordeNormalCampo = Color.parseColor("#CBD5E1");
+
+        View[] contenedoresCampos = {contenedorCorreo, contenedorContrasena};
+        for (View contenedor : contenedoresCampos) {
+            if (contenedor != null) {
+                if (normal) {
+                    contenedor.setBackground(fondoRedondeado(fondoNormalCampo, bordeNormalCampo, 12));
+                } else {
+                    contenedor.setBackground(fondoRedondeado(fondoCampo, borde, 12));
+                }
+            }
+        }
+
         EditText[] campos = {etCorreo, etContrasena};
         for (EditText campo : campos) {
             if (campo != null) {
+                campo.setBackground(null);
                 if (normal) {
-                    restaurarFondo(campo);
                     restaurarColor(campo);
                     if (pistasOriginales.containsKey(campo)) {
                         campo.setHintTextColor(pistasOriginales.get(campo));
                     }
                 } else {
-                    campo.setBackground(fondoRedondeado(fondoCampo, borde, 12));
                     campo.setTextColor(textoPrincipal);
                     campo.setHintTextColor(textoPista);
                 }
@@ -426,15 +451,10 @@ public class InicioActivity extends AppCompatActivity {
 
         if (etCorreo != null) actualizarIconoInicio(etCorreo, R.drawable.ic_email, colorIconos);
         if (etContrasena != null) actualizarIconoInicio(etContrasena, R.drawable.ic_lock, colorIconos);
-        if (btnTogglePassword != null) {
-            btnTogglePassword.setImageTintList(ColorStateList.valueOf(colorIconos));
-        }
-        if (btnMicCorreo != null) {
-            btnMicCorreo.setImageTintList(ColorStateList.valueOf(colorIconos));
-        }
-        if (btnMicContrasena != null) {
-            btnMicContrasena.setImageTintList(ColorStateList.valueOf(colorIconos));
-        }
+
+        aplicarTintBotonIcono(btnTogglePassword, colorIconos);
+        aplicarTintBotonIcono(btnMicCorreo, colorIconos);
+        aplicarTintBotonIcono(btnMicContrasena, colorIconos);
 
         TextView enlace = findViewById(R.id.txtRegistrarse);
         if (enlace != null) {
@@ -445,6 +465,22 @@ public class InicioActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void aplicarTintBotonIcono(ImageView boton, int colorModoCremaOOscuro) {
+        if (boton == null) return;
+        Drawable d = boton.getDrawable();
+        if (d != null) {
+            d.mutate();
+            DrawableCompat.setTintList(d, null); // Limpia cualquier tint previo pegado en el drawable
+        }
+        if (modoContraste == 0) {
+            // Color oscuro visible sobre fondo claro en contraste normal
+            boton.setImageTintList(ColorStateList.valueOf(Color.parseColor("#0B1F3A")));
+        } else {
+            boton.setImageTintList(ColorStateList.valueOf(colorModoCremaOOscuro));
+        }
+    }
+
 
     private void actualizarColoresTextos(View vista, int principal, int secundario) {
         if (vista instanceof TextView && !(vista instanceof EditText)) {
@@ -490,8 +526,9 @@ public class InicioActivity extends AppCompatActivity {
         Drawable icono = ContextCompat.getDrawable(this, recurso);
         if (icono == null) return;
         icono = icono.mutate();
-        int colorFinal = modoContraste == 0 ? Color.parseColor("#111827") : color;
-        DrawableCompat.setTint(icono, colorFinal);
+        if (modoContraste != 0) {
+            DrawableCompat.setTint(icono, color);
+        }
         Drawable[] actuales = campo.getCompoundDrawablesRelative();
         campo.setCompoundDrawablesRelativeWithIntrinsicBounds(icono, actuales[1], actuales[2], actuales[3]);
     }
@@ -516,7 +553,7 @@ public class InicioActivity extends AppCompatActivity {
         if (bienvenidaVista) return;
 
         new AlertDialog.Builder(this)
-                .setTitle("¡Bienvenido a ViajAPP! 🌍")
+                .setTitle("¡Bienvenido a ViajAPP!")
                 .setMessage("Tu próxima aventura comienza acá.\n\nEn ViajAPP queremos que todos puedan viajar sin barreras.\n\n¿Querés activar la asistencia por voz?\n\nPodrás escuchar las indicaciones de la aplicación y completar formularios mediante dictado.")
                 .setPositiveButton("Activar asistencia por voz", (dialogo, opcion) -> {
                     preferencias.edit().putBoolean("bienvenidaVista", true).putBoolean("asistenciaVozSolicitada", true).apply();
