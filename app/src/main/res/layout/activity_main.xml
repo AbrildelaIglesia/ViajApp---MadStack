@@ -184,15 +184,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:layout_gravity="center_horizontal"
-                android:contentDescription="100% compatible con lectores de pantalla"
                 android:background="@drawable/fondo_chip_accesible"
+                android:contentDescription="100% compatible con lectores de pantalla"
                 android:gravity="center"
+                android:importantForAccessibility="no"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:text="100% compatible con lectores de pantalla"
                 android:textColor="#059669"
-                android:textSize="10sp"
-                android:importantForAccessibility="no"/>
+                android:textSize="10sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -212,11 +212,12 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/contenedorCorreo"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="6dp"
-                    android:background="@drawable/fondo_campo"
                     android:gravity="center_vertical"
+                    android:background="@null"
                     android:orientation="horizontal"
                     android:paddingStart="12dp"
                     android:paddingEnd="8dp">
@@ -260,11 +261,12 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/contenedorContrasena"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="6dp"
-                    android:background="@drawable/fondo_campo"
                     android:gravity="center_vertical"
+                    android:background="@null"
                     android:orientation="horizontal"
                     android:paddingStart="12dp"
                     android:paddingEnd="8dp">
@@ -338,78 +340,6 @@
                         android:importantForAccessibility="no" />
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:gravity="center"
-                    android:text="O INGRESA DE FORMA ACCESIBLE CON"
-                    android:textColor="#52647A"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:importantForAccessibility="no"/>
-
-                <!--<LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:weightSum="2">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="46dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="5dp"
-                        android:background="@drawable/fondo_campo"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:src="@drawable/ic_fingerprint"
-                        android:contentDescription="Iniciar sesión con biometría, huella o reconocimiento facial"
-                        android:importantForAccessibility="no">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:text="Huella / rostro"
-                            android:textColor="#0B1F3A"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btnDictadoVoz"
-                        android:layout_width="0dp"
-                        android:layout_height="46dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/fondo_campo"
-                        android:contentDescription="Iniciar sesión o completar campos mediante dictado por voz"
-                        android:gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_mic"
-                            android:importantForAccessibility="no" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:text="Dictado por voz"
-                            android:textColor="#0B1F3A"
-                            android:textSize="10sp"
-                            android:importantForAccessibility="no" />
-                    </LinearLayout>
-                </LinearLayout>-->
 
                 <TextView
                     android:layout_width="match_parent"

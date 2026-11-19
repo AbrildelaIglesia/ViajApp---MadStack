@@ -1,11 +1,13 @@
 package com.example.viajapp_madstack;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Patterns;
 import android.util.TypedValue;
 import android.view.View;
@@ -17,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
+import android.speech.RecognizerIntent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
@@ -24,7 +28,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,12 +38,27 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
-import android.content.Intent;
 public class RegistroActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CODE_VOICE_NOMBRE = 200;
+    private static final int REQUEST_CODE_VOICE_CORREO = 201;
+    private static final int REQUEST_CODE_VOICE_PASSWORD = 202;
+    private static final int REQUEST_CODE_VOICE_CONF_PASSWORD = 203;
 
     // CAMPOS DEL FORMULARIO
     private EditText etNombreApellidos, etCorreo,
             etContrasena, etConfirmarContrasena;
+
+    // CONTENEDORES DE CAMPOS DEL FORMULARIO
+    private View contenedorNombre, contenedorCorreo,
+            contenedorContrasena, contenedorConfirmarContrasena;
+
+    // BOTONES DE VISIBILIDAD DE CONTRASEÑA (OJITOS)
+    private ImageView btnTogglePassword, btnToggleConfPassword;
+
+    // BOTONES DE MICRÓFONO
+    private ImageView btnMicNombre, btnMicCorreo,
+            btnMicContrasena, btnMicConfirmacionContrasena;
 
     // CASILLAS DE ACCESIBILIDAD Y TÉRMINOS
     private CheckBox cbSillaRuedas, cbRecorridosCortos,
@@ -89,14 +107,6 @@ public class RegistroActivity extends AppCompatActivity {
     private final IdentityHashMap<View, Drawable> fondosOriginales =
             new IdentityHashMap<>();
 
-    private final IdentityHashMap<ImageView, ColorStateList> tintesOriginales =
-            new IdentityHashMap<>();
-
-
-    // Guardar los dibujos originales para restaurarlos
-    private final IdentityHashMap<ImageView, Drawable.ConstantState> iconosOriginales =
-            new IdentityHashMap<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +119,22 @@ public class RegistroActivity extends AppCompatActivity {
         etCorreo = findViewById(R.id.etCorreo);
         etContrasena = findViewById(R.id.etContrasena);
         etConfirmarContrasena = findViewById(R.id.etConfirmarContrasena);
+
+        // CONECTAR CONTENEDORES DE CAMPOS
+        contenedorNombre = findViewById(R.id.contenedorNombre);
+        contenedorCorreo = findViewById(R.id.contenedorCorreo);
+        contenedorContrasena = findViewById(R.id.contenedorContrasena);
+        contenedorConfirmarContrasena = findViewById(R.id.contenedorConfirmarContrasena);
+
+        // CONECTAR TOGGLES DE CONTRASEÑA
+        btnTogglePassword = findViewById(R.id.btnTogglePassword);
+        btnToggleConfPassword = findViewById(R.id.btnToggleConfPassword);
+
+        // CONECTAR MICRÓFONOS
+        btnMicNombre = findViewById(R.id.btnMicNombre);
+        btnMicCorreo = findViewById(R.id.btnMicCorreo);
+        btnMicContrasena = findViewById(R.id.btnMicContrasena);
+        btnMicConfirmacionContrasena = findViewById(R.id.btnMicConfirmacionContrasena);
 
         // CONECTAR CASILLAS
         cbSillaRuedas = findViewById(R.id.cbSillaRuedas);
@@ -139,6 +165,7 @@ public class RegistroActivity extends AppCompatActivity {
 
         // CONFIGURAR PREFERENCIAS
         configurarAccesibilidad();
+        configurarListenersContrasenasYMicros();
 
         // ABRIR Y CERRAR EL MENÚ
         btnAccesibilidad.setOnClickListener(v -> {
@@ -272,7 +299,6 @@ public class RegistroActivity extends AppCompatActivity {
                     .toString()
                     .trim();
 
-            // NO MODIFICAR LAS CONTRASEÑAS CON trim()
             String contrasena =
                     etContrasena.getText().toString();
 
@@ -289,10 +315,7 @@ public class RegistroActivity extends AppCompatActivity {
             crearCuentaFirebase(nombre, correo, contrasena);
         });
 
-        // ===================================================
-        // NUEVO: IR A LA PANTALLA DE INICIO DE SESIÓN
-        // ===================================================
-
+        // IR A LA PANTALLA DE INICIO DE SESIÓN
         TextView txtIniciarSesion = findViewById(R.id.txtIniciarSesion);
 
         txtIniciarSesion.setOnClickListener(v -> {
@@ -306,6 +329,65 @@ public class RegistroActivity extends AppCompatActivity {
             finish();
 
         });
+    }
+
+    // ===================================================
+    // CONFIGURACIÓN DE MOSTRAR/OCULTAR Y MICRÓFONOS
+    // ===================================================
+
+    private void configurarListenersContrasenasYMicros() {
+        // MOSTRAR / OCULTAR CONTRASEÑA PRINCIPAL
+        btnTogglePassword.setOnClickListener(v -> {
+            boolean esVisible = etContrasena.getTransformationMethod() == null;
+            if (esVisible) {
+                etContrasena.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                btnTogglePassword.setImageResource(R.drawable.visible_false);
+                btnTogglePassword.setContentDescription("Mostrar contraseña");
+            } else {
+                etContrasena.setTransformationMethod(null);
+                btnTogglePassword.setImageResource(R.drawable.visible_true);
+                btnTogglePassword.setContentDescription("Ocultar la contraseña");
+            }
+            aplicarTintIndividual(btnTogglePassword, modoContraste == 1
+                    ? Color.parseColor("#272727")
+                    : Color.parseColor("#FFFFFF"));
+            etContrasena.setSelection(etContrasena.getText().length());
+        });
+
+        // MOSTRAR / OCULTAR CONFIRMACIÓN DE CONTRASEÑA
+        btnToggleConfPassword.setOnClickListener(v -> {
+            boolean esVisible = etConfirmarContrasena.getTransformationMethod() == null;
+            if (esVisible) {
+                etConfirmarContrasena.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                btnToggleConfPassword.setImageResource(R.drawable.visible_false);
+                btnToggleConfPassword.setContentDescription("Mostrar confirmación de contraseña");
+            } else {
+                etConfirmarContrasena.setTransformationMethod(null);
+                btnToggleConfPassword.setImageResource(R.drawable.visible_true);
+                btnToggleConfPassword.setContentDescription("Ocultar confirmación de contraseña");
+            }
+            aplicarTintIndividual(btnToggleConfPassword, modoContraste == 1
+                    ? Color.parseColor("#272727")
+                    : Color.parseColor("#FFFFFF"));
+            etConfirmarContrasena.setSelection(etConfirmarContrasena.getText().length());
+        });
+
+        // FUNCIONALIDAD DE ACCESIBILIDAD PARA MICRÓFONOS
+        btnMicNombre.setOnClickListener(v ->
+                VoiceUtils.iniciarDictado(this, REQUEST_CODE_VOICE_NOMBRE, "Dicta tu nombre y apellidos")
+        );
+
+        btnMicCorreo.setOnClickListener(v ->
+                VoiceUtils.iniciarDictado(this, REQUEST_CODE_VOICE_CORREO, "Dicta tu correo electrónico")
+        );
+
+        btnMicContrasena.setOnClickListener(v ->
+                VoiceUtils.iniciarDictado(this, REQUEST_CODE_VOICE_PASSWORD, "Dicta tu contraseña")
+        );
+
+        btnMicConfirmacionContrasena.setOnClickListener(v ->
+                VoiceUtils.iniciarDictado(this, REQUEST_CODE_VOICE_CONF_PASSWORD, "Dicta la confirmación de contraseña")
+        );
     }
 
     @Override
@@ -325,6 +407,41 @@ public class RegistroActivity extends AppCompatActivity {
         );
 
         actualizarTamanoTextos(barraAccesibilidad);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && data != null) {
+            ArrayList<String> resultado = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (resultado != null && !resultado.isEmpty()) {
+                String textoHablado = resultado.get(0);
+
+                if (requestCode == REQUEST_CODE_VOICE_NOMBRE) {
+                    String nombreLimpio = formatearNombre(
+                            VoiceUtils.procesarTextoDictado(textoHablado, VoiceUtils.TIPO_TEXTO_GENERAL)
+                    );
+                    etNombreApellidos.setText(nombreLimpio);
+                    etNombreApellidos.setSelection(nombreLimpio.length());
+
+                } else if (requestCode == REQUEST_CODE_VOICE_CORREO) {
+                    String correoLimpio = VoiceUtils.procesarTextoDictado(textoHablado, VoiceUtils.TIPO_CORREO);
+                    etCorreo.setText(correoLimpio);
+                    etCorreo.setSelection(correoLimpio.length());
+
+                } else if (requestCode == REQUEST_CODE_VOICE_PASSWORD) {
+                    String passLimpia = VoiceUtils.procesarTextoDictado(textoHablado, VoiceUtils.TIPO_PASSWORD);
+                    etContrasena.setText(passLimpia);
+                    etContrasena.setSelection(passLimpia.length());
+
+                } else if (requestCode == REQUEST_CODE_VOICE_CONF_PASSWORD) {
+                    String confPassLimpia = VoiceUtils.procesarTextoDictado(textoHablado, VoiceUtils.TIPO_PASSWORD);
+                    etConfirmarContrasena.setText(confPassLimpia);
+                    etConfirmarContrasena.setSelection(confPassLimpia.length());
+                }
+            }
+        }
     }
 
     // ===================================================
@@ -369,10 +486,6 @@ public class RegistroActivity extends AppCompatActivity {
         boolean normal = modoContraste == 0;
         boolean crema = modoContraste == 1;
 
-
-        // COLORES DE CADA TEMA
-        // Inspirados en los modos oscuro y crema de Wattpad
-
         int fondoPantalla = Color.parseColor(
                 crema ? "#FFF1D6" : "#111111"
         );
@@ -413,11 +526,9 @@ public class RegistroActivity extends AppCompatActivity {
                 crema ? "#D8C5A8" : "#303030"
         );
 
-
         int colorIconos = Color.parseColor(
                 crema ? "#272727" : "#FFFFFF"
         );
-
 
         // 1. FONDO GENERAL
         if (normal) {
@@ -462,19 +573,12 @@ public class RegistroActivity extends AppCompatActivity {
             guardarColorOriginal(control);
 
             if (normal) {
-
                 restaurarFondo(control);
-
-                control.setTextColor(
-                        coloresOriginales.get(control)
-                );
-
+                control.setTextColor(coloresOriginales.get(control));
             } else {
-
                 control.setBackground(
                         fondoRedondeado(fondoControl, borde, 12, 1)
                 );
-
                 control.setTextColor(textoPrincipal);
             }
         }
@@ -484,16 +588,9 @@ public class RegistroActivity extends AppCompatActivity {
         guardarColorOriginal(btnCrearCuenta);
 
         if (normal) {
-
             restaurarFondo(btnCrearCuenta);
-
-            btnCrearCuenta.setTextColor(
-                    coloresOriginales.get(btnCrearCuenta)
-            );
-
-
+            btnCrearCuenta.setTextColor(coloresOriginales.get(btnCrearCuenta));
         } else {
-
             btnCrearCuenta.setBackground(
                     fondoBotonTema(
                             fondoBoton,
@@ -501,14 +598,32 @@ public class RegistroActivity extends AppCompatActivity {
                             crema ? borde : Color.WHITE
                     )
             );
-
             btnCrearCuenta.setTextColor(
                     crema ? Color.parseColor("#222222") : Color.WHITE
             );
         }
 
+        // 7. CONTENEDORES Y CAMPOS DEL FORMULARIO
+        int fondoNormalCampo = Color.parseColor("#FFFFFF");
+        int bordeNormalCampo = Color.parseColor("#CBD5E1"); // O "#111827" si lo querés bien marcado
 
-        // 7. CAMPOS DEL FORMULARIO
+        View[] contenedoresCampos = {
+                contenedorNombre,
+                contenedorCorreo,
+                contenedorContrasena,
+                contenedorConfirmarContrasena
+        };
+
+        for (View contenedor : contenedoresCampos) {
+            if (contenedor != null) {
+                if (normal) {
+                    contenedor.setBackground(fondoCampoTema(fondoNormalCampo, bordeNormalCampo));
+                } else {
+                    contenedor.setBackground(fondoCampoTema(fondoCampo, borde));
+                }
+            }
+        }
+
         EditText[] campos = {
                 etNombreApellidos,
                 etCorreo,
@@ -517,37 +632,24 @@ public class RegistroActivity extends AppCompatActivity {
         };
 
         for (EditText campo : campos) {
+            if (campo != null) {
+                campo.setBackground(null);
+                guardarColorOriginal(campo);
 
-            guardarFondoOriginal(campo);
-            guardarColorOriginal(campo);
+                if (!pistasOriginales.containsKey(campo)) {
+                    pistasOriginales.put(
+                            campo,
+                            campo.getHintTextColors()
+                    );
+                }
 
-            if (!pistasOriginales.containsKey(campo)) {
-                pistasOriginales.put(
-                        campo,
-                        campo.getHintTextColors()
-                );
-            }
-
-            if (normal) {
-
-                restaurarFondo(campo);
-
-                campo.setTextColor(
-                        coloresOriginales.get(campo)
-                );
-
-                campo.setHintTextColor(
-                        pistasOriginales.get(campo)
-                );
-
-            } else {
-
-                campo.setBackground(
-                        fondoCampoTema(fondoCampo, borde)
-                );
-
-                campo.setTextColor(textoPrincipal);
-                campo.setHintTextColor(textoPista);
+                if (normal) {
+                    campo.setTextColor(coloresOriginales.get(campo));
+                    campo.setHintTextColor(pistasOriginales.get(campo));
+                } else {
+                    campo.setTextColor(textoPrincipal);
+                    campo.setHintTextColor(textoPista);
+                }
             }
         }
 
@@ -558,29 +660,10 @@ public class RegistroActivity extends AppCompatActivity {
         );
 
         // 9. ICONOS DE LOS CAMPOS
-        actualizarIconoInicio(
-                etNombreApellidos,
-                R.drawable.ic_person,
-                colorIconos
-        );
-
-        actualizarIconoInicio(
-                etCorreo,
-                R.drawable.ic_email,
-                colorIconos
-        );
-
-        actualizarIconoInicio(
-                etContrasena,
-                R.drawable.ic_lock,
-                colorIconos
-        );
-
-        actualizarIconoInicio(
-                etConfirmarContrasena,
-                R.drawable.ic_lock,
-                colorIconos
-        );
+        actualizarIconoInicio(etNombreApellidos, R.drawable.ic_person, colorIconos);
+        actualizarIconoInicio(etCorreo, R.drawable.ic_email, colorIconos);
+        actualizarIconoInicio(etContrasena, R.drawable.ic_lock, colorIconos);
+        actualizarIconoInicio(etConfirmarContrasena, R.drawable.ic_lock, colorIconos);
 
         // 10. FLECHA DEL BOTÓN CREAR CUENTA
         actualizarIconoFinal(
@@ -589,12 +672,22 @@ public class RegistroActivity extends AppCompatActivity {
                 crema ? Color.parseColor("#222222") : Color.WHITE
         );
 
+        // 11. OJITOS DE LAS CONTRASEÑAS (TINTES)
+        aplicarTintIndividual(btnTogglePassword, colorIconos);
+        aplicarTintIndividual(btnToggleConfPassword, colorIconos);
+    }
 
-        // 11. OJITOS DE LAS CONTRASEÑAS
-        actualizarIconosContrasenas(
-                pantallaRegistro,
-                normal ? 0 : colorIconos
-        );
+    private void aplicarTintIndividual(ImageView boton, int colorModoCremaOOscuro) {
+        if (boton == null) return;
+        Drawable d = boton.getDrawable();
+        if (d != null) {
+            d.mutate();
+            DrawableCompat.setTintList(d, null);
+        }
+        int colorFinal = (modoContraste == 0)
+                ? Color.parseColor("#111827")
+                : colorModoCremaOOscuro;
+        boton.setImageTintList(ColorStateList.valueOf(colorFinal));
     }
 
     // ===================================================
@@ -619,12 +712,8 @@ public class RegistroActivity extends AppCompatActivity {
                     coloresOriginales.get(texto);
 
             if (modoContraste == 0) {
-
                 texto.setTextColor(original);
-
             } else if (texto.getId() == R.id.txtIniciarSesion) {
-
-                // EL ENLACE DE INICIO DE SESIÓN SE DESTACA
                 texto.setTextColor(
                         Color.parseColor(
                                 modoContraste == 1
@@ -632,11 +721,8 @@ public class RegistroActivity extends AppCompatActivity {
                                         : "#FFE16B"
                         )
                 );
-
             } else {
-
                 int colorAnterior = original.getDefaultColor();
-
                 boolean esSecundario =
                         colorAnterior == Color.parseColor("#6B7280")
                                 || colorAnterior == Color.parseColor("#4B5563");
@@ -648,9 +734,7 @@ public class RegistroActivity extends AppCompatActivity {
         }
 
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
                 actualizarColoresTextos(
                         grupo.getChildAt(i),
@@ -686,13 +770,10 @@ public class RegistroActivity extends AppCompatActivity {
             }
 
             if (modoContraste == 0) {
-
                 casilla.setButtonTintList(
                         coloresOriginalesCasillas.get(casilla)
                 );
-
             } else {
-
                 int marcado = Color.parseColor(
                         modoContraste == 1
                                 ? "#785500"
@@ -710,10 +791,7 @@ public class RegistroActivity extends AppCompatActivity {
                                 new int[] { android.R.attr.state_checked },
                                 new int[] {}
                         },
-                        new int[] {
-                                marcado,
-                                desmarcado
-                        }
+                        new int[] { marcado, desmarcado }
                 );
 
                 casilla.setButtonTintList(tintes);
@@ -726,29 +804,20 @@ public class RegistroActivity extends AppCompatActivity {
     // ===================================================
 
     private void guardarFondoOriginal(View vista) {
-
-        if (!fondosOriginales.containsKey(vista)) {
-            fondosOriginales.put(
-                    vista,
-                    vista.getBackground()
-            );
+        if (vista != null && !fondosOriginales.containsKey(vista)) {
+            fondosOriginales.put(vista, vista.getBackground());
         }
     }
 
     private void restaurarFondo(View vista) {
-
-        vista.setBackground(
-                fondosOriginales.get(vista)
-        );
+        if (vista != null && fondosOriginales.containsKey(vista)) {
+            vista.setBackground(fondosOriginales.get(vista));
+        }
     }
 
     private void guardarColorOriginal(TextView texto) {
-
-        if (!coloresOriginales.containsKey(texto)) {
-            coloresOriginales.put(
-                    texto,
-                    texto.getTextColors()
-            );
+        if (texto != null && !coloresOriginales.containsKey(texto)) {
+            coloresOriginales.put(texto, texto.getTextColors());
         }
     }
 
@@ -756,10 +825,6 @@ public class RegistroActivity extends AppCompatActivity {
     // ICONOS DE LA PANTALLA
     // ===================================================
 
-
-    // CAMBIAR Y RESTAURAR LOS ICONOS
-
-    // CAMBIAR LOS ICONOS SEGÚN EL CONTRASTE
     private void actualizarIconosContraste(
             View vista,
             int colorIconos) {
@@ -767,49 +832,36 @@ public class RegistroActivity extends AppCompatActivity {
         if (vista instanceof ImageView) {
 
             ImageView imagen = (ImageView) vista;
-
-            CharSequence descripcion =
-                    imagen.getContentDescription();
-
+            CharSequence descripcion = imagen.getContentDescription();
             int recurso = 0;
 
-            // Identificar solamente nuestros iconos
             if (descripcion != null) {
-
                 switch (descripcion.toString()) {
-
                     case "Escudo de accesibilidad":
                         recurso = R.drawable.ic_shield_check;
                         break;
-
                     case "Silla de ruedas":
                         recurso = R.drawable.ic_wheelchair;
                         break;
-
                     case "Recorridos cortos":
                         recurso = R.drawable.ic_walk;
                         break;
-
                     case "Visión reducida":
                         recurso = R.drawable.ic_visibility;
                         break;
-
                     case "Accesibilidad auditiva":
                         recurso = R.drawable.ic_hearing;
                         break;
-
                     case "Sin adaptaciones específicas":
                         recurso = R.drawable.ic_travel_explore;
                         break;
-
+                    case "Dictar nombre y apellidos":
+                    case "Dictar correo electrónico":
+                    case "Dictar contraseña":
+                    case "Dictar la confirmación de contraseña":
                     case "Micrófono":
                         recurso = R.drawable.ic_mic;
                         break;
-
-                    case "Huella digital":
-                        recurso = R.drawable.ic_fingerprint;
-                        break;
-
                     case "Privacidad":
                         recurso = R.drawable.ic_privacy;
                         break;
@@ -817,58 +869,35 @@ public class RegistroActivity extends AppCompatActivity {
             }
 
             if (recurso != 0) {
-
-                // Volver a cargar el dibujo original
                 imagen.setImageTintList(null);
                 imagen.setImageResource(recurso);
-
-                // Aplicar siempre un color visible
-                int colorFinal;
-
-                if (modoContraste == 0) {
-
-                    // NORMAL: iconos oscuros
-                    colorFinal = Color.parseColor("#111827");
-
-                } else {
-
-                    // CREMA Y OSCURO
-                    colorFinal = colorIconos;
+                Drawable d = imagen.getDrawable();
+                if (d != null) {
+                    d.mutate();
+                    DrawableCompat.setTintList(d, null);
                 }
 
-                imagen.setImageTintList(
-                        ColorStateList.valueOf(colorFinal)
-                );
+                int colorFinal = (modoContraste == 0) ? Color.parseColor("#111827") : colorIconos;
+                imagen.setImageTintList(ColorStateList.valueOf(colorFinal));
             }
         }
 
-        // Recorrer todos los elementos de la pantalla
         if (vista instanceof ViewGroup) {
-
             ViewGroup grupo = (ViewGroup) vista;
-
             for (int i = 0; i < grupo.getChildCount(); i++) {
-
-                actualizarIconosContraste(
-                        grupo.getChildAt(i),
-                        colorIconos
-                );
+                actualizarIconosContraste(grupo.getChildAt(i), colorIconos);
             }
         }
     }
 
-
-
-    // ICONOS A LA IZQUIERDA DE LOS CAMPOS
     private void actualizarIconoInicio(
             EditText campo,
             int recurso,
             int color) {
 
+        if (campo == null) return;
         Drawable icono = obtenerIconoTema(recurso, color);
-
-        Drawable[] actuales =
-                campo.getCompoundDrawablesRelative();
+        Drawable[] actuales = campo.getCompoundDrawablesRelative();
 
         campo.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 icono,
@@ -878,16 +907,14 @@ public class RegistroActivity extends AppCompatActivity {
         );
     }
 
-    // FLECHA DEL BOTÓN CREAR CUENTA
     private void actualizarIconoFinal(
             TextView boton,
             int recurso,
             int color) {
 
+        if (boton == null) return;
         Drawable icono = obtenerIconoTema(recurso, color);
-
-        Drawable[] actuales =
-                boton.getCompoundDrawablesRelative();
+        Drawable[] actuales = boton.getCompoundDrawablesRelative();
 
         boton.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 actuales[0],
@@ -901,63 +928,17 @@ public class RegistroActivity extends AppCompatActivity {
             int recurso,
             int color) {
 
-        Drawable icono =
-                ContextCompat.getDrawable(this, recurso);
-
-        if (icono != null && modoContraste != 0) {
-
+        Drawable icono = ContextCompat.getDrawable(this, recurso);
+        if (icono != null) {
             icono = icono.mutate();
-
-            DrawableCompat.setTint(icono, color);
+            DrawableCompat.setTintList(icono, null);
+            int colorAplicar = (modoContraste == 0)
+                    ? Color.parseColor("#111827")
+                    : color;
+            DrawableCompat.setTint(icono, colorAplicar);
         }
-
         return icono;
     }
-
-
-    // OJITOS PARA MOSTRAR Y OCULTAR CONTRASEÑAS
-    private void actualizarIconosContrasenas(
-            View vista,
-            int colorIconos) {
-
-        if (vista instanceof TextInputLayout) {
-
-            TextInputLayout campo =
-                    (TextInputLayout) vista;
-
-            if (modoContraste == 0) {
-
-                // NORMAL: ojitos oscuros
-                campo.setEndIconTintList(
-                        ColorStateList.valueOf(
-                                Color.parseColor("#111827")
-                        )
-                );
-
-            } else {
-
-                // CREMA Y OSCURO: color correspondiente
-                campo.setEndIconTintList(
-                        ColorStateList.valueOf(colorIconos)
-                );
-            }
-        }
-
-        // Recorrer todos los elementos
-        if (vista instanceof ViewGroup) {
-
-            ViewGroup grupo = (ViewGroup) vista;
-
-            for (int i = 0; i < grupo.getChildCount(); i++) {
-
-                actualizarIconosContrasenas(
-                        grupo.getChildAt(i),
-                        colorIconos
-                );
-            }
-        }
-    }
-
 
     // ===================================================
     // FONDOS REDONDEADOS SEGÚN EL CONTRASTE
@@ -970,17 +951,10 @@ public class RegistroActivity extends AppCompatActivity {
             int grosorDp) {
 
         GradientDrawable forma = new GradientDrawable();
-
         forma.setShape(GradientDrawable.RECTANGLE);
         forma.setColor(colorFondo);
-
         forma.setCornerRadius(dp(radioDp));
-
-        forma.setStroke(
-                dp(grosorDp),
-                colorBorde
-        );
-
+        forma.setStroke(dp(grosorDp), colorBorde);
         return forma;
     }
 
@@ -988,29 +962,16 @@ public class RegistroActivity extends AppCompatActivity {
             int colorFondo,
             int colorBorde) {
 
-        StateListDrawable estados =
-                new StateListDrawable();
+        StateListDrawable estados = new StateListDrawable();
 
-        // CAMPO SELECCIONADO
         estados.addState(
                 new int[] { android.R.attr.state_focused },
-                fondoRedondeado(
-                        colorFondo,
-                        colorBorde,
-                        12,
-                        2
-                )
+                fondoRedondeado(colorFondo, colorBorde, 12, 2)
         );
 
-        // CAMPO NORMAL
         estados.addState(
                 new int[] {},
-                fondoRedondeado(
-                        colorFondo,
-                        colorBorde,
-                        12,
-                        1
-                )
+                fondoRedondeado(colorFondo, colorBorde, 12, 1)
         );
 
         return estados;
@@ -1021,37 +982,22 @@ public class RegistroActivity extends AppCompatActivity {
             int presionado,
             int borde) {
 
-        StateListDrawable estados =
-                new StateListDrawable();
+        StateListDrawable estados = new StateListDrawable();
 
-        // BOTÓN PRESIONADO
         estados.addState(
                 new int[] { android.R.attr.state_pressed },
-                fondoRedondeado(
-                        presionado,
-                        borde,
-                        28,
-                        2
-                )
+                fondoRedondeado(presionado, borde, 28, 2)
         );
 
-        // BOTÓN NORMAL
         estados.addState(
                 new int[] {},
-                fondoRedondeado(
-                        normal,
-                        borde,
-                        28,
-                        2
-                )
+                fondoRedondeado(normal, borde, 28, 2)
         );
 
         return estados;
     }
 
-    // CONVERTIR DP A PÍXELES
     private int dp(int valor) {
-
         return Math.round(
                 valor * getResources()
                         .getDisplayMetrics()
@@ -1066,42 +1012,25 @@ public class RegistroActivity extends AppCompatActivity {
     private boolean validarNombre(String nombre) {
 
         if (nombre.isEmpty()) {
-
-            etNombreApellidos.setError(
-                    "Ingrese su nombre y apellido"
-            );
-
+            etNombreApellidos.setError("Ingrese su nombre y apellido");
             etNombreApellidos.requestFocus();
             return false;
         }
 
-        if (!nombre.matches(
-                "[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]+")) {
-
-            etNombreApellidos.setError(
-                    "El nombre y apellido solo pueden contener letras"
-            );
-
+        if (!nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ ]+")) {
+            etNombreApellidos.setError("El nombre y apellido solo pueden contener letras");
             etNombreApellidos.requestFocus();
             return false;
         }
 
         if (nombre.length() < 2 || nombre.length() > 100) {
-
-            etNombreApellidos.setError(
-                    "El nombre y apellido deben tener entre 2 y 100 caracteres"
-            );
-
+            etNombreApellidos.setError("El nombre y apellido deben tener entre 2 y 100 caracteres");
             etNombreApellidos.requestFocus();
             return false;
         }
 
         if (nombre.split(" ").length < 2) {
-
-            etNombreApellidos.setError(
-                    "Ingrese su nombre y al menos un apellido"
-            );
-
+            etNombreApellidos.setError("Ingrese su nombre y al menos un apellido");
             etNombreApellidos.requestFocus();
             return false;
         }
@@ -1115,15 +1044,11 @@ public class RegistroActivity extends AppCompatActivity {
 
     private String formatearNombre(String nombre) {
 
-        String[] palabras =
-                nombre.toLowerCase().split(" ");
-
+        String[] palabras = nombre.toLowerCase().split(" ");
         StringBuilder resultado = new StringBuilder();
 
         for (String palabra : palabras) {
-
             if (!palabra.isEmpty()) {
-
                 if (resultado.length() > 0) {
                     resultado.append(" ");
                 }
@@ -1133,11 +1058,8 @@ public class RegistroActivity extends AppCompatActivity {
                         || palabra.equals("la")
                         || palabra.equals("las")
                         || palabra.equals("los")) {
-
                     resultado.append(palabra);
-
                 } else {
-
                     resultado.append(
                             palabra.substring(0, 1).toUpperCase()
                     ).append(palabra.substring(1));
@@ -1155,21 +1077,13 @@ public class RegistroActivity extends AppCompatActivity {
     private boolean validarCorreo(String correo) {
 
         if (correo.isEmpty()) {
-
-            etCorreo.setError(
-                    "Ingrese su correo electrónico"
-            );
-
+            etCorreo.setError("Ingrese su correo electrónico");
             etCorreo.requestFocus();
             return false;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
-
-            etCorreo.setError(
-                    "Ingrese un correo electrónico válido"
-            );
-
+            etCorreo.setError("Ingrese un correo electrónico válido");
             etCorreo.requestFocus();
             return false;
         }
@@ -1184,61 +1098,37 @@ public class RegistroActivity extends AppCompatActivity {
     private boolean validarContrasena(String contrasena) {
 
         if (contrasena.isEmpty()) {
-
-            etContrasena.setError(
-                    "Ingrese una contraseña"
-            );
-
+            etContrasena.setError("Ingrese una contraseña");
             etContrasena.requestFocus();
             return false;
         }
 
         if (contrasena.length() < 8) {
-
-            etContrasena.setError(
-                    "La contraseña debe tener al menos 8 caracteres"
-            );
-
+            etContrasena.setError("La contraseña debe tener al menos 8 caracteres");
             etContrasena.requestFocus();
             return false;
         }
 
         if (!contrasena.matches(".*[A-Z].*")) {
-
-            etContrasena.setError(
-                    "Debe contener al menos una letra mayúscula"
-            );
-
+            etContrasena.setError("Debe contener al menos una letra mayúscula");
             etContrasena.requestFocus();
             return false;
         }
 
         if (!contrasena.matches(".*[a-z].*")) {
-
-            etContrasena.setError(
-                    "Debe contener al menos una letra minúscula"
-            );
-
+            etContrasena.setError("Debe contener al menos una letra minúscula");
             etContrasena.requestFocus();
             return false;
         }
 
         if (!contrasena.matches(".*[0-9].*")) {
-
-            etContrasena.setError(
-                    "Debe contener al menos un número"
-            );
-
+            etContrasena.setError("Debe contener al menos un número");
             etContrasena.requestFocus();
             return false;
         }
 
         if (!contrasena.matches(".*[^a-zA-Z0-9].*")) {
-
-            etContrasena.setError(
-                    "Debe contener al menos un carácter especial"
-            );
-
+            etContrasena.setError("Debe contener al menos un carácter especial");
             etContrasena.requestFocus();
             return false;
         }
@@ -1255,21 +1145,13 @@ public class RegistroActivity extends AppCompatActivity {
             String confirmarContrasena) {
 
         if (confirmarContrasena.isEmpty()) {
-
-            etConfirmarContrasena.setError(
-                    "Confirme su contraseña"
-            );
-
+            etConfirmarContrasena.setError("Confirme su contraseña");
             etConfirmarContrasena.requestFocus();
             return false;
         }
 
         if (!contrasena.equals(confirmarContrasena)) {
-
-            etConfirmarContrasena.setError(
-                    "Las contraseñas no coinciden"
-            );
-
+            etConfirmarContrasena.setError("Las contraseñas no coinciden");
             etConfirmarContrasena.requestFocus();
             return false;
         }
@@ -1289,10 +1171,7 @@ public class RegistroActivity extends AppCompatActivity {
                 && !cbSubtitulos.isChecked()
                 && !cbSinAdaptaciones.isChecked()) {
 
-            cbSillaRuedas.setError(
-                    "Seleccioná al menos una opción de accesibilidad"
-            );
-
+            cbSillaRuedas.setError("Seleccioná al menos una opción de accesibilidad");
             cbSillaRuedas.requestFocus();
             return false;
         }
@@ -1308,11 +1187,7 @@ public class RegistroActivity extends AppCompatActivity {
     private boolean validarTerminos() {
 
         if (!cbTerminos.isChecked()) {
-
-            cbTerminos.setError(
-                    "Debe aceptar los términos y condiciones"
-            );
-
+            cbTerminos.setError("Debe aceptar los términos y condiciones");
             cbTerminos.requestFocus();
 
             Toast.makeText(
@@ -1334,30 +1209,22 @@ public class RegistroActivity extends AppCompatActivity {
 
     private void configurarAccesibilidad() {
 
-        // SI ELIGE SIN ADAPTACIONES
         cbSinAdaptaciones.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
-
                     if (isChecked) {
-
                         cbSillaRuedas.setChecked(false);
                         cbRecorridosCortos.setChecked(false);
                         cbVisionReducida.setChecked(false);
                         cbSubtitulos.setChecked(false);
-
                         cbSillaRuedas.setError(null);
                     }
                 }
         );
 
-        // SI ELIGE ALGUNA ADAPTACIÓN
         CompoundButton.OnCheckedChangeListener listener =
                 (buttonView, isChecked) -> {
-
                     if (isChecked) {
-
                         cbSinAdaptaciones.setChecked(false);
-
                         cbSillaRuedas.setError(null);
                     }
                 };
@@ -1393,17 +1260,13 @@ public class RegistroActivity extends AppCompatActivity {
                         firebaseAuth.getCurrentUser();
 
                 if (usuario != null) {
-
                     guardarUsuarioFirestore(
                             usuario.getUid(),
                             nombre,
                             correo
                     );
-
                 } else {
-
                     finalizarRegistroEnCurso();
-
                     Toast.makeText(
                             this,
                             "No se pudo obtener el usuario creado",
@@ -1414,19 +1277,12 @@ public class RegistroActivity extends AppCompatActivity {
             } else {
 
                 finalizarRegistroEnCurso();
-
                 Exception error = task.getException();
 
                 if (error instanceof FirebaseAuthUserCollisionException) {
-
-                    etCorreo.setError(
-                            "Este correo electrónico ya está registrado"
-                    );
-
+                    etCorreo.setError("Este correo electrónico ya está registrado");
                     etCorreo.requestFocus();
-
                 } else {
-
                     Toast.makeText(
                             this,
                             "No se pudo crear la cuenta. Verificá la conexión e intentá nuevamente.",
@@ -1446,51 +1302,25 @@ public class RegistroActivity extends AppCompatActivity {
             String nombre,
             String correo) {
 
-        Map<String, Object> datosUsuario =
-                new HashMap<>();
+        Map<String, Object> datosUsuario = new HashMap<>();
 
         datosUsuario.put("uid", uid);
         datosUsuario.put("nombreApellidos", nombre);
         datosUsuario.put("correo", correo);
 
-        // GUARDAR PREFERENCIAS
-        Map<String, Object> accesibilidad =
-                new HashMap<>();
+        Map<String, Object> accesibilidad = new HashMap<>();
 
-        accesibilidad.put(
-                "sillaRuedas",
-                cbSillaRuedas.isChecked()
-        );
+        accesibilidad.put("sillaRuedas", cbSillaRuedas.isChecked());
+        accesibilidad.put("recorridosCortos", cbRecorridosCortos.isChecked());
+        accesibilidad.put("visionReducida", cbVisionReducida.isChecked());
+        accesibilidad.put("subtitulos", cbSubtitulos.isChecked());
 
-        accesibilidad.put(
-                "recorridosCortos",
-                cbRecorridosCortos.isChecked()
-        );
-
-        accesibilidad.put(
-                "visionReducida",
-                cbVisionReducida.isChecked()
-        );
-
-        accesibilidad.put(
-                "subtitulos",
-                cbSubtitulos.isChecked()
-        );
-
-        datosUsuario.put(
-                "accesibilidad",
-                accesibilidad
-        );
-
-        datosUsuario.put(
-                "fechaRegistro",
-                FieldValue.serverTimestamp()
-        );
+        datosUsuario.put("accesibilidad", accesibilidad);
+        datosUsuario.put("fechaRegistro", FieldValue.serverTimestamp());
 
         firestore.collection("usuarios")
                 .document(uid)
                 .set(datosUsuario)
-
                 .addOnSuccessListener(unused -> {
 
                     finalizarRegistroEnCurso();
@@ -1501,10 +1331,8 @@ public class RegistroActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
 
-                    // CERRAR LA SESIÓN AUTOMÁTICA DE FIREBASE
                     firebaseAuth.signOut();
 
-                    // IR A INICIO DE SESIÓN
                     Intent intent = new Intent(
                             RegistroActivity.this,
                             InicioActivity.class
@@ -1514,7 +1342,6 @@ public class RegistroActivity extends AppCompatActivity {
                     finish();
 
                 })
-
                 .addOnFailureListener(e -> {
 
                     finalizarRegistroEnCurso();
@@ -1532,9 +1359,7 @@ public class RegistroActivity extends AppCompatActivity {
     // ===================================================
 
     private void finalizarRegistroEnCurso() {
-
         registrando = false;
-
         btnCrearCuenta.setEnabled(true);
         btnCrearCuenta.setAlpha(1.0f);
     }
