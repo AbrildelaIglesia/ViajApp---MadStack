@@ -4,6 +4,7 @@ import android.content.Intent;
 import androidx.appcompat.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
@@ -165,6 +166,15 @@ public class LugaresActivity extends AppCompatActivity {
 
         // CONSERVAR LA CARGA ORIGINAL DESDE FIREBASE
         cargarItinerarios();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (MenuSeguridad.manejarResultadoDictado(requestCode, resultCode, data)
+                || MenuEditarPerfil.manejarResultadoDictado(requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void cargarItinerarios() {
@@ -518,7 +528,17 @@ public class LugaresActivity extends AppCompatActivity {
             ).show();
         });
 
-        // AUDIO SE IMPLEMENTARÁ DESPUÉS
+        btnAudio.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
 
     // ===================================================

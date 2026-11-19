@@ -1,12 +1,16 @@
 package com.example.viajapp_madstack;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.speech.RecognizerIntent;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +23,19 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
 public class MenuSeguridad {
+
+    public static final int REQ_DICTADO_CLAVE_ACTUAL = 4101;
+    public static final int REQ_DICTADO_CLAVE_NUEVA = 4102;
+    public static final int REQ_DICTADO_CONFIRMAR_CLAVE = 4103;
+
+    private static WeakReference<PopupWindow> popupActivoRef = new WeakReference<>(null);
+    private static WeakReference<TextInputEditText> edtActualRef = new WeakReference<>(null);
+    private static WeakReference<TextInputEditText> edtNuevaRef = new WeakReference<>(null);
+    private static WeakReference<TextInputEditText> edtConfirmarRef = new WeakReference<>(null);
 
     public static void mostrar(Activity actividad,
                                View botonPerfil,
@@ -73,6 +89,34 @@ public class MenuSeguridad {
         TextView btnVolver =
                 formulario.findViewById(R.id.txtVolverSeguridad);
 
+        // GUARDAR REFERENCIAS ACTIVAS PARA EL DICTADO POR VOZ
+        popupActivoRef = new WeakReference<>(popup);
+        edtActualRef = new WeakReference<>(edtActual);
+        edtNuevaRef = new WeakReference<>(edtNueva);
+        edtConfirmarRef = new WeakReference<>(edtConfirmar);
+
+        popup.setOnDismissListener(() -> {
+            if (popupActivoRef.get() == popup) {
+                popupActivoRef.clear();
+                edtActualRef.clear();
+                edtNuevaRef.clear();
+                edtConfirmarRef.clear();
+            }
+        });
+
+        configurarVisibilidadYMicrofonos(
+                actividad,
+                edtActual,
+                edtNueva,
+                edtConfirmar,
+                formulario.findViewById(R.id.btnToggleClaveActual),
+                formulario.findViewById(R.id.btnToggleClaveNueva),
+                formulario.findViewById(R.id.btnToggleConfirmarClave),
+                formulario.findViewById(R.id.btnMicClaveActual),
+                formulario.findViewById(R.id.btnMicClaveNueva),
+                formulario.findViewById(R.id.btnMicConfirmarClave)
+        );
+
         // VOLVER
         btnVolver.setOnClickListener(v -> {
             popup.dismiss();
@@ -125,7 +169,6 @@ public class MenuSeguridad {
                 return;
             }
 
-
             // VALIDAR LETRA MAYÚSCULA
             if (!nueva.matches(".*[A-Z].*")) {
                 layoutNueva.setError(
@@ -161,7 +204,6 @@ public class MenuSeguridad {
                 edtNueva.requestFocus();
                 return;
             }
-
 
             // EVITAR REUTILIZAR LA MISMA CONTRASEÑA
             if (actual.equals(nueva)) {
@@ -291,7 +333,6 @@ public class MenuSeguridad {
                     });
         });
 
-
         popup.setAnimationStyle(android.R.style.Animation_Dialog);
 
         popup.showAsDropDown(
@@ -300,6 +341,109 @@ public class MenuSeguridad {
                 dp(actividad, 8),
                 Gravity.END
         );
+    }
+
+    private static void configurarVisibilidadYMicrofonos(
+            Activity actividad,
+            TextInputEditText edtActual,
+            TextInputEditText edtNueva,
+            TextInputEditText edtConfirmar,
+            ImageView btnToggleActual,
+            ImageView btnToggleNueva,
+            ImageView btnToggleConfirmar,
+            ImageView btnMicActual,
+            ImageView btnMicNueva,
+            ImageView btnMicConfirmar) {
+
+        configurarTogglePassword(edtActual, btnToggleActual);
+        configurarTogglePassword(edtNueva, btnToggleNueva);
+        configurarTogglePassword(edtConfirmar, btnToggleConfirmar);
+
+        if (btnMicActual != null) {
+            btnMicActual.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(
+                            actividad,
+                            REQ_DICTADO_CLAVE_ACTUAL,
+                            "Dictá tu contraseña actual"
+                    )
+            );
+        }
+
+        if (btnMicNueva != null) {
+            btnMicNueva.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(
+                            actividad,
+                            REQ_DICTADO_CLAVE_NUEVA,
+                            "Dictá tu nueva contraseña"
+                    )
+            );
+        }
+
+        if (btnMicConfirmar != null) {
+            btnMicConfirmar.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(
+                            actividad,
+                            REQ_DICTADO_CONFIRMAR_CLAVE,
+                            "Repetí tu nueva contraseña por voz"
+                    )
+            );
+        }
+    }
+
+    private static void configurarTogglePassword(TextInputEditText campo, ImageView toggle) {
+        if (campo == null || toggle == null) return;
+
+        toggle.setOnClickListener(v -> {
+            boolean esVisible = (campo.getInputType() & InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD)
+                    == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
+
+            if (esVisible) {
+                campo.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                toggle.setImageResource(R.drawable.visible_false);
+                toggle.setContentDescription("Mostrar contraseña");
+            } else {
+                campo.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                toggle.setImageResource(R.drawable.visible_true);
+                toggle.setContentDescription("Ocultar contraseña");
+            }
+
+            if (campo.getText() != null) {
+                campo.setSelection(campo.getText().length());
+            }
+        });
+    }
+
+    public static boolean manejarResultadoDictado(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK || data == null) {
+            return false;
+        }
+
+        TextInputEditText destino = null;
+        if (requestCode == REQ_DICTADO_CLAVE_ACTUAL) {
+            destino = edtActualRef.get();
+        } else if (requestCode == REQ_DICTADO_CLAVE_NUEVA) {
+            destino = edtNuevaRef.get();
+        } else if (requestCode == REQ_DICTADO_CONFIRMAR_CLAVE) {
+            destino = edtConfirmarRef.get();
+        }
+
+        if (destino == null) {
+            return false;
+        }
+
+        ArrayList<String> resultados = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        if (resultados != null && !resultados.isEmpty()) {
+            String textoProcesado = VoiceUtils.procesarTextoDictado(
+                    resultados.get(0),
+                    VoiceUtils.TIPO_PASSWORD
+            );
+            destino.setText(textoProcesado);
+            destino.setSelection(textoProcesado.length());
+            destino.requestFocus();
+            return true;
+        }
+
+        return false;
     }
 
     // OBTENER TEXTO DE LOS CAMPOS

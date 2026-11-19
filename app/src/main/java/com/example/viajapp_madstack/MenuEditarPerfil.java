@@ -1,14 +1,16 @@
-
 package com.example.viajapp_madstack;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.speech.RecognizerIntent;
 import android.util.Patterns;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +22,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
 public class MenuEditarPerfil {
+
+    public static final int REQ_DICTADO_NOMBRE_PERFIL = 4201;
+    public static final int REQ_DICTADO_CORREO_PERFIL = 4202;
+
+    private static WeakReference<PopupWindow> popupActivoRef = new WeakReference<>(null);
+    private static WeakReference<TextInputEditText> edtNombreRef = new WeakReference<>(null);
+    private static WeakReference<TextInputEditText> edtCorreoRef = new WeakReference<>(null);
 
     public static void mostrar(
             Activity actividad,
@@ -50,27 +62,12 @@ public class MenuEditarPerfil {
                 android.R.style.Animation_Dialog
         );
 
-
         // ESCUCHA PARA DETECTAR EL REGRESO DESDE GMAIL
         final ViajAppApplication.EscuchaRegreso[] escuchaCorreo =
                 new ViajAppApplication.EscuchaRegreso[1];
 
         ViajAppApplication aplicacion =
                 (ViajAppApplication) actividad.getApplication();
-
-        // EVITAR QUE LA ESCUCHA QUEDE ACTIVA
-        // SI SE CIERRA EDITAR PERFIL
-        popup.setOnDismissListener(() -> {
-
-            if (escuchaCorreo[0] != null) {
-                aplicacion.quitarEscuchaRegreso(
-                        escuchaCorreo[0]
-                );
-
-                escuchaCorreo[0] = null;
-            }
-        });
-
 
         // CAMPOS
         TextInputEditText edtNombre =
@@ -105,6 +102,36 @@ public class MenuEditarPerfil {
                         R.id.txtVolverMiCuenta
                 );
 
+        // GUARDAR REFERENCIAS ACTIVAS PARA EL DICTADO POR VOZ
+        popupActivoRef = new WeakReference<>(popup);
+        edtNombreRef = new WeakReference<>(edtNombre);
+        edtCorreoRef = new WeakReference<>(edtCorreo);
+
+        // EVITAR QUE LA ESCUCHA QUEDE ACTIVA
+        // SI SE CIERRA EDITAR PERFIL
+        popup.setOnDismissListener(() -> {
+
+            if (escuchaCorreo[0] != null) {
+                aplicacion.quitarEscuchaRegreso(
+                        escuchaCorreo[0]
+                );
+
+                escuchaCorreo[0] = null;
+            }
+
+            if (popupActivoRef.get() == popup) {
+                popupActivoRef.clear();
+                edtNombreRef.clear();
+                edtCorreoRef.clear();
+            }
+        });
+
+        configurarMicrofonos(
+                actividad,
+                formulario.findViewById(R.id.btnMicNombreApellidoPerfil),
+                formulario.findViewById(R.id.btnMicCorreoPerfil)
+        );
+
         // VOLVER AL MENÚ MI CUENTA
         btnVolver.setOnClickListener(v -> {
             popup.dismiss();
@@ -137,13 +164,11 @@ public class MenuEditarPerfil {
         // GUARDAR CAMBIOS
         btnGuardar.setOnClickListener(v -> {
 
-
             layoutNombre.setError(null);
             layoutNombre.setErrorEnabled(false);
 
             layoutCorreo.setError(null);
             layoutCorreo.setErrorEnabled(false);
-
 
             String nombreCompleto =
                     obtenerTexto(edtNombre).trim();
@@ -272,7 +297,6 @@ public class MenuEditarPerfil {
                         }
 
                         // SI CAMBIÓ, PEDIR VERIFICACIÓN
-
                         btnGuardar.setText(
                                 "Enviando verificación..."
                         );
@@ -283,7 +307,6 @@ public class MenuEditarPerfil {
                         usuario.verifyBeforeUpdateEmail(
                                         correoNuevo
                                 )
-
                                 .addOnSuccessListener(resultado -> {
 
                                     if (actividad.isFinishing()
@@ -296,14 +319,12 @@ public class MenuEditarPerfil {
                                             "Guardar cambios"
                                     );
 
-
                                     // RECORDAR EL CORREO PENDIENTE
                                     // HASTA QUE EL USUARIO LO VERIFIQUE
                                     aplicacion.guardarCorreoPendiente(
                                             usuario.getUid(),
                                             correoNuevo
                                     );
-
 
                                     // DETECTAR EL REGRESO DESDE GMAIL
                                     final boolean[] comprobandoCorreo = {false};
@@ -342,7 +363,6 @@ public class MenuEditarPerfil {
                                                                     usuario.getUid()
                                                             );
 
-
                                                             popup.dismiss();
 
                                                             new androidx.appcompat.app.AlertDialog.Builder(actividad)
@@ -375,7 +395,6 @@ public class MenuEditarPerfil {
                                                                     .show();
                                                             break;
 
-
                                                         case SESION_INVALIDA:
 
                                                             // EVITAR QUE SE MUESTRE DOS VECES
@@ -388,7 +407,6 @@ public class MenuEditarPerfil {
                                                                     .solicitarNuevoInicioSesion(actividad);
                                                             break;
 
-
                                                         case PENDIENTE:
 
                                                             mostrarMensaje(
@@ -396,6 +414,7 @@ public class MenuEditarPerfil {
                                                                     "El correo todavía está pendiente de verificación."
                                                             );
                                                             break;
+
                                                         case ERROR:
 
                                                             new androidx.appcompat.app.AlertDialog.Builder(actividad)
@@ -417,7 +436,6 @@ public class MenuEditarPerfil {
                                     aplicacion.establecerEscuchaRegreso(
                                             escuchaCorreo[0]
                                     );
-
 
                                     new androidx.appcompat.app.AlertDialog.Builder(actividad)
                                             .setTitle("¡Correo de verificación enviado!")
@@ -481,6 +499,69 @@ public class MenuEditarPerfil {
                 dp(actividad, 8),
                 Gravity.END
         );
+    }
+
+    private static void configurarMicrofonos(
+            Activity actividad,
+            ImageView btnMicNombre,
+            ImageView btnMicCorreo) {
+
+        if (btnMicNombre != null) {
+            btnMicNombre.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(
+                            actividad,
+                            REQ_DICTADO_NOMBRE_PERFIL,
+                            "Dictá tu nombre y apellido"
+                    )
+            );
+        }
+
+        if (btnMicCorreo != null) {
+            btnMicCorreo.setOnClickListener(v ->
+                    VoiceUtils.iniciarDictado(
+                            actividad,
+                            REQ_DICTADO_CORREO_PERFIL,
+                            "Dictá tu correo electrónico"
+                    )
+            );
+        }
+    }
+
+    public static boolean manejarResultadoDictado(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK || data == null) {
+            return false;
+        }
+
+        TextInputEditText destino;
+        int tipoCampo;
+
+        if (requestCode == REQ_DICTADO_NOMBRE_PERFIL) {
+            destino = edtNombreRef.get();
+            tipoCampo = VoiceUtils.TIPO_TEXTO_GENERAL;
+        } else if (requestCode == REQ_DICTADO_CORREO_PERFIL) {
+            destino = edtCorreoRef.get();
+            tipoCampo = VoiceUtils.TIPO_CORREO;
+        } else {
+            return false;
+        }
+
+        if (destino == null) {
+            return false;
+        }
+
+        ArrayList<String> resultados = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        if (resultados != null && !resultados.isEmpty()) {
+            String textoProcesado = VoiceUtils.procesarTextoDictado(
+                    resultados.get(0),
+                    tipoCampo
+            );
+            destino.setText(textoProcesado);
+            destino.setSelection(textoProcesado.length());
+            destino.requestFocus();
+            return true;
+        }
+
+        return false;
     }
 
     // =========================================
@@ -561,7 +642,6 @@ public class MenuEditarPerfil {
                     // RECORDAR EL VALOR ORIGINAL PARA COMPARARLO
                     alCargarNombre.accept(nombreCargado.trim());
                 })
-
                 .addOnFailureListener(error -> {
 
                     if (!actividad.isFinishing()
@@ -573,7 +653,6 @@ public class MenuEditarPerfil {
                         );
                     }
                 });
-
     }
 
     // OBTENER TEXTO

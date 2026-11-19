@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,6 +179,15 @@ public class PresupuestoActivity extends AppCompatActivity {
 
         aplicarTemaContraste();
         actualizarTamanoTextos(pantallaPrincipal);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (MenuSeguridad.manejarResultadoDictado(requestCode, resultCode, data)
+                || MenuEditarPerfil.manejarResultadoDictado(requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     // ==========================================
@@ -1718,12 +1728,15 @@ public class PresupuestoActivity extends AppCompatActivity {
 
         // Audio pendiente
         btnAudio.setOnClickListener(v -> {
-
-            Toast.makeText(
-                    this,
-                    "Función de audio próximamente",
-                    Toast.LENGTH_SHORT
-            ).show();
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
         });
     }
 

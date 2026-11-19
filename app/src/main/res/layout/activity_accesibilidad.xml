@@ -35,7 +35,8 @@
                 android:layout_height="44dp"
                 android:gravity="center"
                 android:background="@drawable/logo_viajapp"
-                android:contentDescription="Logo ViajAPP"/>
+                android:contentDescription="Logo ViajAPP"
+                android:importantForAccessibility="no"/>
 
             <!-- Nombre -->
             <LinearLayout
@@ -51,7 +52,8 @@
                     android:text="ViajAPP"
                     android:textColor="#001428"
                     android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -59,14 +61,11 @@
                     android:text="ACCESIBILIDAD"
                     android:textColor="#43474D"
                     android:textSize="10sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:contentDescription="Pantalla de accesibilidad"/>
             </LinearLayout>
 
-
-            <!-- ======================================= -->
-            <!-- BOTÓN PERFIL DE USUARIO                 -->
-            <!-- ======================================= -->
-
+            <!-- BOTÓN PERFIL DE USUARIO -->
             <com.google.android.material.card.MaterialCardView
                 android:tooltipText="Perfil"
                 android:id="@+id/btnAbrirPerfil"
@@ -74,7 +73,7 @@
                 android:layout_height="48dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="Abrir menú de mi cuenta"
+                android:contentDescription="Menú de usuario"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#DBEAFE"
@@ -95,15 +94,16 @@
         </LinearLayout>
     </LinearLayout>
 
-
     <ScrollView
         android:id="@+id/scrollContenido"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="18dp"
         android:paddingStart="14dp"
         android:paddingEnd="14dp"
+        android:paddingBottom="12dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/barraAccesibilidad"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -113,100 +113,160 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <!-- ======================================= -->
-            <!-- TARJETA DE PRESUPUESTO Y GASTOS         -->
+            <!-- PRUEBA DE TEXTO Y CONTRASTE             -->
             <!-- ======================================= -->
-
             <LinearLayout
-                android:id="@+id/tarjetaAccesoPresupuesto"
+                android:id="@+id/seccionPruebaAccesibilidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="12dp"
                 android:orientation="vertical"
-                android:padding="18dp"
-                android:background="@drawable/fondo_tarjeta_presupuesto">
+                android:padding="14dp"
+                android:background="@drawable/bg_interest">
 
-                <!-- ÍCONO Y EXPLICACIÓN -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Prueba de lectura y contraste"
+                    android:textColor="#0C4A6E"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtEjemplo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="12dp"
+                    android:padding="10dp"
+                    android:text="Texto de ejemplo: Probá ajustar el tamaño de letra y cambiar el contraste para comprobar la lectura."
+                    android:textColor="#111827"
+                    android:textSize="13sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="top">
+                    android:gravity="center_vertical">
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:cardBackgroundColor="#DBEAFE">
-
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:padding="0dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_wallet"
-                            android:contentDescription="Presupuesto y gastos" />
-
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/btnDisminuirTexto"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="14dp"
-                        android:orientation="vertical">
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/fondo_boton_accesibilidad"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="A-"
+                        android:textColor="#111827"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Disminuir tamaño de letra" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="¿Querés controlar los gastos de tu viaje?"
-                            android:textColor="#0C2340"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/btnAumentarTexto"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:background="@drawable/fondo_boton_accesibilidad"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="A+"
+                        android:textColor="#111827"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Aumentar tamaño de letra" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="También podés registrar tus consumos, consultar cuánto gastaste, conocer tu saldo disponible y saber si superaste el presupuesto planificado."
-                            android:textColor="#475569"
-                            android:textSize="14sp"
-                            android:lineSpacingExtra="4dp" />
-
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/btnContraste"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1.4"
+                        android:layout_marginStart="6dp"
+                        android:background="@drawable/fondo_boton_accesibilidad"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="◐  Contraste"
+                        android:textColor="#111827"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:contentDescription="Cambiar contraste de pantalla" />
 
                 </LinearLayout>
 
-                <!-- BOTÓN PARA ENTRAR A PRESUPUESTO -->
+            </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnIrPresupuesto"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="18dp"
-                    android:background="@drawable/fondo_boton_ir_presupuesto"
-                    android:backgroundTint="@null"
-                    android:text="Ir a Presupuesto y Gastos"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
+            <!-- ======================================= -->
+            <!-- SECCIÓN APARTADA: AUDIO                 -->
+            <!-- ======================================= -->
+            <LinearLayout
+                android:id="@+id/seccionAudio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="14dp"
+                android:background="@drawable/bg_interest">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lectura por voz"
+                        android:textColor="#0C4A6E"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Activá o desactivá la guía de audio en pantalla."
+                        android:textColor="#64748B"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnAudio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:background="@drawable/fondo_boton_audio"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="🔊  Audio"
+                    android:textColor="#111827"
+                    android:textSize="12sp"
                     android:textStyle="bold"
-                    android:contentDescription="Abrir la sección de presupuesto y gastos" />
+                    android:contentDescription="Ir a configuración de accesibilidad del teléfono" />
 
             </LinearLayout>
 
-
+            <!-- ======================================= -->
+            <!-- OPCIONES DE ADAPTACIÓN DE VIAJE         -->
+            <!-- ======================================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:padding="8dp"
@@ -220,7 +280,8 @@
                     android:text="♿︎"
                     android:textColor="#2563eb"
                     android:textSize="17sp"
-                    android:tag="interest"/>
+                    android:tag="interest"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -257,7 +318,8 @@
                     android:contentDescription="Silla de ruedas o movilidad reducida"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" android:textStyle="bold"/>
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
@@ -277,7 +339,8 @@
                     android:text="⏱︎"
                     android:textColor="#15803d"
                     android:textSize="17sp"
-                    android:tag="interest"/>
+                    android:tag="interest"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -293,12 +356,6 @@
                         android:textColor="#0C4A6E"
                         android:textSize="12sp"
                         android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="300m"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -319,7 +376,8 @@
                     android:contentDescription="Priorizar recorridos cortos"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" android:textStyle="bold"/>
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
@@ -339,7 +397,8 @@
                     android:text="WC"
                     android:textColor="#e11d48"
                     android:textSize="10sp"
-                    android:tag="interest"/>
+                    android:tag="interest"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -375,7 +434,8 @@
                     android:contentDescription="Baños adaptados"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" android:textStyle="bold"/>
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
@@ -394,7 +454,8 @@
                     android:src="@drawable/dificultad_visual"
                     android:padding="10dp"
                     android:scaleType="centerInside"
-                    android:tag="interest"/>
+                    android:tag="interest"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -430,7 +491,8 @@
                     android:contentDescription="Dificultad visual"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" android:textStyle="bold"/>
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
@@ -449,7 +511,8 @@
                     android:src="@drawable/dificultad_auditiva"
                     android:padding="10dp"
                     android:scaleType="centerInside"
-                    android:tag="interest"/>
+                    android:tag="interest"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -485,7 +548,87 @@
                     android:contentDescription="Dificultad auditiva"
                     android:text=""
                     android:textColor="#FFFFFF"
-                    android:textSize="13sp" android:textStyle="bold"/>
+                    android:textSize="13sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- ======================================= -->
+            <!-- TARJETA DE PRESUPUESTO Y GASTOS         -->
+            <!-- ======================================= -->
+            <LinearLayout
+                android:id="@+id/tarjetaAccesoPresupuesto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="14dp"
+                android:orientation="vertical"
+                android:padding="18dp"
+                android:background="@drawable/fondo_tarjeta_presupuesto">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#DBEAFE"
+                        android:importantForAccessibility="no">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="0dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_wallet"
+                            android:importantForAccessibility="no" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="¿Querés controlar los gastos de tu viaje?"
+                            android:textColor="#0C2340"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="También podés registrar tus consumos, consultar cuánto gastaste, conocer tu saldo disponible y saber si superaste el presupuesto planificado."
+                            android:textColor="#475569"
+                            android:textSize="14sp"
+                            android:lineSpacingExtra="4dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnIrPresupuesto"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/fondo_boton_ir_presupuesto"
+                    android:backgroundTint="@null"
+                    android:text="Ir a Presupuesto y Gastos"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:contentDescription="Abrir la sección de presupuesto y gastos" />
             </LinearLayout>
 
             <Button
@@ -505,88 +648,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
-
-
-    <LinearLayout
-        android:id="@+id/barraAccesibilidad"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="14dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:background="@drawable/fondo_barra_accesibilidad"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/btnAccesibilidad"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:background="@drawable/fondo_boton_accesibilidad"
-            android:text=" ☰  ACCESIBILIDAD"
-            android:textColor="#1E5FA8"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:contentDescription="Cerrar menú de accesibilidad"
-            android:clickable="true"
-            android:focusable="true" />
-
-        <TextView
-            android:id="@+id/btnDisminuirTexto"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/fondo_boton_accesibilidad"
-            android:gravity="center"
-            android:text="A-"
-            android:textColor="#111827"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/btnAumentarTexto"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/fondo_boton_accesibilidad"
-            android:gravity="center"
-            android:text="A+"
-            android:textColor="#111827"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-
-        <TextView
-            android:id="@+id/btnContraste"
-            android:layout_width="90dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="5dp"
-            android:gravity="center"
-            android:background="@drawable/fondo_boton_accesibilidad"
-            android:text="◐  Contraste"
-            android:textColor="#111827"
-            android:textSize="11sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/btnAudio"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/fondo_boton_audio"
-            android:gravity="center"
-            android:text="🔊"
-            android:textSize="14sp"
-            android:contentDescription="Audio" />
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/bottomNav"
@@ -609,7 +670,8 @@
             android:focusable="true"
             android:background="#EFF6FF"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:contentDescription="Accesibilidad, pantalla actual">
 
             <TextView
                 android:layout_width="match_parent"
@@ -618,7 +680,8 @@
                 android:gravity="center"
                 android:text="♿︎"
                 android:textColor="#2563EB"
-                android:textSize="23sp" />
+                android:textSize="23sp"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -627,7 +690,8 @@
                 android:text="Accesibilidad"
                 android:textColor="#2563EB"
                 android:textSize="11sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:importantForAccessibility="no" />
         </LinearLayout>
 
         <LinearLayout
@@ -638,7 +702,9 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a planear viaje">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -646,7 +712,8 @@
                 android:text="◎"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -654,10 +721,9 @@
                 android:clickable="false"
                 android:text="Planear"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no" />
         </LinearLayout>
-
-
 
         <LinearLayout
             android:id="@+id/navItinerario"
@@ -667,7 +733,9 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:contentDescription="Ir a Itinerario">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -675,14 +743,17 @@
                 android:text="▦"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Itinerario"
                 android:textColor="#64748B"
                 android:textSize="11sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no" />
         </LinearLayout>
 
         <LinearLayout
@@ -693,7 +764,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a Colección">
 
             <TextView
                 android:layout_width="match_parent"
@@ -702,7 +774,8 @@
                 android:text="⌖"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -710,7 +783,8 @@
                 android:text="Colección"
                 android:textColor="#64748B"
                 android:textSize="11sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no" />
         </LinearLayout>
     </LinearLayout>
 
