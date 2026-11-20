@@ -235,12 +235,11 @@
                     android:id="@+id/btnMicNombre"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:padding="12dp"
                     android:clickable="true"
+                    android:contentDescription="Dictar nombre y apellidos"
                     android:focusable="true"
-
-                    android:src="@drawable/ic_mic"
-                    android:contentDescription="Dictar nombre y apellidos"/>
+                    android:padding="12dp"
+                    android:src="@drawable/ic_mic" />
 
             </LinearLayout>
 
@@ -654,14 +653,20 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="Aceptar términos y condiciones"/>
 
+
                 <TextView
+                    android:id="@+id/txtLeerTerminos"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Acepto los términos de servicio y las políticas de turismo accesible."
+                    android:text="Acepto los términos de servicio y las políticas de turismo accesible. Leer términos y condiciones"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Leer términos y condiciones de ViajAPP" />
+
 
             </LinearLayout>
 
