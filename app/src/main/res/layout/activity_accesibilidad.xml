@@ -6,9 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
-    android:clipChildren="false"
-    android:clipToPadding="false">
+    android:background="#F8FAFC">
 
     <LinearLayout
         android:id="@+id/header"
@@ -94,463 +92,116 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- BARRA DE ACCESIBILIDAD FIJA -->
+
+    <LinearLayout
+        android:id="@+id/barraAccesibilidad"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="14dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:background="@drawable/fondo_barra_accesibilidad"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- ACCESIBILIDAD -->
+        <TextView
+            android:id="@+id/btnAccesibilidad"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:clickable="true"
+            android:contentDescription="Cerrar menú de accesibilidad"
+            android:focusable="true"
+            android:gravity="center"
+            android:text=" ☰  ACCESIBILIDAD"
+            android:textColor="#1E5FA8"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <!-- DISMINUIR TEXTO -->
+        <TextView
+            android:id="@+id/btnDisminuirTexto"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:gravity="center"
+            android:text="A-"
+            android:textColor="#111827"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <!-- AUMENTAR TEXTO -->
+
+        <!-- CONTRASTE -->
+
+        <TextView
+            android:id="@+id/btnAumentarTexto"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:gravity="center"
+            android:text="A+"
+            android:textColor="#111827"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btnContraste"
+            android:layout_width="90dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/fondo_boton_accesibilidad"
+            android:gravity="center"
+            android:text="◐  Contraste"
+            android:textColor="#111827"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <!-- AUDIO -->
+        <TextView
+            android:id="@+id/btnAudio"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/fondo_boton_audio"
+            android:contentDescription="Audio"
+            android:gravity="center"
+            android:text="🔊"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/scrollContenido"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="18dp"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:paddingBottom="12dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        android:paddingStart="20dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="20dp"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/barraAccesibilidad"
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!-- ======================================= -->
-            <!-- PRUEBA DE TEXTO Y CONTRASTE             -->
-            <!-- ======================================= -->
-            <LinearLayout
-                android:id="@+id/seccionPruebaAccesibilidad"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:orientation="vertical"
-                android:padding="14dp"
-                android:background="@drawable/bg_interest">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Prueba de lectura y contraste"
-                    android:textColor="#0C4A6E"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtEjemplo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="12dp"
-                    android:padding="10dp"
-                    android:text="Texto de ejemplo: Probá ajustar el tamaño de letra y cambiar el contraste para comprobar la lectura."
-                    android:textColor="#111827"
-                    android:textSize="13sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/btnDisminuirTexto"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/fondo_boton_accesibilidad"
-                        android:gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="A-"
-                        android:textColor="#111827"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:contentDescription="Disminuir tamaño de letra" />
-
-                    <TextView
-                        android:id="@+id/btnAumentarTexto"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/fondo_boton_accesibilidad"
-                        android:gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="A+"
-                        android:textColor="#111827"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:contentDescription="Aumentar tamaño de letra" />
-
-                    <TextView
-                        android:id="@+id/btnContraste"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1.4"
-                        android:layout_marginStart="6dp"
-                        android:background="@drawable/fondo_boton_accesibilidad"
-                        android:gravity="center"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="◐  Contraste"
-                        android:textColor="#111827"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:contentDescription="Cambiar contraste de pantalla" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- ======================================= -->
-            <!-- SECCIÓN APARTADA: AUDIO                 -->
-            <!-- ======================================= -->
-            <LinearLayout
-                android:id="@+id/seccionAudio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="14dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="14dp"
-                android:background="@drawable/bg_interest">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Lectura por voz"
-                        android:textColor="#0C4A6E"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Activá o desactivá la guía de audio en pantalla."
-                        android:textColor="#64748B"
-                        android:textSize="11sp" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnAudio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:background="@drawable/fondo_boton_audio"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="🔊  Audio"
-                    android:textColor="#111827"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:contentDescription="Ir a configuración de accesibilidad del teléfono" />
-
-            </LinearLayout>
-
-            <!-- ======================================= -->
-            <!-- OPCIONES DE ADAPTACIÓN DE VIAJE         -->
-            <!-- ======================================= -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="4dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:background="@drawable/bg_interest">
-
-                <TextView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:gravity="center"
-                    android:background="@drawable/bg_interest_blue"
-                    android:text="♿︎"
-                    android:textColor="#2563eb"
-                    android:textSize="17sp"
-                    android:tag="interest"
-                    android:importantForAccessibility="no"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Silla de Ruedas / Movilidad Reducida"
-                        android:textColor="#0C4A6E"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Requiere rampas, ascensores, pasillos anchos y accesos nivelados sin desniveles pronunciados."
-                        android:textColor="#64748B"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnCheckMovilidad"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="6dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="@drawable/bg_uncheck_circle"
-                    android:contentDescription="Silla de ruedas o movilidad reducida"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:background="@drawable/bg_interest">
-
-                <TextView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_interest_green"
-                    android:gravity="center"
-                    android:text="⏱︎"
-                    android:textColor="#15803d"
-                    android:textSize="17sp"
-                    android:tag="interest"
-                    android:importantForAccessibility="no"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Priorizar recorridos cortos"
-                        android:textColor="#0C4A6E"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Distancias menores a 300m con bancos y áreas sombreadas de descanso frecuente."
-                        android:textColor="#64748B"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnCheckCortos"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="6dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="@drawable/bg_uncheck_circle"
-                    android:contentDescription="Priorizar recorridos cortos"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:background="@drawable/bg_interest">
-
-                <TextView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_interest_pink"
-                    android:gravity="center"
-                    android:text="WC"
-                    android:textColor="#e11d48"
-                    android:textSize="10sp"
-                    android:tag="interest"
-                    android:importantForAccessibility="no"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Baños adaptados"
-                        android:textColor="#0C4A6E"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sanitarios adaptados con barras de apoyo duales, espacio de giro y llamada de auxilio."
-                        android:textColor="#64748B"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnCheckBanos"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="6dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="@drawable/bg_uncheck_circle"
-                    android:contentDescription="Baños adaptados"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:background="@drawable/bg_interest">
-
-                <ImageView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_interest_gray"
-                    android:src="@drawable/dificultad_visual"
-                    android:padding="10dp"
-                    android:scaleType="centerInside"
-                    android:tag="interest"
-                    android:importantForAccessibility="no"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dificultad visual"
-                        android:textColor="#0C4A6E"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Compatibilidad total TalkBack y audiodescripciones de monumentos."
-                        android:textColor="#64748B"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnCheckVisual"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="6dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="@drawable/bg_uncheck_circle"
-                    android:contentDescription="Dificultad visual"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp"
-                android:background="@drawable/bg_interest">
-
-                <ImageView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_interest_gray"
-                    android:src="@drawable/dificultad_auditiva"
-                    android:padding="10dp"
-                    android:scaleType="centerInside"
-                    android:tag="interest"
-                    android:importantForAccessibility="no"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dificultad Auditiva"
-                        android:textColor="#0C4A6E"
-                        android:textSize="12sp"
-                        android:textStyle="bold"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Señalización lumínica y alertas sincronizadas por vibración."
-                        android:textColor="#64748B"
-                        android:textSize="10sp"/>
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnCheckAuditiva"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="6dp"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="@drawable/bg_uncheck_circle"
-                    android:contentDescription="Dificultad auditiva"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
-            </LinearLayout>
 
             <!-- ======================================= -->
             <!-- TARJETA DE PRESUPUESTO Y GASTOS         -->
@@ -561,39 +212,38 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="14dp"
+                android:background="@drawable/fondo_tarjeta_presupuesto"
                 android:orientation="vertical"
-                android:padding="18dp"
-                android:background="@drawable/fondo_tarjeta_presupuesto">
+                android:padding="18dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="top">
+                    android:gravity="top"
+                    android:orientation="horizontal">
 
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="52dp"
                         android:layout_height="52dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        android:importantForAccessibility="no"
                         app:cardBackgroundColor="#DBEAFE"
-                        android:importantForAccessibility="no">
+                        app:cardCornerRadius="16dp">
 
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:importantForAccessibility="no"
                             android:padding="0dp"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/ic_wallet"
-                            android:importantForAccessibility="no" />
+                            android:src="@drawable/ic_wallet" />
 
                     </com.google.android.material.card.MaterialCardView>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginStart="14dp"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -608,10 +258,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
+                            android:lineSpacingExtra="4dp"
                             android:text="También podés registrar tus consumos, consultar cuánto gastaste, conocer tu saldo disponible y saber si superaste el presupuesto planificado."
                             android:textColor="#475569"
-                            android:textSize="14sp"
-                            android:lineSpacingExtra="4dp" />
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -623,12 +273,302 @@
                     android:layout_height="56dp"
                     android:background="@drawable/fondo_boton_ir_presupuesto"
                     android:backgroundTint="@null"
+                    android:contentDescription="Abrir la sección de presupuesto y gastos"
                     android:text="Ir a Presupuesto y Gastos"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:contentDescription="Abrir la sección de presupuesto y gastos" />
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- ======================================= -->
+            <!-- OPCIONES DE ADAPTACIÓN DE VIAJE         -->
+            <!-- ======================================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_interest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_interest_blue"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:tag="interest"
+                    android:text="♿︎"
+                    android:textColor="#2563eb"
+                    android:textSize="17sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Silla de Ruedas / Movilidad Reducida"
+                        android:textColor="#0C4A6E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Requiere rampas, ascensores, pasillos anchos y accesos nivelados sin desniveles pronunciados."
+                        android:textColor="#64748B"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnCheckMovilidad"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_uncheck_circle"
+                    android:clickable="true"
+                    android:contentDescription="Silla de ruedas o movilidad reducida"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_interest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_interest_green"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:tag="interest"
+                    android:text="⏱︎"
+                    android:textColor="#15803d"
+                    android:textSize="17sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Priorizar recorridos cortos"
+                        android:textColor="#0C4A6E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Distancias menores a 300m con bancos y áreas sombreadas de descanso frecuente."
+                        android:textColor="#64748B"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnCheckCortos"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_uncheck_circle"
+                    android:clickable="true"
+                    android:contentDescription="Priorizar recorridos cortos"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_interest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_interest_pink"
+                    android:gravity="center"
+                    android:importantForAccessibility="no"
+                    android:tag="interest"
+                    android:text="WC"
+                    android:textColor="#e11d48"
+                    android:textSize="10sp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Baños adaptados"
+                        android:textColor="#0C4A6E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sanitarios adaptados con barras de apoyo duales, espacio de giro y llamada de auxilio."
+                        android:textColor="#64748B"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnCheckBanos"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_uncheck_circle"
+                    android:clickable="true"
+                    android:contentDescription="Baños adaptados"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_interest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_interest_gray"
+                    android:importantForAccessibility="no"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/dificultad_visual"
+                    android:tag="interest" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dificultad visual"
+                        android:textColor="#0C4A6E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Compatibilidad total TalkBack y audiodescripciones de monumentos."
+                        android:textColor="#64748B"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnCheckVisual"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_uncheck_circle"
+                    android:clickable="true"
+                    android:contentDescription="Dificultad visual"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_interest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageView
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_interest_gray"
+                    android:importantForAccessibility="no"
+                    android:padding="10dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/dificultad_auditiva"
+                    android:tag="interest" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dificultad Auditiva"
+                        android:textColor="#0C4A6E"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnCheckAuditiva"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_uncheck_circle"
+                    android:clickable="true"
+                    android:contentDescription="Dificultad auditiva"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <Button
@@ -637,7 +577,6 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="14dp"
                 android:background="@drawable/bg_button_ai"
-                app:backgroundTint="@null"
                 android:minHeight="0dp"
                 android:padding="8dp"
                 android:stateListAnimator="@null"
@@ -645,7 +584,8 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:backgroundTint="@null" />
         </LinearLayout>
     </ScrollView>
 

@@ -94,7 +94,7 @@
             android:gravity="center"
             android:text="🔊"
             android:textSize="14sp"
-            android:contentDescription="Cambiar lectura de pantalla por voz"/>
+            android:contentDescription="Ir a deshabilitar el talkback"/>
 
     </LinearLayout>
 
@@ -191,7 +191,8 @@
                     android:layout_weight="1"
                     android:text="Nombre y Apellidos *"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:contentDescription="Nombre y Apellidos, campo obligatorio"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -255,7 +256,8 @@
                     android:layout_weight="1"
                     android:text="Correo electrónico *"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:contentDescription="Correo electrónico, campo obligatorio"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -317,14 +319,17 @@
                     android:layout_weight="1"
                     android:text="Contraseña *"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:contentDescription="Contraseña, campo obligatorio"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Mínimo 8 caracteres"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:contentDescription="Mínimo 8 caracteres, por lo menos una letra mayúscula, una minuscula, un número y un caractér especial"/>
+
 
             </LinearLayout>
 
@@ -397,7 +402,8 @@
                     android:layout_weight="1"
                     android:text="Confirmar Contraseña *"
                     android:textColor="#111827"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:contentDescription="Confirmar Contraseña, campo obligatorio"/>
 
                 <TextView
                     android:layout_width="wrap_content"

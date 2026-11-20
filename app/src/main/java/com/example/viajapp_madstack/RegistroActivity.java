@@ -1,5 +1,6 @@
 package com.example.viajapp_madstack;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Patterns;
 import android.util.TypedValue;
@@ -285,6 +287,24 @@ public class RegistroActivity extends AppCompatActivity {
             ).show();
         });
 
+        btnAudio.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+
+        cbVisionReducida.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                preguntarPorTalkBack();
+            }
+        });
+
         // BOTÓN CREAR CUENTA
         btnCrearCuenta.setOnClickListener(v -> {
 
@@ -339,6 +359,24 @@ public class RegistroActivity extends AppCompatActivity {
     // ===================================================
     // CONFIGURACIÓN DE MOSTRAR/OCULTAR Y MICRÓFONOS
     // ===================================================
+
+    private void preguntarPorTalkBack() {
+        new AlertDialog.Builder(this)
+                .setTitle("Dificultad visual")
+                .setMessage("¿Querés abrir los ajustes de Android para configurar TalkBack? "
+                        + "Es opcional y no modifica tu preferencia de viaje.")
+                .setPositiveButton("Configurar TalkBack", (dialog, which) -> {
+                    try {
+                        startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                    } catch (Exception e) {
+                        Toast.makeText(this,
+                                "No se pudo abrir la configuración de accesibilidad",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Ahora no", null)
+                .show();
+    }
 
     private void configurarListenersContrasenasYMicros() {
         // MOSTRAR / OCULTAR CONTRASEÑA PRINCIPAL

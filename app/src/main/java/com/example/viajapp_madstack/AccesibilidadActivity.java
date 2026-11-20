@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
@@ -32,9 +33,9 @@ import java.util.Map;
 
 public class AccesibilidadActivity extends AppCompatActivity {
 
-    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares; //barraAccesibilidad;
+    private LinearLayout navPlanear, navAccesibilidad, navItinerario, navLugares, barraAccesibilidad;
 
-    private TextView btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias; //btnAccesibilidad
+    private TextView btnDisminuirTexto, btnAumentarTexto, btnContraste, btnAudio, btnPreferencias, btnAccesibilidad;
     private TextView btnCheckMovilidad, btnCheckCortos, btnCheckBanos, btnCheckVisual, btnCheckAuditiva;
     private View pantallaPrincipal, scrollContenido, header, bottomNav;
 
@@ -270,9 +271,9 @@ public class AccesibilidadActivity extends AppCompatActivity {
         header = findViewById(R.id.header);
         bottomNav = findViewById(R.id.bottomNav);
 
-        //barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
+        barraAccesibilidad = findViewById(R.id.barraAccesibilidad);
 
-        //btnAccesibilidad = findViewById(R.id.btnAccesibilidad);
+        btnAccesibilidad = findViewById(R.id.btnAccesibilidad);
         btnDisminuirTexto = findViewById(R.id.btnDisminuirTexto);
         btnAumentarTexto = findViewById(R.id.btnAumentarTexto);
         btnContraste = findViewById(R.id.btnContraste);
@@ -282,6 +283,29 @@ public class AccesibilidadActivity extends AppCompatActivity {
         // Guardamos los valores originales de toda la pantalla
         guardarOriginales(pantallaPrincipal);
 
+        btnAccesibilidad.setOnClickListener(v -> {
+            boolean mostrar = btnDisminuirTexto.getVisibility() != View.VISIBLE;
+            int visibilidad = mostrar ? View.VISIBLE : View.GONE;
+
+            btnDisminuirTexto.setVisibility(visibilidad);
+            btnAumentarTexto.setVisibility(visibilidad);
+            btnContraste.setVisibility(visibilidad);
+            btnAudio.setVisibility(visibilidad);
+
+            LinearLayout.LayoutParams parametrosBoton = (LinearLayout.LayoutParams) btnAccesibilidad.getLayoutParams();
+            parametrosBoton.width = mostrar ? 0 : LinearLayout.LayoutParams.WRAP_CONTENT;
+            parametrosBoton.weight = mostrar ? 1f : 0f;
+            btnAccesibilidad.setLayoutParams(parametrosBoton);
+
+            int espacio = dp(12);
+            btnAccesibilidad.setPadding(mostrar ? 0 : espacio, 0, mostrar ? 0 : espacio, 0);
+
+            ConstraintLayout.LayoutParams parametrosBarra = (ConstraintLayout.LayoutParams) barraAccesibilidad.getLayoutParams();
+            parametrosBarra.width = mostrar ? 0 : ConstraintLayout.LayoutParams.WRAP_CONTENT;
+            barraAccesibilidad.setLayoutParams(parametrosBarra);
+
+            btnAccesibilidad.setContentDescription(mostrar ? "Cerrar menú de accesibilidad" : "Abrir menú de accesibilidad");
+        });
 
         // Disminuir tamaño del texto
         btnDisminuirTexto.setOnClickListener(v -> {
@@ -504,11 +528,11 @@ public class AccesibilidadActivity extends AppCompatActivity {
         );
 
 
-        /*barraAccesibilidad.setBackground(
+        barraAccesibilidad.setBackground(
                 fondoRedondeado(fondoTarjeta, borde, 16)
-        );*/
+        );
 
-        //btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
         btnDisminuirTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
         btnAumentarTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
         btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
