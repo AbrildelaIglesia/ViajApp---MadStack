@@ -269,22 +269,6 @@ public class RegistroActivity extends AppCompatActivity {
 
             aplicarTemaContraste();
             PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
-
-            String nombreModo;
-
-            if (modoContraste == 0) {
-                nombreModo = "Normal";
-            } else if (modoContraste == 1) {
-                nombreModo = "Crema";
-            } else {
-                nombreModo = "Oscuro";
-            }
-
-            Toast.makeText(
-                    this,
-                    "Contraste: " + nombreModo,
-                    Toast.LENGTH_SHORT
-            ).show();
         });
 
         btnAudio.setOnClickListener(v -> {
@@ -526,6 +510,14 @@ public class RegistroActivity extends AppCompatActivity {
 
     private void aplicarTemaContraste() {
 
+        if (modoContraste == 0) {
+            btnContraste.setText("◐ Contraste");
+        } else if (modoContraste == 1) {
+            btnContraste.setText("◐ Crema");
+        } else {
+            btnContraste.setText("◐ Oscuro");
+        }
+
         boolean normal = modoContraste == 0;
         boolean crema = modoContraste == 1;
 
@@ -718,6 +710,55 @@ public class RegistroActivity extends AppCompatActivity {
         // 11. OJITOS DE LAS CONTRASEÑAS (TINTES)
         aplicarTintIndividual(btnTogglePassword, colorIconos);
         aplicarTintIndividual(btnToggleConfPassword, colorIconos);
+
+
+        // 12. ÍCONOS DECORATIVOS DEL REGISTRO
+        int[] iconosRegistro = {
+                R.id.imgEscudoRegistro,
+                R.id.imgSillaRegistro,
+                R.id.imgRecorridosRegistro,
+                R.id.imgVisionRegistro,
+                R.id.imgSinAdaptacionesRegistro,
+                R.id.imgPrivacidadRegistro
+        };
+
+        int[] dibujosRegistro = {
+                R.drawable.ic_shield_check,
+                R.drawable.ic_wheelchair,
+                R.drawable.ic_walk,
+                R.drawable.ic_visibility,
+                R.drawable.ic_travel_explore,
+                R.drawable.ic_privacy
+        };
+
+        int colorDecorativo;
+
+        if (modoContraste == 0) {
+            colorDecorativo = Color.parseColor("#111827");
+        } else if (modoContraste == 1) {
+            colorDecorativo = Color.parseColor("#272727");
+        } else {
+            colorDecorativo = Color.WHITE;
+        }
+
+        for (int i = 0; i < iconosRegistro.length; i++) {
+            ImageView imagen = findViewById(iconosRegistro[i]);
+
+            if (imagen != null) {
+                Drawable dibujo = ContextCompat.getDrawable(
+                        this, dibujosRegistro[i]
+                );
+
+                if (dibujo != null) {
+                    imagen.setImageTintList(null);
+                    imagen.setImageDrawable(dibujo.mutate());
+                    imagen.setImageTintList(
+                            ColorStateList.valueOf(colorDecorativo)
+                    );
+                }
+            }
+        }
+
     }
 
     private void aplicarTintIndividual(ImageView boton, int colorModoCremaOOscuro) {
@@ -756,17 +797,37 @@ public class RegistroActivity extends AppCompatActivity {
 
             if (modoContraste == 0) {
                 texto.setTextColor(original);
+
+                if (texto.getId() == R.id.txtIniciarSesion) {
+                    texto.setPaintFlags(
+                            texto.getPaintFlags()
+                                    & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG
+                    );
+                }
             } else if (texto.getId() == R.id.txtErrorAccesibilidad
                     || texto.getId() == R.id.txtErrorTerminos) {
                 texto.setTextColor(Color.parseColor("#D32F2F"));
+
             } else if (texto.getId() == R.id.txtIniciarSesion) {
+
                 texto.setTextColor(
-                        Color.parseColor(
-                                modoContraste == 1
-                                        ? "#664700"
-                                        : "#FFE16B"
-                        )
+                        modoContraste == 1
+                                ? Color.parseColor("#664700")
+                                : Color.WHITE
                 );
+
+                if (modoContraste == 2) {
+                    texto.setPaintFlags(
+                            texto.getPaintFlags()
+                                    | android.graphics.Paint.UNDERLINE_TEXT_FLAG
+                    );
+                } else {
+                    texto.setPaintFlags(
+                            texto.getPaintFlags()
+                                    & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG
+                    );
+                }
+
             } else {
                 int colorAnterior = original.getDefaultColor();
                 boolean esSecundario =

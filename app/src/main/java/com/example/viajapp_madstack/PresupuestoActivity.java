@@ -422,12 +422,61 @@ public class PresupuestoActivity extends AppCompatActivity {
                     TextView ayudaSelector =
                             findViewById(R.id.tvAyudaSelectorViaje);
 
+
                     android.widget.ArrayAdapter<String> adaptador =
-                            new android.widget.ArrayAdapter<>(
+                            new android.widget.ArrayAdapter<String>(
                                     this,
                                     android.R.layout.simple_list_item_1,
                                     opciones
-                            );
+                            ) {
+                                @Override
+                                public View getDropDownView(
+                                        int position, View convertView, ViewGroup parent) {
+
+                                    View fila = super.getDropDownView(
+                                            position, convertView, parent
+                                    );
+
+                                    int colorFondo = Color.parseColor(
+                                            modoContraste == 1 ? "#F3DFC0" :
+                                                    modoContraste == 2 ? "#2A2A2A" : "#EFF6FF"
+                                    );
+
+                                    fila.setBackgroundColor(colorFondo);
+
+                                    if (fila instanceof TextView) {
+                                        ((TextView) fila).setTextColor(
+                                                modoContraste == 2
+                                                        ? Color.WHITE
+                                                        : Color.parseColor("#222222")
+                                        );
+                                    }
+
+                                    return fila;
+                                }
+
+
+                                @Override
+                                public View getView(int position, View convertView, ViewGroup parent) {
+
+                                    View fila = super.getView(position, convertView, parent);
+
+                                    TextView texto = fila.findViewById(android.R.id.text1);
+
+                                    if (texto != null) {
+                                        texto.setTextColor(
+                                                modoContraste == 2
+                                                        ? Color.WHITE
+                                                        : Color.parseColor("#222222")
+                                        );
+                                    }
+
+                                    return fila;
+                                }
+
+
+                            };
+
 
                     selector.setAdapter(adaptador);
 
@@ -465,7 +514,10 @@ public class PresupuestoActivity extends AppCompatActivity {
                             "No pudimos cargar tus viajes. " +
                                     "Revisá tu conexión."
                     );
+
                 });
+
+
     }
 
     // ==========================================
@@ -2025,6 +2077,39 @@ public class PresupuestoActivity extends AppCompatActivity {
         // Recuperar primero el diseño original
         restaurarDisenoOriginal(pantallaPrincipal);
 
+
+// COLORES DEL SELECTOR DE VIAJES
+        com.google.android.material.textfield.MaterialAutoCompleteTextView selectorViajes =
+                findViewById(R.id.selectorViajes);
+
+        com.google.android.material.textfield.TextInputLayout contenedorSelector =
+                findViewById(R.id.contenedorSelectorViaje);
+
+        int colorSelector = Color.parseColor(
+                modoContraste == 1 ? "#F3DFC0" :
+                        modoContraste == 2 ? "#2A2A2A" : "#EFF6FF"
+        );
+
+        int bordeSelector = Color.parseColor(
+                modoContraste == 1 ? "#96734D" :
+                        modoContraste == 2 ? "#888888" : "#60A5FA"
+        );
+
+        int textoSelector = modoContraste == 2
+                ? Color.WHITE
+                : Color.parseColor("#222222");
+
+        contenedorSelector.setBoxBackgroundColor(colorSelector);
+        contenedorSelector.setBoxStrokeColor(bordeSelector);
+
+        selectorViajes.setTextColor(textoSelector);
+        selectorViajes.setHintTextColor(textoSelector);
+
+        selectorViajes.setDropDownBackgroundDrawable(
+                fondoRedondeado(colorSelector, bordeSelector, 12, 1)
+        );
+
+
         if (modoContraste == 0) {
 
 
@@ -2207,7 +2292,8 @@ public class PresupuestoActivity extends AppCompatActivity {
             );
         }
 
-        if (vista instanceof EditText) {
+        if (vista instanceof EditText
+                && vista.getId() != R.id.selectorViajes) {
 
             EditText campo = (EditText) vista;
 

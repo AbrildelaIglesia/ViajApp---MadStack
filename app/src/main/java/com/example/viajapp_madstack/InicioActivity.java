@@ -286,14 +286,13 @@ public class InicioActivity extends AppCompatActivity {
         });
 
         // CICLAR CONTRASTE Y GUARDAR PREFERENCIA
+
         btnContraste.setOnClickListener(v -> {
             modoContraste = (modoContraste + 1) % 3;
             aplicarTemaContraste();
             PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
-
-            String nombreModo = (modoContraste == 0) ? "Normal" : (modoContraste == 1) ? "Crema" : "Oscuro";
-            Toast.makeText(this, "Contraste: " + nombreModo, Toast.LENGTH_SHORT).show();
         });
+
 
         btnAudio.setOnClickListener(v -> {
             try {
@@ -357,6 +356,17 @@ public class InicioActivity extends AppCompatActivity {
     }
 
     private void aplicarTemaContraste() {
+
+
+        if (modoContraste == 0) {
+            btnContraste.setText("◐ Contraste");
+        } else if (modoContraste == 1) {
+            btnContraste.setText("◐ Crema");
+        } else {
+            btnContraste.setText("◐ Oscuro");
+        }
+
+
         boolean normal = modoContraste == 0;
         boolean crema = modoContraste == 1;
 
@@ -470,13 +480,29 @@ public class InicioActivity extends AppCompatActivity {
         aplicarTintBotonIcono(btnMicContrasena, colorIconos);
 
         TextView enlace = findViewById(R.id.txtRegistrarse);
+
         if (enlace != null) {
             if (normal) {
+                // NORMAL: color original, sin subrayado
                 restaurarColor(enlace);
+                enlace.setPaintFlags(
+                        enlace.getPaintFlags() & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG
+                );
+            } else if (crema) {
+                // CREMA: marrón original, sin subrayado
+                enlace.setTextColor(Color.parseColor("#664700"));
+                enlace.setPaintFlags(
+                        enlace.getPaintFlags() & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG
+                );
             } else {
-                enlace.setTextColor(crema ? Color.parseColor("#664700") : Color.parseColor("#FFE16B"));
+                // OSCURO: blanco puro y subrayado
+                enlace.setTextColor(Color.WHITE);
+                enlace.setPaintFlags(
+                        enlace.getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG
+                );
             }
         }
+
     }
 
     private void aplicarTintBotonIcono(ImageView boton, int colorModoCremaOOscuro) {

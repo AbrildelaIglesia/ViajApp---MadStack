@@ -44,6 +44,41 @@ public class MenuEditarPerfil {
         View formulario = LayoutInflater.from(actividad)
                 .inflate(R.layout.menu_editar_perfil, null);
 
+        // APLICAR CONTRASTE Y TAMAÑO DE TEXTO
+        aplicarAccesibilidadPerfil(
+                formulario,
+                modoContraste,
+                escalaTexto
+        );
+
+        // BORDES AZULES EN MODO NORMAL
+        if (modoContraste == 0) {
+
+            int[] campos = {
+                    R.id.contenedorNombreApellidoPerfil,
+                    R.id.contenedorCorreoPerfil
+            };
+
+            for (int id : campos) {
+                View campo = formulario.findViewById(id);
+
+                if (campo != null) {
+                    android.graphics.drawable.GradientDrawable fondo =
+                            new android.graphics.drawable.GradientDrawable();
+
+                    fondo.setColor(Color.WHITE);
+                    fondo.setCornerRadius(dp(actividad, 12));
+                    fondo.setStroke(
+                            dp(actividad, 1),
+                            Color.parseColor("#60A5FA")
+                    );
+
+                    campo.setBackground(fondo);
+                }
+            }
+        }
+
+
         // CREAR DESPLEGABLE
         PopupWindow popup = new PopupWindow(
                 formulario,
@@ -96,6 +131,36 @@ public class MenuEditarPerfil {
                 formulario.findViewById(
                         R.id.btnGuardarEditarPerfil
                 );
+
+        // COLOR DEL BOTÓN SEGÚN EL MODO DE ACCESIBILIDAD
+        if (modoContraste == 1) {
+
+            // MODO CREMA
+            btnGuardar.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(
+                            Color.parseColor("#8B5A2B")
+                    )
+            );
+
+        } else if (modoContraste == 2) {
+
+            // MODO OSCURO
+            btnGuardar.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(
+                            Color.parseColor("#111111")
+                    )
+            );
+
+            btnGuardar.setStrokeColor(
+                    android.content.res.ColorStateList.valueOf(Color.WHITE)
+            );
+            btnGuardar.setStrokeWidth(
+                    Math.round(1 * actividad.getResources()
+                            .getDisplayMetrics().density)
+            );
+        }
+
+        btnGuardar.setTextColor(Color.WHITE);
 
         TextView btnVolver =
                 formulario.findViewById(
@@ -678,6 +743,122 @@ public class MenuEditarPerfil {
                 Toast.LENGTH_LONG
         ).show();
     }
+
+
+    // ACCESIBILIDAD DEL FORMULARIO EDITAR PERFIL
+    private static void aplicarAccesibilidadPerfil(
+            View vista, int modo, float escala) {
+
+        float escalaSegura = Math.max(0.9f, Math.min(1.3f, escala));
+
+        int fondo = Color.parseColor(
+                modo == 2 ? "#111111" :
+                        modo == 1 ? "#FFF1D6" : "#FFFFFF");
+
+        int texto = Color.parseColor(
+                modo == 2 ? "#FFFFFF" : "#111827");
+
+        int secundario = Color.parseColor(
+                modo == 2 ? "#E2E8F0" :
+                        modo == 1 ? "#49351F" : "#64748B");
+
+        int borde = Color.parseColor(
+                modo == 2 ? "#777777" :
+                        modo == 1 ? "#96754D" : "#B6C6E3");
+
+        int campo = Color.parseColor(
+                modo == 2 ? "#252525" :
+                        modo == 1 ? "#F3DFC0" : "#FFFFFF");
+
+        // FONDO DE LA VENTANA
+        if (modo != 0 &&
+                vista instanceof com.google.android.material.card.MaterialCardView) {
+
+            com.google.android.material.card.MaterialCardView tarjeta =
+                    (com.google.android.material.card.MaterialCardView) vista;
+
+            if (vista.getId() == R.id.tarjetaEditarPerfil) {
+                tarjeta.setCardBackgroundColor(fondo);
+                tarjeta.setStrokeColor(borde);
+            }
+        }
+
+        // FONDOS DE LOS CAMPOS
+        if (modo != 0 &&
+                (vista.getId() == R.id.contenedorNombreApellidoPerfil ||
+                        vista.getId() == R.id.contenedorCorreoPerfil)) {
+
+            android.graphics.drawable.GradientDrawable dibujo =
+                    new android.graphics.drawable.GradientDrawable();
+
+            dibujo.setColor(campo);
+            dibujo.setCornerRadius(dpDesdeVistaPerfil(vista, 12));
+            dibujo.setStroke(dpDesdeVistaPerfil(vista, 1), borde);
+            vista.setBackground(dibujo);
+        }
+
+        // SEPARADOR
+        if (modo != 0 &&
+                vista.getId() == R.id.divisorEditarPerfilSuperior) {
+            vista.setBackgroundColor(borde);
+        }
+
+        // TAMAÑO Y COLORES DE TEXTO
+        if (vista instanceof TextView) {
+            TextView tv = (TextView) vista;
+
+            float original = tv.getTextSize();
+
+            tv.setTextSize(
+                    android.util.TypedValue.COMPLEX_UNIT_PX,
+                    original * escalaSegura
+            );
+
+            if (modo != 0 &&
+                    !(tv instanceof MaterialButton)) {
+
+                boolean enlace =
+                        tv.getId() == R.id.txtVolverMiCuenta;
+
+                boolean secundarioTexto =
+                        tv.getId() == R.id.txtSubtituloEditarPerfil ||
+                                tv.getId() == R.id.txtPieEditarPerfil;
+
+                int color = enlace
+                        ? Color.parseColor(
+                        modo == 2 ? "#FFFFFF" :
+                        modo == 1 ? "#664700" : "#2563EB")
+                        : secundarioTexto ? secundario : texto;
+
+                tv.setTextColor(color);
+
+                if (tv instanceof TextInputEditText) {
+                    tv.setHintTextColor(secundario);
+                }
+            }
+        }
+
+        // RECORRER ELEMENTOS DEL FORMULARIO
+        if (vista instanceof ViewGroup) {
+            ViewGroup grupo = (ViewGroup) vista;
+
+            for (int i = 0; i < grupo.getChildCount(); i++) {
+                aplicarAccesibilidadPerfil(
+                        grupo.getChildAt(i),
+                        modo,
+                        escalaSegura
+                );
+            }
+        }
+    }
+
+    private static int dpDesdeVistaPerfil(View vista, int valor) {
+        return Math.round(
+                valor * vista.getResources()
+                        .getDisplayMetrics().density
+        );
+    }
+
 
     // CONVERTIR DP A PÍXELES
     private static int dp(

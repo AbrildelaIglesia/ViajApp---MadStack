@@ -1126,21 +1126,6 @@ public class ItinerarioActivity extends AppCompatActivity {
             aplicarTemaContraste();
             PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
-            String nombreModo;
-
-            if (modoContraste == 0) {
-                nombreModo = "Normal";
-            } else if (modoContraste == 1) {
-                nombreModo = "Crema";
-            } else {
-                nombreModo = "Oscuro";
-            }
-
-            Toast.makeText(
-                    this,
-                    "Contraste: " + nombreModo,
-                    Toast.LENGTH_SHORT
-            ).show();
         });
 
         btnAudio.setOnClickListener(v -> {
@@ -1248,6 +1233,16 @@ public class ItinerarioActivity extends AppCompatActivity {
 
     private void aplicarTemaContraste() {
 
+
+        if (modoContraste == 0) {
+            btnContraste.setText("◐ Contraste");
+        } else if (modoContraste == 1) {
+            btnContraste.setText("◐ Crema");
+        } else {
+            btnContraste.setText("◐ Oscuro");
+        }
+
+
         boolean normal = modoContraste == 0;
         boolean crema = modoContraste == 1;
 
@@ -1301,7 +1296,7 @@ public class ItinerarioActivity extends AppCompatActivity {
             botonAudioMirador.setForeground(null);
             botonVerMapa.setForeground(null);
 
-
+            actualizarControlesDinamicos(scrollContenido);
             return;
         }
 
@@ -1421,6 +1416,10 @@ public class ItinerarioActivity extends AppCompatActivity {
                         : Color.parseColor("#303030"),
                 textoPrincipal
         );
+
+        if (modoContraste != 0) {
+            actualizarControlesDinamicos(scrollContenido);
+        }
     }
 
     // ===================================================
@@ -1558,6 +1557,97 @@ public class ItinerarioActivity extends AppCompatActivity {
     // ===================================================
     // NUEVO: ADAPTAR BOTONES CON BACKGROUNDTINT
     // ===================================================
+
+
+
+    private void actualizarControlesDinamicos(View vista) {
+        if (vista == null) return;
+
+        // CUADRADITOS DEL CHECKLIST
+        if (vista instanceof CheckBox) {
+            CheckBox check = (CheckBox) vista;
+
+            int color;
+
+            if (modoContraste == 1) {
+                // CREMA
+                color = Color.parseColor("#A88659");
+            } else if (modoContraste == 2) {
+                // OSCURO
+                color = Color.parseColor("#BDBDBD");
+            } else {
+                // NORMAL
+                color = Color.parseColor("#2563EB");
+            }
+
+            check.setButtonTintList(
+                    ColorStateList.valueOf(color)
+            );
+
+        } else if (vista instanceof Button) {
+            Button boton = (Button) vista;
+            String nombre = boton.getText().toString();
+
+            boolean esBotonActividad =
+                    nombre.equals("Cómo llegar con Google Maps")
+                            || nombre.equals("Cambiar actividad")
+                            || nombre.equals("Ver recorrido del día en Google Maps");
+
+            if (esBotonActividad) {
+
+                if (modoContraste == 1 || modoContraste == 2) {
+
+                    int fondo = modoContraste == 1
+                            ? Color.parseColor("#E9D7B8")
+                            : Color.parseColor("#303030");
+
+                    int borde = modoContraste == 1
+                            ? Color.parseColor("#B99768")
+                            : Color.parseColor("#888888");
+
+                    int texto = modoContraste == 1
+                            ? Color.parseColor("#222222")
+                            : Color.WHITE;
+
+                    boton.setBackgroundTintList(null);
+                    boton.setBackground(
+                            fondoRedondeado(fondo, borde, 24)
+                    );
+                    boton.setTextColor(texto);
+
+                } else {
+                    // MODO NORMAL: recuperar colores originales
+                    int colorOriginal;
+
+                    if (nombre.equals("Cómo llegar con Google Maps")) {
+                        colorOriginal = Color.parseColor("#2563EB");
+                    } else if (nombre.equals("Cambiar actividad")) {
+                        colorOriginal = Color.parseColor("#0F766E");
+                    } else {
+                        colorOriginal = Color.parseColor("#F43F5E");
+                    }
+
+                    boton.setBackgroundTintList(null);
+                    boton.setBackground(fondosOriginales.get(boton));
+                    boton.setBackgroundTintList(
+                            ColorStateList.valueOf(colorOriginal)
+                    );
+                    boton.setTextColor(Color.WHITE);
+                    boton.setForeground(null);
+                }
+            }
+        }
+
+        if (vista instanceof ViewGroup) {
+            ViewGroup grupo = (ViewGroup) vista;
+
+            for (int i = 0; i < grupo.getChildCount(); i++) {
+                actualizarControlesDinamicos(
+                        grupo.getChildAt(i)
+                );
+            }
+        }
+    }
 
 
 

@@ -224,6 +224,7 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/tarjetaIconoPresupuesto"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
                         android:importantForAccessibility="no"
@@ -231,6 +232,7 @@
                         app:cardCornerRadius="16dp">
 
                         <ImageView
+                            android:id="@+id/imgIconoPresupuesto"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:importantForAccessibility="no"
@@ -270,6 +272,7 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnIrPresupuesto"
+                    android:layout_marginTop="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:background="@drawable/fondo_boton_ir_presupuesto"

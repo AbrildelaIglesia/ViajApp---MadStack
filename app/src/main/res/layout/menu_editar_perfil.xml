@@ -187,6 +187,8 @@
             </LinearLayout>
 
             <!-- BOTÓN -->
+
+            <!-- TEXTO FINAL -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGuardarEditarPerfil"
                 android:layout_width="match_parent"
@@ -200,12 +202,11 @@
                 app:backgroundTint="#2563EB"
                 app:cornerRadius="18dp"
                 app:icon="@drawable/ic_save"
-                app:iconTint="#FFFFFF"
-                app:iconSize="20dp"
+                app:iconGravity="textStart"
                 app:iconPadding="10dp"
-                app:iconGravity="textStart" />
+                app:iconSize="20dp"
+                app:iconTint="#FFFFFF" />
 
-            <!-- TEXTO FINAL -->
             <TextView
                 android:id="@+id/txtPieEditarPerfil"
                 android:layout_width="match_parent"
