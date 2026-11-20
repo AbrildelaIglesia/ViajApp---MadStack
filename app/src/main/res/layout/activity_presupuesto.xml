@@ -34,7 +34,8 @@
                 android:layout_height="44dp"
                 android:gravity="center"
                 android:background="@drawable/logo_viajapp"
-                android:contentDescription="Logo ViajAPP" />
+                android:contentDescription="Logo ViajAPP"
+                android:importantForAccessibility="no"/>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -49,7 +50,8 @@
                     android:text="ViajAPP"
                     android:textColor="#001428"
                     android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -57,7 +59,8 @@
                     android:text="PRESUPUESTO Y GASTOS"
                     android:textColor="#43474D"
                     android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:contentDescription="Pantalla de presupuesto y gastos"/>
 
             </LinearLayout>
 
@@ -70,7 +73,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:tooltipText="Perfil"
-                android:contentDescription="Abrir menú de mi cuenta"
+                android:contentDescription="Menú de usuario"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#DBEAFE"
@@ -138,7 +141,8 @@
             android:text="A-"
             android:textColor="#111827"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
         <TextView
             android:id="@+id/btnAumentarTexto"
@@ -150,7 +154,8 @@
             android:text="A+"
             android:textColor="#111827"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
         <TextView
             android:id="@+id/btnContraste"
@@ -162,7 +167,8 @@
             android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cambiar contraste"/>
 
         <TextView
             android:id="@+id/btnAudio"
@@ -173,7 +179,7 @@
             android:background="@drawable/fondo_boton_audio"
             android:text="🔊"
             android:textSize="14sp"
-            android:contentDescription="Audio" />
+            android:contentDescription="Ir a deshabilitar talkback"/>
 
     </LinearLayout>
 
@@ -310,7 +316,7 @@
 
             <!-- ===================================== -->
             <!-- REGISTRO DE GASTO POR VOZ              -->
-            <!-- ===================================== -->
+            <!-- =====================================
 
             <LinearLayout
                 android:id="@+id/tarjetaRegistroVoz"
@@ -374,7 +380,7 @@
                     android:contentDescription="Registrar gasto utilizando la voz" />
 
             </LinearLayout>
-
+               -->
             <!-- ===================================== -->
             <!-- RESUMEN GENERAL DEL PRESUPUESTO        -->
             <!-- ===================================== -->
@@ -399,7 +405,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="●  Límite total planificado"
+                        android:text="Límite total planificado"
                         android:textColor="#0C2340"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -571,17 +577,18 @@
                     android:max="100"
                     android:progress="0"
                     android:progressTint="#2563EB"
-                    android:progressBackgroundTint="#DBEAFE" />
+                    android:progressBackgroundTint="#DBEAFE"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:id="@+id/tvAvisoPresupuesto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="✓  Ingresá tu presupuesto para comenzar"
+                    android:text="Ingresá tu presupuesto para comenzar"
                     android:textColor="#15803D"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 
@@ -658,22 +665,45 @@
                     android:text="Monto en pesos (ARS) *"
                     android:textColor="#111827"
                     android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:contentDescription="Monto en pesos argentinos"/>
 
-                <EditText
-                    android:id="@+id/etMontoGasto"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="7dp"
-                    android:background="@drawable/fondo_campo"
-                    android:hint="Ej.: 18000"
-                    android:inputType="number"
-                    android:singleLine="true"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:textColor="#111827"
-                    android:textColorHint="#94A3B8"
-                    android:textSize="17sp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/etMontoGasto"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/fondo_campo"
+                        android:hint="Escribí la cantidad gastada"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#111827"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="17sp" />
+
+                    <ImageView
+                        android:id="@+id/btnVozMonto"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:padding="11dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/fondo_boton_microfono_busqueda"
+                        android:src="@drawable/ic_mic"
+                        app:tint="#FFFFFF"
+                        android:contentDescription="Dictar cantidad gastada por voz" />
+
+                </LinearLayout>
 
                 <!-- CONCEPTO -->
 
@@ -684,22 +714,44 @@
                     android:text="Concepto o lugar *"
                     android:textColor="#111827"
                     android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:contentDescription="Concepto o lugar"/>
 
-                <EditText
-                    android:id="@+id/etConceptoGasto"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="7dp"
-                    android:background="@drawable/fondo_campo"
-                    android:hint="Ej.: Almuerzo en Bariloche"
-                    android:inputType="textCapSentences"
-                    android:singleLine="true"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:textColor="#111827"
-                    android:textColorHint="#94A3B8"
-                    android:textSize="14sp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/etConceptoGasto"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/fondo_campo"
+                        android:hint="Escribí el conecepto o lugar del gasto"
+                        android:singleLine="true"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="#111827"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="17sp" />
+
+                    <ImageView
+                        android:id="@+id/btnVozConcepto"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:padding="11dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="@drawable/fondo_boton_microfono_busqueda"
+                        android:src="@drawable/ic_mic"
+                        app:tint="#FFFFFF"
+                        android:contentDescription="Dictar concepto por voz" />
+
+                </LinearLayout>
 
                 <!-- CATEGORÍAS -->
 
@@ -846,7 +898,8 @@
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:contentDescription="Registrar gasto"/>
 
             </LinearLayout>
 
@@ -933,7 +986,7 @@
                             android:padding="11dp"
                             android:background="@drawable/fondo_boton_accesibilidad"
                             android:src="@drawable/ic_documento_descarga"
-                            android:contentDescription="Documento con flecha de descarga" />
+                            android:importantForAccessibility="no" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -1014,15 +1067,15 @@
                             android:layout_marginEnd="12dp"
                             app:cardCornerRadius="16dp"
                             app:cardElevation="0dp"
-                            app:cardBackgroundColor="#DBEAFE">
+                            app:cardBackgroundColor="#DBEAFE"
+                            android:importantForAccessibility="no">
 
                             <ImageView
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:padding="13dp"
                                 android:src="@drawable/ic_historial_gastos_nuevo"
-                                app:tint="#2563EB"
-                                android:contentDescription="Historial de presupuestos y gastos" />
+                                app:tint="#2563EB"/>
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -1114,7 +1167,8 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:contentDescription="Ir a accesibilidad">
 
             <TextView
                 android:layout_width="match_parent"
@@ -1123,14 +1177,16 @@
                 android:text="♿︎"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false" />
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Accesibilidad"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no"/>
 
         </LinearLayout>
 
@@ -1144,7 +1200,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a planear viaje">
 
             <TextView
                 android:layout_width="match_parent"
@@ -1153,14 +1210,16 @@
                 android:text="◎"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false" />
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Planear"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no"/>
 
         </LinearLayout>
 
@@ -1174,7 +1233,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a Itinerario">
 
             <TextView
                 android:layout_width="match_parent"
@@ -1183,14 +1243,16 @@
                 android:text="▦"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false" />
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Itinerario"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no"/>
 
         </LinearLayout>
 
@@ -1204,7 +1266,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a Colección">
 
             <TextView
                 android:layout_width="match_parent"
@@ -1213,14 +1276,16 @@
                 android:text="⌖"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false" />
+                android:clickable="false"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Colección"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no" />
 
         </LinearLayout>
 

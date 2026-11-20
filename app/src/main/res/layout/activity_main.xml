@@ -82,7 +82,7 @@
             android:textColor="#111827"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:contentDescription="Cambiar contraste de pantalla"/>
+            android:contentDescription="Cambiar contraste"/>
 
         <!-- AUDIO -->
         <TextView
