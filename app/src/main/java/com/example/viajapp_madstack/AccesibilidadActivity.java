@@ -255,12 +255,47 @@ public class AccesibilidadActivity extends AppCompatActivity {
     }
 
     private void actualizarVistaBoton(TextView boton, boolean seleccionado) {
-        if (seleccionado) {
-            boton.setBackgroundResource(R.drawable.bg_check_circle);
-            boton.setText("✓");
+        if (boton == null) return;
+
+        boton.setText(seleccionado ? "✓" : "");
+
+        if (modoContraste == 1) {
+            // MODO CREMA
+            GradientDrawable fondo = new GradientDrawable();
+            fondo.setCornerRadius(dp(24));
+            fondo.setColor(Color.parseColor(seleccionado ? "#F7EACF" : "#EFE1C4"));
+            fondo.setStroke(dp(1), Color.parseColor("#A88659"));
+
+            boton.setBackground(
+                    new android.graphics.drawable.InsetDrawable(
+                            fondo, dp(6)
+                    )
+            );
+            boton.setTextColor(Color.parseColor("#2B241B"));
+
+        } else if (modoContraste == 2) {
+            // MODO OSCURO
+            GradientDrawable fondo = new GradientDrawable();
+            fondo.setCornerRadius(dp(24));
+            fondo.setColor(Color.parseColor(seleccionado ? "#2B2B2B" : "#252525"));
+            fondo.setStroke(dp(1), Color.parseColor("#7A7A7A"));
+
+            boton.setBackground(
+                    new android.graphics.drawable.InsetDrawable(
+                            fondo, dp(6)
+                    )
+            );
+            boton.setTextColor(Color.WHITE);
+
         } else {
-            boton.setBackgroundResource(R.drawable.bg_uncheck_circle);
-            boton.setText("");
+            // MODO NORMAL
+            if (seleccionado) {
+                boton.setBackgroundResource(R.drawable.bg_check_circle);
+                boton.setTextColor(Color.WHITE);
+            } else {
+                boton.setBackgroundResource(R.drawable.bg_uncheck_circle);
+                boton.setTextColor(Color.WHITE);
+            }
         }
     }
 
@@ -454,6 +489,17 @@ public class AccesibilidadActivity extends AppCompatActivity {
         if (modoContraste == 0) {
             btnContraste.setText("◐  Contraste");
             sincronizarBotonesSeleccionDespuesDeRestaurar();
+            android.widget.ImageView iconoNormal =
+                    findViewById(R.id.imgIconoPresupuesto);
+
+            iconoNormal.clearColorFilter();
+            iconoNormal.setImageResource(R.drawable.ic_wallet);
+            com.google.android.material.card.MaterialCardView tarjetaNormal =
+                    findViewById(R.id.tarjetaIconoPresupuesto);
+
+            tarjetaNormal.setCardBackgroundColor(
+                    Color.parseColor("#DBEAFE")
+            );
             return;
         }
 
@@ -470,12 +516,13 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
             btnPreferencias.setBackground(
                     fondoRedondeado(
-                            Color.rgb(130, 85, 35),
-                            Color.rgb(100, 65, 30),
-                            12
+                            Color.parseColor("#E9D7B8"),
+                            Color.parseColor("#B99768"),
+                            28
                     )
             );
 
+            btnPreferencias.setTextColor(Color.parseColor("#222222"));
             btnAudio.setBackground(
                     fondoRedondeado(
                             Color.parseColor("#FFFAF0"),
@@ -496,11 +543,13 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
             btnPreferencias.setBackground(
                     fondoRedondeado(
-                            Color.rgb(55, 55, 55),
-                            Color.rgb(120, 120, 120),
-                            12
+                            Color.parseColor("#303030"),
+                            Color.parseColor("#888888"),
+                            28
                     )
             );
+
+            btnPreferencias.setTextColor(Color.WHITE);
 
             btnAudio.setBackground(
                     fondoRedondeado(
@@ -528,14 +577,45 @@ public class AccesibilidadActivity extends AppCompatActivity {
         );
 
 
-        barraAccesibilidad.setBackground(
-                fondoRedondeado(fondoTarjeta, borde, 16)
+
+        GradientDrawable fondoBarra = fondoRedondeado(
+                fondoTarjeta,
+                modoContraste == 1
+                        ? Color.parseColor("#B68A59")
+                        : borde,
+                16
         );
 
-        btnAccesibilidad.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
-        btnDisminuirTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
-        btnAumentarTexto.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
-        btnContraste.setBackground(fondoRedondeado(fondoTarjeta, borde, 12));
+        fondoBarra.setStroke(
+                dp(1),
+                modoContraste == 1
+                        ? Color.parseColor("#C7AC88")
+                        : borde
+        );
+
+        barraAccesibilidad.setBackground(fondoBarra);
+
+
+        int fondoBotones = modoContraste == 1
+                ? Color.parseColor("#FFFAF0")
+                : fondoTarjeta;
+
+        int bordeBotones = modoContraste == 1
+                ? Color.parseColor("#C7AC88")
+                : borde;
+
+        btnAccesibilidad.setBackground(
+                fondoRedondeado(fondoBotones, bordeBotones, 12));
+
+        btnDisminuirTexto.setBackground(
+                fondoRedondeado(fondoBotones, bordeBotones, 12));
+
+        btnAumentarTexto.setBackground(
+                fondoRedondeado(fondoBotones, bordeBotones, 12));
+
+        btnContraste.setBackground(
+                fondoRedondeado(fondoBotones, bordeBotones, 12));
+
 
         actualizarFondosTarjetas(scrollContenido, fondoTarjeta, borde);
 
@@ -565,10 +645,59 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         // Mantener el texto blanco sobre el botón marrón en modo crema
         if (modoContraste == 1 && btnPreferencias != null) {
-            btnPreferencias.setTextColor(Color.WHITE);
+            btnPreferencias.setTextColor(Color.parseColor("#222222"));
         }
 
         sincronizarBotonesSeleccionDespuesDeRestaurar();
+
+        // BOTÓN PRESUPUESTO SEGÚN EL CONTRASTE
+        TextView btnPresupuesto =
+                findViewById(R.id.btnIrPresupuesto);
+
+        com.google.android.material.card.MaterialCardView tarjetaIconoPresupuesto =
+                findViewById(R.id.tarjetaIconoPresupuesto);
+
+        android.widget.ImageView imgIconoPresupuesto =
+                findViewById(R.id.imgIconoPresupuesto);
+
+        if (modoContraste == 1) {
+
+            btnPresupuesto.setBackground(
+                    fondoRedondeado(
+                            Color.parseColor("#E9D7B8"),
+                            Color.parseColor("#B99768"),
+                            28
+                    )
+            );
+
+            btnPresupuesto.setTextColor(Color.parseColor("#222222"));
+
+            imgIconoPresupuesto.clearColorFilter();
+            imgIconoPresupuesto.setImageResource(R.drawable.ic_wallet_crema);
+
+            tarjetaIconoPresupuesto.setCardBackgroundColor(
+                    Color.parseColor("#F3DFC0")
+            );
+
+
+        } else if (modoContraste == 2) {
+
+            // OSCURO: BORDE BLANCO MÁS DEFINIDO
+            GradientDrawable fondoPresupuesto = new GradientDrawable();
+
+            fondoPresupuesto.setColor(Color.parseColor("#303030"));
+            fondoPresupuesto.setCornerRadius(dp(28));
+            fondoPresupuesto.setStroke(dp(1), Color.parseColor("#888888"));
+
+            btnPresupuesto.setBackground(fondoPresupuesto);
+            btnPresupuesto.setTextColor(Color.WHITE);
+            imgIconoPresupuesto.clearColorFilter();
+            imgIconoPresupuesto.setImageResource(R.drawable.ic_wallet_oscuro);
+            tarjetaIconoPresupuesto.setCardBackgroundColor(
+                    Color.parseColor("#2A2A2A")
+            );
+        }
+
     }
 
     private void sincronizarBotonesSeleccionDespuesDeRestaurar() {
@@ -646,13 +775,15 @@ public class AccesibilidadActivity extends AppCompatActivity {
 
         Drawable fondoOriginal = fondosOriginales.get(vista);
 
-        if (fondoOriginal != null) {
-            Drawable copia = fondoOriginal.getConstantState() != null
-                    ? fondoOriginal.getConstantState().newDrawable().mutate()
-                    : fondoOriginal.mutate();
-            vista.setBackground(copia);
-        } else {
-            vista.setBackground(null);
+        if (vista.getId() != R.id.tarjetaIconoPresupuesto) {
+            if (fondoOriginal != null) {
+                Drawable copia = fondoOriginal.getConstantState() != null
+                        ? fondoOriginal.getConstantState().newDrawable().mutate()
+                        : fondoOriginal.mutate();
+                vista.setBackground(copia);
+            } else {
+                vista.setBackground(null);
+            }
         }
 
         if (vista instanceof TextView) {

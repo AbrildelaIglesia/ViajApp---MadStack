@@ -1227,21 +1227,6 @@ public class PlanearActivity extends AppCompatActivity {
             aplicarTemaContraste();
             PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
-            String nombreModo;
-
-            if (modoContraste == 0) {
-                nombreModo = "Normal";
-            } else if (modoContraste == 1) {
-                nombreModo = "Crema";
-            } else {
-                nombreModo = "Oscuro";
-            }
-
-            Toast.makeText(
-                    this,
-                    "Contraste: " + nombreModo,
-                    Toast.LENGTH_SHORT
-            ).show();
         });
 
         btnAudio.setOnClickListener(v -> {
@@ -1355,6 +1340,16 @@ public class PlanearActivity extends AppCompatActivity {
     // ===================================================
 
     private void aplicarTemaContraste() {
+
+
+        if (modoContraste == 0) {
+            btnContraste.setText("◐  Contraste");
+        } else if (modoContraste == 1) {
+            btnContraste.setText("◐  Crema");
+        } else {
+            btnContraste.setText("◐  Oscuro");
+        }
+
 
         boolean normal = modoContraste == 0;
         boolean crema = modoContraste == 1;

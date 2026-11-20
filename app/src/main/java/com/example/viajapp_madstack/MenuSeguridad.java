@@ -46,6 +46,42 @@ public class MenuSeguridad {
         View formulario = LayoutInflater.from(actividad)
                 .inflate(R.layout.menu_seguridad, null);
 
+        // APLICAR ACCESIBILIDAD AL MENÚ SEGURIDAD
+        aplicarAccesibilidadSeguridad(
+                formulario,
+                modoContraste,
+                escalaTexto
+        );
+
+        // BORDES AZULES EN MODO NORMAL
+        if (modoContraste == 0) {
+
+            int[] campos = {
+                    R.id.contenedorClaveActual,
+                    R.id.contenedorClaveNueva,
+                    R.id.contenedorConfirmarClave
+            };
+
+            for (int id : campos) {
+                View campo = formulario.findViewById(id);
+
+                if (campo != null) {
+                    android.graphics.drawable.GradientDrawable fondo =
+                            new android.graphics.drawable.GradientDrawable();
+
+                    fondo.setColor(Color.WHITE);
+                    fondo.setCornerRadius(dp(actividad, 12));
+                    fondo.setStroke(
+                            dp(actividad, 1),
+                            Color.parseColor("#60A5FA")
+                    );
+
+                    campo.setBackground(fondo);
+                }
+            }
+        }
+
+
         // CREAR VENTANA EMERGENTE
         PopupWindow popup = new PopupWindow(
                 formulario,
@@ -85,6 +121,34 @@ public class MenuSeguridad {
         // BOTONES
         MaterialButton btnGuardar =
                 formulario.findViewById(R.id.btnGuardarSeguridad);
+
+        // COLOR DEL BOTÓN SEGÚN EL CONTRASTE
+        if (modoContraste == 1) {
+
+            // CREMA: MARRÓN
+            btnGuardar.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(
+                            Color.parseColor("#8B5A2B")
+                    )
+            );
+
+        } else if (modoContraste == 2) {
+
+            // OSCURO: NEGRO CON BORDE BLANCO
+            btnGuardar.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(
+                            Color.parseColor("#111111")
+                    )
+            );
+
+            btnGuardar.setStrokeColor(
+                    android.content.res.ColorStateList.valueOf(Color.WHITE)
+            );
+
+            btnGuardar.setStrokeWidth(dp(actividad, 1));
+        }
+
+        btnGuardar.setTextColor(Color.WHITE);
 
         TextView btnVolver =
                 formulario.findViewById(R.id.txtVolverSeguridad);
@@ -468,6 +532,119 @@ public class MenuSeguridad {
                 Toast.LENGTH_LONG
         ).show();
     }
+
+
+    // ACCESIBILIDAD DEL FORMULARIO SEGURIDAD
+    private static void aplicarAccesibilidadSeguridad(
+            View vista, int modo, float escala) {
+
+        int fondo = Color.parseColor(
+                modo == 2 ? "#111111" :
+                        modo == 1 ? "#FFF1D6" : "#FFFFFF");
+
+        int texto = Color.parseColor(
+                modo == 2 ? "#FFFFFF" : "#111827");
+
+        int secundario = Color.parseColor(
+                modo == 2 ? "#E2E8F0" :
+                        modo == 1 ? "#49351F" : "#64748B");
+
+        int borde = Color.parseColor(
+                modo == 2 ? "#777777" :
+                        modo == 1 ? "#96754D" : "#B6C6E3");
+
+        int campo = Color.parseColor(
+                modo == 2 ? "#252525" :
+                        modo == 1 ? "#F3DFC0" : "#FFFFFF");
+
+        // FONDO PRINCIPAL
+        if (modo != 0 && vista.getId() == R.id.tarjetaSeguridad) {
+
+            com.google.android.material.card.MaterialCardView tarjeta =
+                    (com.google.android.material.card.MaterialCardView) vista;
+
+            tarjeta.setCardBackgroundColor(fondo);
+            tarjeta.setStrokeColor(borde);
+        }
+
+        // CAMPOS DE CONTRASEÑA
+        if (modo != 0 &&
+                (vista.getId() == R.id.contenedorClaveActual ||
+                        vista.getId() == R.id.contenedorClaveNueva ||
+                        vista.getId() == R.id.contenedorConfirmarClave)) {
+
+            android.graphics.drawable.GradientDrawable dibujo =
+                    new android.graphics.drawable.GradientDrawable();
+
+            dibujo.setColor(campo);
+
+            float densidad = vista.getResources()
+                    .getDisplayMetrics().density;
+
+            dibujo.setCornerRadius(12 * densidad);
+            dibujo.setStroke(Math.round(densidad), borde);
+
+            vista.setBackground(dibujo);
+        }
+
+        // SEPARADOR
+        if (modo != 0 && vista.getId() == R.id.divisorSeguridad) {
+            vista.setBackgroundColor(borde);
+        }
+
+        // TEXTOS
+        if (vista instanceof TextView) {
+
+            TextView tv = (TextView) vista;
+
+            tv.setTextSize(
+                    android.util.TypedValue.COMPLEX_UNIT_PX,
+                    tv.getTextSize() * escala
+            );
+
+            if (modo != 0 && !(tv instanceof MaterialButton)) {
+
+                boolean enlace =
+                        tv.getId() == R.id.txtVolverSeguridad;
+
+                tv.setTextColor(
+                        enlace
+                                ? Color.parseColor(
+                                modo == 2 ? "#FFFFFF" :
+                                modo == 1 ? "#664700" : "#2563EB")
+                                : texto
+                );
+
+                if (tv instanceof TextInputEditText) {
+                    tv.setHintTextColor(secundario);
+                }
+            }
+        }
+
+        // OJITOS Y MICRÓFONOS
+        if (modo != 0 && vista instanceof ImageView) {
+            ImageView icono = (ImageView) vista;
+            icono.setImageTintList(
+                    android.content.res.ColorStateList.valueOf(texto)
+            );
+        }
+
+        // RECORRER ELEMENTOS
+        if (vista instanceof ViewGroup) {
+
+            ViewGroup grupo = (ViewGroup) vista;
+
+            for (int i = 0; i < grupo.getChildCount(); i++) {
+
+                aplicarAccesibilidadSeguridad(
+                        grupo.getChildAt(i),
+                        modo,
+                        escala
+                );
+            }
+        }
+    }
+
 
     // CONVERTIR DP A PÍXELES
     private static int dp(

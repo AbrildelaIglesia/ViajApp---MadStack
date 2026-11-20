@@ -515,17 +515,6 @@ public class LugaresActivity extends AppCompatActivity {
             aplicarTemaContraste();
             PreferenciasAccesibilidad.guardarContraste(this, modoContraste);
 
-            String nombreModo = modoContraste == 0
-                    ? "Normal"
-                    : modoContraste == 1
-                      ? "Crema"
-                      : "Oscuro";
-
-            Toast.makeText(
-                    this,
-                    "Contraste: " + nombreModo,
-                    Toast.LENGTH_SHORT
-            ).show();
         });
 
         btnAudio.setOnClickListener(v -> {
@@ -647,6 +636,16 @@ public class LugaresActivity extends AppCompatActivity {
     // ===================================================
 
     private void aplicarTemaContraste() {
+
+
+        if (modoContraste == 0) {
+            btnContraste.setText("◐ Contraste");
+        } else if (modoContraste == 1) {
+            btnContraste.setText("◐ Crema");
+        } else {
+            btnContraste.setText("◐ Oscuro");
+        }
+
 
         // VOLVER AL DISEÑO ORIGINAL
 
