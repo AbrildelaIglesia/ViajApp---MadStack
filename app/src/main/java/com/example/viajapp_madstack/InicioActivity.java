@@ -2,6 +2,7 @@ package com.example.viajapp_madstack;
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -292,6 +293,18 @@ public class InicioActivity extends AppCompatActivity {
 
             String nombreModo = (modoContraste == 0) ? "Normal" : (modoContraste == 1) ? "Crema" : "Oscuro";
             Toast.makeText(this, "Contraste: " + nombreModo, Toast.LENGTH_SHORT).show();
+        });
+
+        btnAudio.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
+                Toast.makeText(
+                        this,
+                        "No se pudo abrir la configuración de accesibilidad",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
         });
     }
 
