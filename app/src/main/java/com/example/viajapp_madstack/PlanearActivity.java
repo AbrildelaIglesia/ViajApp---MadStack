@@ -59,6 +59,11 @@ import java.util.Map;
 
 import java.util.List;
 
+import android.content.ActivityNotFoundException;
+import android.speech.RecognizerIntent;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 public class PlanearActivity extends AppCompatActivity {
 
     // ===================================================
@@ -134,6 +139,10 @@ public class PlanearActivity extends AppCompatActivity {
     private String destinoNombre;
     private String destinoProvincia;
 
+    //DICTADO POR VOZ
+    private ImageView btnBuscarVoz;
+    private ActivityResultLauncher<Intent> launcherDictadoDestino;
+
     // Evita borrar el destino al limpiar el buscador
     private boolean seleccionandoDestino = false;
 
@@ -157,6 +166,23 @@ public class PlanearActivity extends AppCompatActivity {
         configurarIntereses();
 
         configurarBotonCrearViaje();
+
+        launcherDictadoDestino = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> resultados = result.getData()
+                                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        if (resultados != null && !resultados.isEmpty() && etBuscarDestino != null) {
+                            String textoDictado = resultados.get(0).trim();
+                            seleccionandoDestino = false;
+                            etBuscarDestino.setText(textoDictado);
+                            etBuscarDestino.setSelection(textoDictado.length());
+                            etBuscarDestino.requestFocus();
+                        }
+                    }
+                }
+        );
     }
 
     @Override
@@ -183,6 +209,22 @@ public class PlanearActivity extends AppCompatActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void iniciarDictadoDestino() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-AR");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Decí el destino que querés buscar...");
+
+        try {
+            launcherDictadoDestino.launch(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this,
+                    "El reconocimiento de voz no está disponible en este dispositivo.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     // --------------------------------------------------
@@ -613,6 +655,12 @@ public class PlanearActivity extends AppCompatActivity {
         interesNaturaleza = findViewById(R.id.interesNaturaleza);
         interesGastronomia = findViewById(R.id.interesGastronomia);
         interesTrekking = findViewById(R.id.interesTrekking);
+
+        btnBuscarVoz = findViewById(R.id.btnBuscarVoz);
+        if (btnBuscarVoz != null) {
+            btnBuscarVoz.setOnClickListener(v -> iniciarDictadoDestino());
+        }
+
     }
 
     // --------------------------------------------------
@@ -729,6 +777,8 @@ public class PlanearActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     // --------------------------------------------------
     // CONSULTAR DESTINOS EN FIREBASE

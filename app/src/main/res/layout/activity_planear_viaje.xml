@@ -34,7 +34,7 @@
                 android:text=""
                 android:textColor="#2563EB"
                 android:textSize="25sp"
-                android:contentDescription="Logo ViajAPP" />
+                android:importantForAccessibility="no" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -48,14 +48,16 @@
                     android:text="ViajAPP"
                     android:textColor="#001428"
                     android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="PLANEAR VIAJE"
                     android:textColor="#43474D"
                     android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:contentDescription="Pantalla de Planear Viaje"/>
             </LinearLayout>
 
             <!-- BOTÓN PERFIL DE USUARIO -->
@@ -66,7 +68,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:tooltipText="Perfil"
-                android:contentDescription="Abrir menú de mi cuenta"
+                android:contentDescription="Menú de usuario"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#DBEAFE"
@@ -133,7 +135,8 @@
             android:text="A-"
             android:textColor="#111827"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
         <!-- AUMENTAR TEXTO -->
         <TextView
@@ -146,7 +149,8 @@
             android:text="A+"
             android:textColor="#111827"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
         <!-- CONTRASTE -->
         <TextView
@@ -159,7 +163,8 @@
             android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cambiar contraste"/>
 
         <!-- AUDIO -->
         <TextView
@@ -171,7 +176,7 @@
             android:gravity="center"
             android:text="🔊"
             android:textSize="14sp"
-            android:contentDescription="Audio" />
+            android:contentDescription="Ir a deshabilitar talkback" />
 
     </LinearLayout>
 
@@ -200,7 +205,7 @@
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_search"
             app:tint="#3B82F6"
-            android:contentDescription="Buscar destino"/>
+            android:importantForAccessibility="no"/>
 
         <EditText
             android:id="@+id/etBuscarDestino"
@@ -223,6 +228,8 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:padding="10dp"
+            android:clickable="true"
+            android:focusable="true"
             android:background="@drawable/fondo_boton_microfono_busqueda"
             android:src="@drawable/ic_mic"
             app:tint="#FFFFFF"
@@ -273,13 +280,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:contentDescription="Fotografía del destino seleccionado" />
+                    android:importantForAccessibility="no" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="68dp"
                     android:layout_gravity="bottom"
-                    android:background="@drawable/bg_photo_scrim"/>
+                    android:background="@drawable/bg_photo_scrim"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -334,7 +342,8 @@
                     android:background="@drawable/bg_icon_green"
                     android:text="✓"
                     android:textColor="#15803D"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -423,7 +432,8 @@
                         android:text="−"
                         android:textColor="#0284C7"
                         android:textSize="20sp"
-                        android:stateListAnimator="@null"/>
+                        android:stateListAnimator="@null"
+                        android:contentDescription="Menos días"/>
 
                     <Button
                         android:id="@+id/btnMasDias"
@@ -438,7 +448,8 @@
                         android:text="+"
                         android:textColor="#FFFFFF"
                         android:textSize="20sp"
-                        android:stateListAnimator="@null" />
+                        android:stateListAnimator="@null"
+                        android:contentDescription="Más días"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -497,7 +508,8 @@
                         android:text="−"
                         android:textColor="#0284C7"
                         android:textSize="20sp"
-                        android:stateListAnimator="@null"/>
+                        android:stateListAnimator="@null"
+                        android:contentDescription="Menos viajeros"/>
 
                     <Button
                         android:id="@+id/btnMasViajeros"
@@ -512,7 +524,8 @@
                         android:text="+"
                         android:textColor="#FFFFFF"
                         android:textSize="20sp"
-                        android:stateListAnimator="@null"/>
+                        android:stateListAnimator="@null"
+                        android:contentDescription="Más viajeros"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -530,12 +543,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
+
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="106dp"
                         android:layout_height="wrap_content"
                         android:text="PRESUPUESTO ESTIMADO"
                         android:textColor="#64748B"
-                        android:textSize="9sp"/>
+                        android:textSize="9sp"
+                        android:contentDescription="Presupuesto estimado en pesos argentinos"/>
                     <EditText
                         android:id="@+id/etPresupuesto"
                         android:layout_width="match_parent"
@@ -563,7 +578,8 @@
                     android:text="$"
                     android:textColor="#F43F5E"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
             </LinearLayout>
 
 
@@ -621,7 +637,8 @@
                     android:background="@drawable/bg_circle_white"
                     android:text="⌁"
                     android:textColor="#0284C7"
-                    android:textSize="22sp"/>
+                    android:textSize="22sp"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -641,7 +658,8 @@
                         android:layout_height="wrap_content"
                         android:text="Menos de 250 m entre bancos y descansos"
                         android:textColor="#64748B"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        android:contentDescription="Menos de 250 metros entre bancos y descansos"/>
                 </LinearLayout>
 
                 <Switch
@@ -667,7 +685,8 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:contentDescription="Crear itinerario accesible con IA"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -676,7 +695,8 @@
                 android:gravity="center"
                 android:text="⚡ Itinerario orientativo; verificá la accesibilidad antes de viajar"
                 android:textColor="#64748B"
-                android:textSize="10sp"/>
+                android:textSize="10sp"
+                android:contentDescription="Itinerario orientativo; verificá la accesibilidad antes de viajar"/>
 
 
             <LinearLayout
@@ -695,7 +715,8 @@
                     android:background="@drawable/bg_ai_icon"
                     android:text="✿"
                     android:textColor="#FFFFFF"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp"
+                    android:importantForAccessibility="no"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -744,7 +765,8 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:contentDescription="Ir a Accesibilidad">
 
             <TextView
                 android:layout_width="match_parent"
@@ -753,14 +775,16 @@
                 android:gravity="center"
                 android:text="♿︎"
                 android:textColor="#64748B"
-                android:textSize="23sp" />
+                android:textSize="23sp"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Accesibilidad"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no" />
         </LinearLayout>
 
         <LinearLayout
@@ -772,7 +796,8 @@
             android:orientation="vertical"
             android:background="#EFF6FF"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Planear Viaje, pantalla actual">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -780,7 +805,8 @@
                 android:text="◎"
                 android:textColor="#2563EB"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -789,7 +815,8 @@
                 android:text="Planear"
                 android:textColor="#2563EB"
                 android:textSize="11sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:importantForAccessibility="no" />
         </LinearLayout>
 
         <LinearLayout
@@ -800,7 +827,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a Itinerario">
 
             <TextView
                 android:layout_width="match_parent"
@@ -809,7 +837,8 @@
                 android:text="▦"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -817,7 +846,8 @@
                 android:text="Itinerario"
                 android:textColor="#64748B"
                 android:textSize="11sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
         </LinearLayout>
 
         <LinearLayout
@@ -828,7 +858,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a Colección">
 
             <TextView
                 android:layout_width="match_parent"
@@ -837,7 +868,8 @@
                 android:text="⌖"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -845,7 +877,8 @@
                 android:text="Colección"
                 android:textColor="#64748B"
                 android:textSize="11sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
         </LinearLayout>
     </LinearLayout>
 
