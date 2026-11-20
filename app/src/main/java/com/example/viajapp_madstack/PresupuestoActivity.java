@@ -70,6 +70,8 @@ public class PresupuestoActivity extends AppCompatActivity {
     // Guardar el PDF generado
     private byte[] pdfPendiente;
 
+    private EditText campoDestinoDictadoGasto;
+
     // Abrir el selector de archivos de Android
     private final androidx.activity.result.ActivityResultLauncher<Intent>
             guardarPdfLauncher = registerForActivityResult(
@@ -143,6 +145,12 @@ public class PresupuestoActivity extends AppCompatActivity {
         configurarPerfil();
         configurarCategorias();
 
+        // ACTIVAR REGISTRO DE GASTOS
+        configurarRegistroGastos();
+
+        // ACTIVAR DICTADO POR VOZ EN GASTOS
+        configurarDictadoGastos();
+
         // CARGAR PRESUPUESTO DEL VIAJE
         configurarPresupuestoViaje();
 
@@ -188,6 +196,108 @@ public class PresupuestoActivity extends AppCompatActivity {
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private final androidx.activity.result.ActivityResultLauncher<Intent>
+            dictadoGastoLauncher = registerForActivityResult(
+            new androidx.activity.result.contract.ActivityResultContracts
+                    .StartActivityForResult(),
+            resultado -> {
+                if (resultado.getResultCode() == RESULT_OK
+                        && resultado.getData() != null
+                        && campoDestinoDictadoGasto != null) {
+
+                    ArrayList<String> resultados = resultado.getData()
+                            .getStringArrayListExtra(
+                                    android.speech.RecognizerIntent.EXTRA_RESULTS
+                            );
+
+                    if (resultados != null && !resultados.isEmpty()) {
+                        String texto = resultados.get(0).trim();
+
+                        if (campoDestinoDictadoGasto.getId() == R.id.etMontoGasto) {
+                            texto = limpiarMontoDictado(texto);
+                        }
+
+                        campoDestinoDictadoGasto.setText(texto);
+                        campoDestinoDictadoGasto.setSelection(texto.length());
+                        campoDestinoDictadoGasto.requestFocus();
+                    }
+                }
+                campoDestinoDictadoGasto = null;
+            }
+    );
+
+    private void configurarDictadoGastos() {
+        EditText campoMonto = findViewById(R.id.etMontoGasto);
+        EditText campoConcepto = findViewById(R.id.etConceptoGasto);
+
+        View btnVozMonto = findViewById(R.id.btnVozMonto);
+        View btnVozConcepto = findViewById(R.id.btnVozConcepto);
+
+        if (btnVozMonto != null && campoMonto != null) {
+            btnVozMonto.setOnClickListener(v ->
+                    iniciarDictadoGasto(campoMonto, "Decí la cantidad gastada...")
+            );
+        }
+
+        if (btnVozConcepto != null && campoConcepto != null) {
+            btnVozConcepto.setOnClickListener(v ->
+                    iniciarDictadoGasto(campoConcepto, "Decí el concepto o lugar...")
+            );
+        }
+    }
+
+    private void iniciarDictadoGasto(EditText campoDestino, String mensajePrompt) {
+        campoDestinoDictadoGasto = campoDestino;
+
+        Intent intent = new Intent(
+                android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH
+        );
+        intent.putExtra(
+                android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        );
+        intent.putExtra(
+                android.speech.RecognizerIntent.EXTRA_LANGUAGE,
+                "es-AR"
+        );
+        intent.putExtra(
+                android.speech.RecognizerIntent.EXTRA_PROMPT,
+                mensajePrompt
+        );
+
+        try {
+            dictadoGastoLauncher.launch(intent);
+        } catch (android.content.ActivityNotFoundException e) {
+            campoDestinoDictadoGasto = null;
+            Toast.makeText(
+                    this,
+                    "El reconocimiento de voz no está disponible en este dispositivo",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
+
+    private String limpiarMontoDictado(String textoDictado) {
+        String normalizado = textoDictado
+                .replace(",", ".")
+                .replaceAll("[^0-9.]", " ")
+                .trim();
+
+        if (normalizado.isEmpty()) {
+            return "";
+        }
+
+        String[] partes = normalizado.split("\\s+");
+        String primerNumero = partes[0];
+
+        int indicePunto = primerNumero.indexOf('.');
+        if (indicePunto >= 0) {
+            primerNumero = primerNumero.substring(0, indicePunto);
+        }
+
+        return primerNumero.replaceAll("[^0-9]", "");
     }
 
     // ==========================================
@@ -1575,7 +1685,7 @@ public class PresupuestoActivity extends AppCompatActivity {
             tvEstado.setText("Sin gastos");
 
             tvAviso.setText(
-                    "✓ Todavía tenés todo tu presupuesto disponible."
+                    "Todavía tenés todo tu presupuesto disponible."
             );
 
             tvRecomendacion.setText(
@@ -1588,7 +1698,7 @@ public class PresupuestoActivity extends AppCompatActivity {
             tvEstado.setText("Presupuesto superado");
 
             tvAviso.setText(
-                    "⚠ Superaste tu presupuesto en "
+                    "Superaste tu presupuesto en "
                             + formatearPesos(-saldo)
             );
 
@@ -1602,7 +1712,7 @@ public class PresupuestoActivity extends AppCompatActivity {
             tvEstado.setText("Saldo bajo");
 
             tvAviso.setText(
-                    "⚠ Ya utilizaste gran parte de tu presupuesto."
+                    "Ya utilizaste gran parte de tu presupuesto."
             );
 
             tvRecomendacion.setText(
@@ -1615,7 +1725,7 @@ public class PresupuestoActivity extends AppCompatActivity {
             tvEstado.setText("Dentro del presupuesto");
 
             tvAviso.setText(
-                    "✓ Tus gastos están dentro del presupuesto."
+                    "Tus gastos están dentro del presupuesto."
             );
 
             tvRecomendacion.setText(
@@ -2319,13 +2429,13 @@ public class PresupuestoActivity extends AppCompatActivity {
         );
 
         // FRANJA DE REGISTRO POR VOZ
-        View franja = findViewById(R.id.tarjetaRegistroVoz);
+        /*View franja = findViewById(R.id.tarjetaRegistroVoz);
 
         franja.setBackground(
                 fondoRedondeado(
                         fondoTarjeta, borde, 16, 2
                 )
-        );
+        );*/
 
         // BOTÓN EDITAR
         android.widget.Button editar =
@@ -2342,6 +2452,7 @@ public class PresupuestoActivity extends AppCompatActivity {
         editar.setTextColor(Color.WHITE);
 
         // BOTÓN HABLAR
+        /*
         android.widget.Button hablar =
                 findViewById(R.id.btnRegistrarVoz);
 
@@ -2351,7 +2462,7 @@ public class PresupuestoActivity extends AppCompatActivity {
                 fondoRedondeado(
                         fondoBoton, borde, 12, 2
                 )
-        );
+        );*/
 
 
         // ==========================================
@@ -2359,9 +2470,19 @@ public class PresupuestoActivity extends AppCompatActivity {
         // ==========================================
 
         android.widget.ImageView microfono =
-                findViewById(R.id.imgMicrofonoPresupuesto);
+                findViewById(R.id.btnVozMonto);
+        android.widget.ImageView microfono2 =
+                findViewById(R.id.btnVozConcepto);
 
         microfono.setBackground(
+                fondoRedondeado(
+                        fondoBoton,
+                        borde,
+                        12,
+                        2
+                )
+        );
+        microfono2.setBackground(
                 fondoRedondeado(
                         fondoBoton,
                         borde,
@@ -2373,9 +2494,11 @@ public class PresupuestoActivity extends AppCompatActivity {
         microfono.setImageTintList(
                 ColorStateList.valueOf(Color.WHITE)
         );
+        microfono2.setImageTintList(
+                ColorStateList.valueOf(Color.WHITE)
+        );
 
-
-        hablar.setTextColor(Color.WHITE);
+        //hablar.setTextColor(Color.WHITE);
 
         // ÍCONO DEL DOCUMENTO PDF
         android.widget.ImageView iconoPdf =

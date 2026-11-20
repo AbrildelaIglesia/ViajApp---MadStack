@@ -138,12 +138,10 @@
             android:text="A-"
             android:textColor="#111827"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
         <!-- AUMENTAR TEXTO -->
-
-        <!-- CONTRASTE -->
-
         <TextView
             android:id="@+id/btnAumentarTexto"
             android:layout_width="44dp"
@@ -154,8 +152,10 @@
             android:text="A+"
             android:textColor="#111827"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
+        <!-- CONTRASTE -->
         <TextView
             android:id="@+id/btnContraste"
             android:layout_width="90dp"
@@ -166,7 +166,8 @@
             android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cambiar contraste"/>
 
         <!-- AUDIO -->
         <TextView
@@ -175,7 +176,7 @@
             android:layout_height="44dp"
             android:layout_marginStart="5dp"
             android:background="@drawable/fondo_boton_audio"
-            android:contentDescription="Audio"
+            android:contentDescription="Ir a deshabilitar talkback"
             android:gravity="center"
             android:text="🔊"
             android:textSize="14sp" />
@@ -276,7 +277,6 @@
                     android:layout_height="56dp"
                     android:background="@drawable/fondo_boton_ir_presupuesto"
                     android:backgroundTint="@null"
-                    android:contentDescription="Abrir la sección de presupuesto y gastos"
                     android:text="Ir a Presupuesto y Gastos"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
