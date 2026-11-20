@@ -1087,8 +1087,8 @@ public class PlanearActivity extends AppCompatActivity {
                                     if (resultado.getUri() == null) return;
                                     Glide.with(PlanearActivity.this)
                                             .load(resultado.getUri())
-                                            .placeholder(R.drawable.bariloche)
-                                            .error(R.drawable.bariloche)
+                                            .placeholder((Drawable) null)
+                                            .error((Drawable) null)
                                             .into(imgDestino);
                                     imgDestino.setContentDescription("Fotografía de " + ubicacion + " obtenida de Google Places");
                                 })
@@ -1855,3 +1855,4 @@ public class PlanearActivity extends AppCompatActivity {
         );
     }
 }
+
