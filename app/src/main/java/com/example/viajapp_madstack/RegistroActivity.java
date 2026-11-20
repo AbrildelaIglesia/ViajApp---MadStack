@@ -64,8 +64,11 @@ public class RegistroActivity extends AppCompatActivity {
 
     // CASILLAS DE ACCESIBILIDAD Y TÉRMINOS
     private CheckBox cbSillaRuedas, cbRecorridosCortos,
-            cbVisionReducida, cbSubtitulos,
+            cbVisionReducida,
             cbSinAdaptaciones, cbTerminos;
+
+    // MENSAJES VISIBLES DE VALIDACIÓN DE CASILLAS
+    private TextView txtErrorAccesibilidad, txtErrorTerminos;
 
     private AppCompatButton btnCrearCuenta;
 
@@ -142,9 +145,11 @@ public class RegistroActivity extends AppCompatActivity {
         cbSillaRuedas = findViewById(R.id.cbSillaRuedas);
         cbRecorridosCortos = findViewById(R.id.cbRecorridosCortos);
         cbVisionReducida = findViewById(R.id.cbVisionReducida);
-        cbSubtitulos = findViewById(R.id.cbSubtitulos);
         cbSinAdaptaciones = findViewById(R.id.cbSinAdaptaciones);
         cbTerminos = findViewById(R.id.cbTerminos);
+
+        txtErrorAccesibilidad = findViewById(R.id.txtErrorAccesibilidad);
+        txtErrorTerminos = findViewById(R.id.txtErrorTerminos);
 
         btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
 
@@ -751,6 +756,9 @@ public class RegistroActivity extends AppCompatActivity {
 
             if (modoContraste == 0) {
                 texto.setTextColor(original);
+            } else if (texto.getId() == R.id.txtErrorAccesibilidad
+                    || texto.getId() == R.id.txtErrorTerminos) {
+                texto.setTextColor(Color.parseColor("#D32F2F"));
             } else if (texto.getId() == R.id.txtIniciarSesion) {
                 texto.setTextColor(
                         Color.parseColor(
@@ -793,7 +801,6 @@ public class RegistroActivity extends AppCompatActivity {
                 cbSillaRuedas,
                 cbRecorridosCortos,
                 cbVisionReducida,
-                cbSubtitulos,
                 cbSinAdaptaciones,
                 cbTerminos
         };
@@ -1203,14 +1210,17 @@ public class RegistroActivity extends AppCompatActivity {
 
     private boolean validarAccesibilidad() {
 
-        if (!cbSillaRuedas.isChecked()
-                && !cbRecorridosCortos.isChecked()
-                && !cbVisionReducida.isChecked()
-                && !cbSubtitulos.isChecked()
-                && !cbSinAdaptaciones.isChecked()) {
+        boolean seleccionada = cbSillaRuedas.isChecked()
+                || cbRecorridosCortos.isChecked()
+                || cbVisionReducida.isChecked()
+                || cbSinAdaptaciones.isChecked();
 
-            cbSillaRuedas.setError("Seleccioná al menos una opción de accesibilidad");
+        txtErrorAccesibilidad.setVisibility(seleccionada ? View.GONE : View.VISIBLE);
+
+        if (!seleccionada) {
             cbSillaRuedas.requestFocus();
+            txtErrorAccesibilidad.announceForAccessibility(
+                    "Seleccioná al menos una opción de accesibilidad");
             return false;
         }
 
@@ -1224,16 +1234,18 @@ public class RegistroActivity extends AppCompatActivity {
 
     private boolean validarTerminos() {
 
-        if (!cbTerminos.isChecked()) {
-            cbTerminos.setError("Debe aceptar los términos y condiciones");
-            cbTerminos.requestFocus();
+        boolean aceptados = cbTerminos.isChecked();
+        txtErrorTerminos.setVisibility(aceptados ? View.GONE : View.VISIBLE);
 
+        if (!aceptados) {
+            cbTerminos.requestFocus();
+            txtErrorTerminos.announceForAccessibility(
+                    "Debés aceptar los términos y condiciones");
             Toast.makeText(
                     this,
                     "Debe aceptar los términos y condiciones",
                     Toast.LENGTH_LONG
             ).show();
-
             return false;
         }
 
@@ -1253,8 +1265,8 @@ public class RegistroActivity extends AppCompatActivity {
                         cbSillaRuedas.setChecked(false);
                         cbRecorridosCortos.setChecked(false);
                         cbVisionReducida.setChecked(false);
-                        cbSubtitulos.setChecked(false);
                         cbSillaRuedas.setError(null);
+                        txtErrorAccesibilidad.setVisibility(View.GONE);
                     }
                 }
         );
@@ -1264,13 +1276,20 @@ public class RegistroActivity extends AppCompatActivity {
                     if (isChecked) {
                         cbSinAdaptaciones.setChecked(false);
                         cbSillaRuedas.setError(null);
+                        txtErrorAccesibilidad.setVisibility(View.GONE);
                     }
                 };
 
         cbSillaRuedas.setOnCheckedChangeListener(listener);
         cbRecorridosCortos.setOnCheckedChangeListener(listener);
         cbVisionReducida.setOnCheckedChangeListener(listener);
-        cbSubtitulos.setOnCheckedChangeListener(listener);
+
+        cbTerminos.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                txtErrorTerminos.setVisibility(View.GONE);
+                cbTerminos.setError(null);
+            }
+        });
     }
 
     // ===================================================
@@ -1351,7 +1370,7 @@ public class RegistroActivity extends AppCompatActivity {
         accesibilidad.put("sillaRuedas", cbSillaRuedas.isChecked());
         accesibilidad.put("recorridosCortos", cbRecorridosCortos.isChecked());
         accesibilidad.put("visionReducida", cbVisionReducida.isChecked());
-        accesibilidad.put("subtitulos", cbSubtitulos.isChecked());
+
 
         datosUsuario.put("accesibilidad", accesibilidad);
         datosUsuario.put("fechaRegistro", FieldValue.serverTimestamp());
@@ -1402,3 +1421,4 @@ public class RegistroActivity extends AppCompatActivity {
         btnCrearCuenta.setAlpha(1.0f);
     }
 }
+

@@ -10,6 +10,7 @@
     android:clickable="true"
     android:focusable="true"
     android:contentDescription="Seleccionar interés: Naturaleza accesible">
+
     <TextView
         android:layout_width="34dp"
         android:layout_height="34dp"
@@ -18,12 +19,14 @@
         android:text="♧"
         android:textColor="#15803D"
         android:textSize="17sp" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_weight="1"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,6 +34,7 @@
             android:textColor="#0C4A6E"
             android:textSize="12sp"
             android:textStyle="bold" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,15 +42,20 @@
             android:textColor="#64748B"
             android:textSize="10sp" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/tvCheckInteres"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="6dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
         android:gravity="center"
         android:background="@drawable/bg_check_circle"
         android:text="✓"
         android:textColor="#FFFFFF"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        android:padding="0dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp" />
 </LinearLayout>

@@ -45,13 +45,17 @@
 
     <TextView
         android:id="@+id/tvCheckInteres"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="6dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
         android:gravity="center"
         android:background="@drawable/bg_check_circle"
         android:text="✓"
         android:textColor="#FFFFFF"
-        android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        android:padding="0dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp" />
 </LinearLayout>
