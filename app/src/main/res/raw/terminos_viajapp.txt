@@ -1,0 +1,83 @@
+ViajAPP – Términos y Condiciones de Uso, Seguridad y Turismo Accesible
+
+Última actualización: 20 de noviembre de 2026
+
+Bienvenido/a a ViajAPP, una aplicación diseñada para facilitar la planificación de viajes personalizados, promoviendo el turismo accesible, inclusivo y seguro.
+
+Al registrarte y utilizar ViajAPP, aceptás las siguientes condiciones de uso.
+
+1. Uso de la aplicación
+
+ViajAPP permite organizar viajes, generar itinerarios personalizados mediante inteligencia artificial, consultar destinos, actividades y lugares de interés, y administrar presupuestos y preferencias de accesibilidad.
+
+El usuario se compromete a utilizar la aplicación de manera responsable y proporcionar información verídica al registrarse.
+
+2. Protección de datos personales
+
+ViajAPP solicita determinados datos personales, como nombre, apellido, correo electrónico y preferencias de accesibilidad, con el objetivo de permitir el registro y personalizar la experiencia.
+
+Estos datos se utilizarán para las funcionalidades de la aplicación y no deberán emplearse para fines ajenos a los informados sin una base legal válida.
+
+La aplicación utiliza servicios de Firebase para la autenticación y el almacenamiento de información. La protección de los datos también depende de la configuración y las medidas de seguridad de estos servicios.
+
+3. Seguridad de la cuenta
+
+Cada usuario es responsable de mantener la confidencialidad de su contraseña y evitar compartir sus credenciales.
+
+ViajAPP implementa mecanismos de autenticación y validación para contribuir a la seguridad de las cuentas. Sin embargo, ningún sistema informático puede garantizar una protección absoluta frente a todos los riesgos.
+
+Ante cualquier sospecha de acceso no autorizado, se recomienda cambiar la contraseña y comunicarse con los responsables de la aplicación.
+
+4. Turismo accesible e inclusivo
+
+ViajAPP promueve experiencias turísticas adaptadas a diferentes necesidades, incluyendo movilidad reducida, dificultades visuales o auditivas y otras preferencias de accesibilidad.
+
+Las recomendaciones pueden considerar recorridos cortos, rampas, servicios adaptados y otras características relevantes.
+
+Importante: la información de accesibilidad de destinos, alojamientos, transportes y actividades puede variar. El usuario deberá confirmar directamente con los establecimientos que las instalaciones y los servicios sean adecuados antes de viajar.
+
+5. Itinerarios generados mediante inteligencia artificial
+
+Los itinerarios y sugerencias de ViajAPP pueden generarse mediante inteligencia artificial.
+
+Esta información tiene carácter orientativo y podría contener errores, datos desactualizados o recomendaciones que no se ajusten completamente a las necesidades del usuario.
+
+ViajAPP no garantiza la disponibilidad, los precios, los horarios ni las condiciones de accesibilidad de los lugares recomendados.
+
+6. Seguridad durante los viajes
+
+Antes de realizar una actividad, se recomienda verificar las condiciones climáticas, las características del recorrido, los medios de transporte y los posibles riesgos.
+
+El usuario es responsable de evaluar si las actividades sugeridas son adecuadas para sus necesidades y circunstancias personales.
+
+ViajAPP es una herramienta de planificación y no sustituye la asistencia profesional ni los servicios de emergencia.
+
+7. Servicios externos
+
+Algunas funciones pueden utilizar servicios externos, como mapas, información meteorológica, inteligencia artificial y plataformas de Google.
+
+El funcionamiento de estos servicios está sujeto a sus propias condiciones y políticas de privacidad.
+
+8. Derechos del usuario
+
+El usuario podrá solicitar información sobre el tratamiento de sus datos personales y ejercer los derechos de acceso, rectificación, actualización o supresión que correspondan según la legislación aplicable.
+
+Las solicitudes deberán dirigirse a los responsables de ViajAPP mediante los canales de contacto que se habiliten.
+
+9. Modificaciones de las condiciones
+
+Los presentes términos podrán actualizarse para reflejar cambios en las funcionalidades, las medidas de seguridad o los requisitos legales.
+
+Cuando corresponda, los usuarios serán informados de las modificaciones relevantes.
+
+10. Aceptación de los términos
+
+Al seleccionar la casilla de aceptación y crear una cuenta, el usuario declara haber leído y comprendido estos Términos y Condiciones de Uso, Seguridad y Turismo Accesible.
+
+La aceptación es necesaria para completar el registro.
+
+ViajAPP – MadStack
+
+Proyecto académico de la Tecnicatura Universitaria en Programación – Universidad Tecnológica Nacional (UTN).
+
+Nuestro compromiso: promover una experiencia de planificación de viajes más accesible, inclusiva y responsable para todas las personas.

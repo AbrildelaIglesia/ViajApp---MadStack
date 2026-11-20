@@ -79,7 +79,7 @@
                 android:id="@+id/contenedorClaveActual"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginBottom="18dp"
+                android:layout_marginBottom="0dp"
                 android:gravity="center_vertical"
                 android:background="@null"
                 android:orientation="horizontal"
@@ -137,6 +137,17 @@
                     android:contentDescription="Dictar contraseña actual" />
 
             </LinearLayout>
+    |
+            <TextView
+                android:id="@+id/txtErrorClaveActual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="14dp"
+                android:textColor="#B3261E"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:accessibilityLiveRegion="polite" />
 
             <!-- CONTRASEÑA NUEVA -->
             <TextView
@@ -152,7 +163,7 @@
                 android:id="@+id/contenedorClaveNueva"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginBottom="18dp"
+                android:layout_marginBottom="0dp"
                 android:gravity="center_vertical"
                 android:background="@null"
                 android:orientation="horizontal"
@@ -210,6 +221,18 @@
                     android:contentDescription="Dictar nueva contraseña" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtErrorClaveNueva"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="14dp"
+                android:textColor="#B3261E"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:accessibilityLiveRegion="polite" />
+
 
             <!-- CONFIRMAR CONTRASEÑA -->
             <TextView
@@ -282,6 +305,18 @@
                     android:contentDescription="Dictar confirmación de nueva contraseña" />
 
             </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/txtErrorConfirmarClave"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="#B3261E"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:accessibilityLiveRegion="polite" />
+
 
             <!-- RECOMENDACIÓN -->
             <TextView
