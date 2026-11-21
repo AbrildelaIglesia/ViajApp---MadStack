@@ -532,11 +532,16 @@ public class MenuEditarPerfil {
                                                 "Guardar cambios"
                                         );
 
-                                        mostrarMensaje(
-                                                actividad,
-                                                "El nombre se guardó, pero no se pudo solicitar el cambio de correo. Volver a iniciar sesión. Detalle: "
-                                                        + error.getMessage()
-                                        );
+                                        new androidx.appcompat.app.AlertDialog.Builder(actividad)
+                                                .setTitle("No se pudo cambiar el correo")
+                                                .setMessage(
+                                                        "Tus datos personales se guardaron correctamente.\n\n"
+                                                                + "Por seguridad, intentá iniciar sesión nuevamente  "
+                                                                + "Repetí la solicitud.\n\n"
+                                                                + "Detalle: " + error.getMessage()
+                                                )
+                                                .setPositiveButton("Entendido", null)
+                                                .show();
                                     });
                         })
                         .addOnFailureListener(error -> {
