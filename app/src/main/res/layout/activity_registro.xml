@@ -355,7 +355,6 @@
                     android:layout_weight="1"
                     android:autofillHints="password"
                     android:background="@null"
-                    android:contentDescription="Contraseña, campo de texto seguro, obligatorio"
                     android:drawableStart="@drawable/ic_lock"
                     android:drawablePadding="10dp"
                     android:hint="Escribí tu contraseña"
@@ -441,8 +440,7 @@
                     android:singleLine="true"
                     android:textColor="#111827"
                     android:textColorHint="#6B7280"
-                    android:textSize="14sp"
-                    android:contentDescription="Confirmar contraseña, campo de texto seguro, obligatorio"/>
+                    android:textSize="14sp"/>
 
                 <!-- BOTÓN MOSTRAR/OCULTAR CONTRASEÑA -->
                 <ImageView
