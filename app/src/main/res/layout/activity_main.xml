@@ -340,6 +340,20 @@
                         android:importantForAccessibility="no" />
                 </LinearLayout>
 
+                <!-- RECUPERAR CONTRASEÑA -->
+                <TextView
+                    android:id="@+id/txtRecuperarContrasena"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="¿Olvidaste tu contraseña?"
+                    android:textColor="#1E5FA8"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:contentDescription="Recuperar contraseña por correo electrónico" />
 
                 <TextView
                     android:layout_width="match_parent"

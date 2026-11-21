@@ -1,6 +1,8 @@
 package com.example.viajapp_madstack;
 
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Patterns;
 import android.content.Intent;
 import android.provider.Settings;
 import android.view.View;
@@ -172,12 +174,64 @@ public class InicioActivity extends AppCompatActivity {
                     });
         });
 
+        // BOTÓN RECUPERAR CONTRASEÑA
+        TextView txtRecuperarContrasena = findViewById(R.id.txtRecuperarContrasena);
+        if (txtRecuperarContrasena != null) {
+            txtRecuperarContrasena.setOnClickListener(v -> mostrarDialogoRecuperacion());
+        }
+
         // BOTÓN REGISTRO
         txtRegistrarse = findViewById(R.id.txtRegistrarse);
         txtRegistrarse.setOnClickListener(v -> {
             Intent intent = new Intent(InicioActivity.this, RegistroActivity.class);
             startActivity(intent);
         });
+    }
+
+    // RECUPERACIÓN DE CONTRASEÑA MEDIANTE FIREBASE AUTHENTICATION
+    private void mostrarDialogoRecuperacion() {
+        EditText inputCorreo = new EditText(this);
+        inputCorreo.setHint("Correo electrónico");
+        inputCorreo.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        inputCorreo.setSingleLine(true);
+
+        if (etCorreo != null) {
+            inputCorreo.setText(etCorreo.getText().toString().trim());
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Recuperar contraseña")
+                .setMessage("Ingresá tu correo electrónico para recibir un enlace de recuperación.")
+                .setView(inputCorreo)
+                .setPositiveButton("Enviar correo", null)
+                .setNegativeButton("Cancelar", (d, which) -> d.dismiss())
+                .create();
+
+        dialog.setOnShowListener(d ->
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                    String correo = inputCorreo.getText().toString().trim();
+                    if (correo.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+                        inputCorreo.setError("Ingresá un correo válido");
+                        inputCorreo.requestFocus();
+                        return;
+                    }
+
+                    mAuth.sendPasswordResetEmail(correo)
+                            .addOnCompleteListener(this, task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(this,
+                                            "Si el correo corresponde a una cuenta, recibirás un enlace de recuperación.",
+                                            Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(this,
+                                            "No se pudo procesar la solicitud. Intentá nuevamente.",
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            });
+                })
+        );
+        dialog.show();
     }
 
     @Override
