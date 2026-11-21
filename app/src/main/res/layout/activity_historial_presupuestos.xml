@@ -25,7 +25,7 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/logo_viajapp"
-            android:contentDescription="Logo ViajAPP"/>
+            android:importantForAccessibility="no"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -36,11 +36,12 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:text="ViajAPP"
                 android:textColor="#001428"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,7 +49,8 @@
                 android:text="HISTORIAL DE PRESUPUESTOS Y GASTOS"
                 android:textColor="#43474D"
                 android:textSize="10sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:contentDescription="Pantalla de Historial de Presupuestos y gastos"/>
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
@@ -57,7 +59,7 @@
             android:layout_height="48dp"
             android:clickable="true"
             android:focusable="true"
-            android:contentDescription="Abrir menú de mi cuenta"
+            android:contentDescription="Menú de usuario"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:cardBackgroundColor="#DBEAFE"
@@ -102,7 +104,8 @@
             android:text="☰ ACCESIBILIDAD"
             android:textColor="#1E5FA8"
             android:textSize="11sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:contentDescription="Cerrar menú de accesibilidad"/>
 
         <TextView
             android:id="@+id/btnDisminuirTexto"
@@ -112,7 +115,8 @@
             android:gravity="center"
             android:background="@drawable/fondo_boton_accesibilidad"
             android:text="A-"
-            android:textColor="#111827"/>
+            android:textColor="#111827"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
         <TextView
             android:id="@+id/btnAumentarTexto"
@@ -122,7 +126,8 @@
             android:gravity="center"
             android:background="@drawable/fondo_boton_accesibilidad"
             android:text="A+"
-            android:textColor="#111827"/>
+            android:textColor="#111827"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
         <TextView
             android:id="@+id/btnContraste"
@@ -133,7 +138,8 @@
             android:background="@drawable/fondo_boton_accesibilidad"
             android:text="◐ Contraste"
             android:textColor="#111827"
-            android:textSize="11sp"/>
+            android:textSize="11sp"
+            android:contentDescription="Cambiar contraste"/>
 
         <TextView
             android:id="@+id/btnAudio"
@@ -143,7 +149,7 @@
             android:gravity="center"
             android:background="@drawable/fondo_boton_audio"
             android:text="🔊"
-            android:contentDescription="Audio"
+            android:contentDescription="Ir a deshabilitar talkback"
             android:textSize="14sp"/>
     </LinearLayout>
 

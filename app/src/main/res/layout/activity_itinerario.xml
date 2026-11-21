@@ -32,7 +32,8 @@
                 android:text=""
                 android:textColor="#2563EB"
                 android:textSize="25sp"
-                android:contentDescription="Logo ViajAPP" />
+                android:contentDescription="Logo ViajAPP"
+                android:importantForAccessibility="no" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -46,14 +47,16 @@
                     android:text="ViajAPP"
                     android:textColor="#001428"
                     android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:importantForAccessibility="no"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ITINERARIO"
                     android:textColor="#43474D"
                     android:textSize="10sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:contentDescription="Pantalla de Itinerario"/>
             </LinearLayout>
 
 
@@ -68,7 +71,7 @@
                 android:layout_height="48dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:contentDescription="Abrir menú de mi cuenta"
+                android:contentDescription="Menú de usuario"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#DBEAFE"
@@ -135,7 +138,8 @@
             android:text="A-"
             android:textColor="#111827"
             android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Disminuir tamaño de letra"/>
 
         <!-- AUMENTAR TEXTO -->
 
@@ -151,7 +155,8 @@
             android:text="A+"
             android:textColor="#111827"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Aumentar tamaño de letra"/>
 
         <TextView
             android:id="@+id/btnContraste"
@@ -163,7 +168,8 @@
             android:text="◐  Contraste"
             android:textColor="#111827"
             android:textSize="11sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:contentDescription="Cambiar contraste"/>
 
         <!-- AUDIO -->
         <TextView
@@ -175,7 +181,7 @@
             android:gravity="center"
             android:text="🔊"
             android:textSize="14sp"
-            android:contentDescription="Audio" />
+            android:contentDescription="Ir a deshabilitar talkback"/>
 
     </LinearLayout>
 
@@ -354,7 +360,7 @@
                         android:text="✧ EJEMPLO DE ITINERARIO • DATOS ILUSTRATIVOS"
                         android:textColor="#E11D48"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -374,7 +380,8 @@
                         android:text="♿ 100% Accesible para Silla de Ruedas"
                         android:textColor="#166534"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:contentDescription="100% Accesible para Silla de Ruedas"/>
                 </LinearLayout>
 
                 <Button
@@ -469,7 +476,8 @@
                         android:gravity="center"
                         android:text="☀"
                         android:textColor="#C2410C"
-                        android:textSize="24sp" />
+                        android:textSize="24sp"
+                        android:importantForAccessibility="no"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -701,7 +709,8 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:contentDescription="Ir a accesibilidad">
 
             <TextView
                 android:layout_width="match_parent"
@@ -710,14 +719,16 @@
                 android:gravity="center"
                 android:text="♿︎"
                 android:textColor="#64748B"
-                android:textSize="23sp" />
+                android:textSize="23sp"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Accesibilidad"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no"/>
         </LinearLayout>
 
         <LinearLayout
@@ -728,7 +739,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a planear viaje">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -736,7 +748,8 @@
                 android:text="◎"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -744,7 +757,8 @@
                 android:clickable="false"
                 android:text="Planear"
                 android:textColor="#64748B"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                android:importantForAccessibility="no"/>
         </LinearLayout>
 
 
@@ -758,7 +772,8 @@
             android:orientation="vertical"
             android:background="#EFF6FF"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Itinerario, pantalla actual">
 
             <TextView
                 android:layout_width="match_parent"
@@ -767,7 +782,8 @@
                 android:text="▦"
                 android:textColor="#2563EB"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -776,7 +792,8 @@
                 android:textColor="#2563EB"
                 android:textStyle="bold"
                 android:textSize="11sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
         </LinearLayout>
 
         <LinearLayout
@@ -787,7 +804,8 @@
             android:gravity="center"
             android:orientation="vertical"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:contentDescription="Ir a Colección">
 
             <TextView
                 android:layout_width="match_parent"
@@ -796,7 +814,8 @@
                 android:text="⌖"
                 android:textColor="#64748B"
                 android:textSize="23sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -804,7 +823,8 @@
                 android:text="Colección"
                 android:textColor="#64748B"
                 android:textSize="11sp"
-                android:clickable="false"/>
+                android:clickable="false"
+                android:importantForAccessibility="no"/>
         </LinearLayout>
     </LinearLayout>
 

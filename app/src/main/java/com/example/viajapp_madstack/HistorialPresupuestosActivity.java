@@ -1,12 +1,14 @@
 
 package com.example.viajapp_madstack;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -610,13 +612,17 @@ public class HistorialPresupuestosActivity
             aplicarTemaContraste();
         });
 
-        btnAudio.setOnClickListener(v ->
+        btnAudio.setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            } catch (Exception e) {
                 Toast.makeText(
                         this,
-                        "Función de audio próximamente",
+                        "No se pudo abrir la configuración de accesibilidad",
                         Toast.LENGTH_SHORT
-                ).show()
-        );
+                ).show();
+            }
+        });
     }
 
     // ==========================================
