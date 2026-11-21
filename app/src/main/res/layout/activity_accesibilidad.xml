@@ -329,6 +329,65 @@
                         android:text="Requiere rampas, ascensores, pasillos anchos y accesos nivelados sin desniveles pronunciados."
                         android:textColor="#64748B"
                         android:textSize="10sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/bg_interest"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:background="@drawable/bg_interest_pink"
+                            android:gravity="center"
+                            android:importantForAccessibility="no"
+                            android:tag="interest"
+                            android:text="WC"
+                            android:textColor="#e11d48"
+                            android:textSize="10sp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Baños adaptados"
+                                android:textColor="#0C4A6E"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Sanitarios adaptados con barras de apoyo duales, espacio de giro y llamada de auxilio."
+                                android:textColor="#64748B"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/btnCheckBanos"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/bg_uncheck_circle"
+                            android:clickable="true"
+                            android:contentDescription="Baños adaptados"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:text=""
+                            android:textColor="#FFFFFF"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <TextView
@@ -415,65 +474,6 @@
                 android:orientation="horizontal"
                 android:padding="8dp">
 
-                <TextView
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_interest_pink"
-                    android:gravity="center"
-                    android:importantForAccessibility="no"
-                    android:tag="interest"
-                    android:text="WC"
-                    android:textColor="#e11d48"
-                    android:textSize="10sp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Baños adaptados"
-                        android:textColor="#0C4A6E"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sanitarios adaptados con barras de apoyo duales, espacio de giro y llamada de auxilio."
-                        android:textColor="#64748B"
-                        android:textSize="10sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnCheckBanos"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="6dp"
-                    android:background="@drawable/bg_uncheck_circle"
-                    android:clickable="true"
-                    android:contentDescription="Baños adaptados"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:text=""
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:background="@drawable/bg_interest"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
                 <ImageView
                     android:layout_width="34dp"
                     android:layout_height="34dp"
@@ -502,7 +502,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Compatibilidad total TalkBack y audiodescripciones de monumentos."
+                        android:text="Compatibilidad total TalkBack."
                         android:textColor="#64748B"
                         android:textSize="10sp" />
                 </LinearLayout>
