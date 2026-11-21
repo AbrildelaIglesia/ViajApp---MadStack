@@ -941,7 +941,6 @@ public class ItinerarioActivity extends AppCompatActivity {
                     if (isFinishing() || isDestroyed() || imagen.getParent() == null) return;
                     if (foto.getUri() != null) {
                         Glide.with(ItinerarioActivity.this).load(foto.getUri()).into(imagen);
-                        imagen.setContentDescription("Imagen de referencia de Google Places para " + nombre);
                     }
                 });
             });

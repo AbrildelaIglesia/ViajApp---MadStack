@@ -324,6 +324,49 @@ public class RegistroActivity extends AppCompatActivity {
             crearCuentaFirebase(nombre, correo, contrasena);
         });
 
+
+        TextView txtLeerTerminos = findViewById(R.id.txtLeerTerminos);
+
+        String texto = "Acepto los términos de servicio y las políticas de turismo accesible. ";
+        String enlace = "Leer términos y condiciones";
+
+        android.text.SpannableString contenido =
+                new android.text.SpannableString(texto + enlace);
+
+        int inicio = texto.length();
+        int fin = contenido.length();
+
+        contenido.setSpan(
+                new android.text.style.ClickableSpan() {
+                    @Override
+                    public void onClick(View widget) {
+                        mostrarTerminos();
+                    }
+
+                    @Override
+                    public void updateDrawState(android.text.TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setColor(
+                                modoContraste == 1
+                                        ? Color.parseColor("#664700")
+                                        : modoContraste == 2
+                                          ? Color.WHITE
+                                          : Color.parseColor("#2563EB")
+                        );
+                        ds.setUnderlineText(true);
+                    }
+                },
+                inicio, fin,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        );
+
+        txtLeerTerminos.setText(contenido);
+        txtLeerTerminos.setMovementMethod(
+                android.text.method.LinkMovementMethod.getInstance()
+        );
+        txtLeerTerminos.setHighlightColor(Color.TRANSPARENT);
+
+
         // IR A LA PANTALLA DE INICIO DE SESIÓN
         TextView txtIniciarSesion = findViewById(R.id.txtIniciarSesion);
 
@@ -343,6 +386,39 @@ public class RegistroActivity extends AppCompatActivity {
     // ===================================================
     // CONFIGURACIÓN DE MOSTRAR/OCULTAR Y MICRÓFONOS
     // ===================================================
+
+    private void mostrarTerminos() {
+        try (java.io.BufferedReader lector =
+                     new java.io.BufferedReader(
+                             new java.io.InputStreamReader(
+                                     getResources().openRawResource(
+                                             R.raw.terminos_viajapp
+                                     ),
+                                     java.nio.charset.StandardCharsets.UTF_8
+                             )
+                     )) {
+
+            StringBuilder contenido = new StringBuilder();
+            String linea;
+
+            while ((linea = lector.readLine()) != null) {
+                contenido.append(linea).append("\n");
+            }
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Términos y condiciones de ViajAPP")
+                    .setMessage(contenido.toString())
+                    .setPositiveButton("Cerrar", null)
+                    .show();
+
+        } catch (java.io.IOException e) {
+            Toast.makeText(
+                    this,
+                    "No se pudieron abrir los términos",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
 
     private void preguntarPorTalkBack() {
         new AlertDialog.Builder(this)

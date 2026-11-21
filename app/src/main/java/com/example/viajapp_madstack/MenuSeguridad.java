@@ -118,6 +118,25 @@ public class MenuSeguridad {
         TextInputLayout layoutConfirmar =
                 formulario.findViewById(R.id.inputLayoutConfirmarClave);
 
+        TextView avisoActual =
+                formulario.findViewById(R.id.txtErrorClaveActual);
+
+        TextView avisoNueva =
+                formulario.findViewById(R.id.txtErrorClaveNueva);
+
+        TextView avisoConfirmar =
+                formulario.findViewById(R.id.txtErrorConfirmarClave);
+
+// Color legible en los tres contrastes
+        int colorError = modoContraste == 2
+                ? Color.parseColor("#FF8A80")
+                : Color.parseColor("#B3261E");
+
+        avisoActual.setTextColor(colorError);
+        avisoNueva.setTextColor(colorError);
+        avisoConfirmar.setTextColor(colorError);
+
+
         // BOTONES
         MaterialButton btnGuardar =
                 formulario.findViewById(R.id.btnGuardarSeguridad);
@@ -198,62 +217,84 @@ public class MenuSeguridad {
         // GUARDAR NUEVA CONTRASEÑA
         btnGuardar.setOnClickListener(v -> {
 
+
             // LIMPIAR ERRORES ANTERIORES
-            layoutActual.setError(null);
-            layoutNueva.setError(null);
-            layoutConfirmar.setError(null);
+            mostrarErrorSeguridad(layoutActual, avisoActual, null);
+            mostrarErrorSeguridad(layoutNueva, avisoNueva, null);
+            mostrarErrorSeguridad(layoutConfirmar, avisoConfirmar, null);
+
 
             String actual = obtenerTexto(edtActual);
             String nueva = obtenerTexto(edtNueva);
             String confirmar = obtenerTexto(edtConfirmar);
 
             // VALIDAR CAMPOS OBLIGATORIOS
+
             if (actual.isEmpty()) {
-                layoutActual.setError(
+                mostrarErrorSeguridad(
+                        layoutActual,
+                        avisoActual,
                         "Ingresá tu contraseña actual"
                 );
                 edtActual.requestFocus();
                 return;
             }
 
+
+
             if (nueva.isEmpty()) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "Ingresá una contraseña nueva"
                 );
                 edtNueva.requestFocus();
                 return;
             }
 
-            // VALIDAR LONGITUD
+
             if (nueva.length() < 8) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "La contraseña debe tener al menos 8 caracteres"
                 );
                 edtNueva.requestFocus();
                 return;
             }
 
+
             // VALIDAR LETRA MAYÚSCULA
+
             if (!nueva.matches(".*[A-Z].*")) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "Debe contener al menos una letra mayúscula"
                 );
                 edtNueva.requestFocus();
                 return;
             }
 
-            // VALIDAR LETRA MINÚSCULA
+
+
             if (!nueva.matches(".*[a-z].*")) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "Debe contener al menos una letra minúscula"
                 );
                 edtNueva.requestFocus();
                 return;
             }
 
+
             // VALIDAR NÚMERO
+
             if (!nueva.matches(".*[0-9].*")) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "Debe contener al menos un número"
                 );
                 edtNueva.requestFocus();
@@ -261,17 +302,24 @@ public class MenuSeguridad {
             }
 
             // VALIDAR CARÁCTER ESPECIAL
+
             if (!nueva.matches(".*[^a-zA-Z0-9].*")) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "Debe contener al menos un carácter especial"
                 );
                 edtNueva.requestFocus();
                 return;
             }
 
+
             // EVITAR REUTILIZAR LA MISMA CONTRASEÑA
+
             if (actual.equals(nueva)) {
-                layoutNueva.setError(
+                mostrarErrorSeguridad(
+                        layoutNueva,
+                        avisoNueva,
                         "La nueva contraseña debe ser diferente de la actual"
                 );
                 edtNueva.requestFocus();
@@ -279,20 +327,27 @@ public class MenuSeguridad {
             }
 
             if (confirmar.isEmpty()) {
-                layoutConfirmar.setError(
+                mostrarErrorSeguridad(
+                        layoutConfirmar,
+                        avisoConfirmar,
                         "Confirmá tu nueva contraseña"
                 );
                 edtConfirmar.requestFocus();
                 return;
             }
 
+
+
             if (!nueva.equals(confirmar)) {
-                layoutConfirmar.setError(
+                mostrarErrorSeguridad(
+                        layoutConfirmar,
+                        avisoConfirmar,
                         "Las contraseñas no coinciden"
                 );
                 edtConfirmar.requestFocus();
                 return;
             }
+
 
             // OBTENER USUARIO ACTUAL
             FirebaseUser usuario =
@@ -337,7 +392,7 @@ public class MenuSeguridad {
                         }
 
                         btnGuardar.setText(
-                                "Actualizando contraseña..."
+                                "Actualizando..."
                         );
 
                         // GUARDAR CONTRASEÑA EN FIREBASE AUTH
@@ -391,9 +446,12 @@ public class MenuSeguridad {
                                 "Actualizar contraseña"
                         );
 
-                        layoutActual.setError(
+                        mostrarErrorSeguridad(
+                                layoutActual,
+                                avisoActual,
                                 "No se pudo verificar la contraseña actual"
                         );
+
                     });
         });
 
@@ -509,6 +567,26 @@ public class MenuSeguridad {
 
         return false;
     }
+
+
+    private static void mostrarErrorSeguridad(
+            TextInputLayout layout,
+            TextView aviso,
+            String mensaje) {
+
+        // Evitar que el mensaje aparezca dentro del campo
+        layout.setError(null);
+
+        if (mensaje == null || mensaje.isEmpty()) {
+            aviso.setText("");
+            aviso.setVisibility(View.GONE);
+        } else {
+            aviso.setText(mensaje);
+            aviso.setVisibility(View.VISIBLE);
+            aviso.announceForAccessibility(mensaje);
+        }
+    }
+
 
     // OBTENER TEXTO DE LOS CAMPOS
     private static String obtenerTexto(
