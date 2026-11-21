@@ -325,226 +325,28 @@ public class MenuEditarPerfil {
             btnGuardar.setEnabled(false);
             btnGuardar.setText("Guardando...");
 
-            // EJECUTAR EL GUARDADO ORIGINAL SOLO DESPUÉS DE VALIDAR EL CORREO
-            Runnable guardarCambios = () -> {
-                // ACTUALIZAR NOMBRE SIN BORRAR OTROS DATOS
-                FirebaseFirestore.getInstance()
-                        .collection("usuarios")
-                        .document(usuario.getUid())
-                        .update(
-                                "nombreApellidos",
-                                nombreCompleto
-                        )
-                        .addOnSuccessListener(vacio -> {
+            // ACTUALIZAR NOMBRE SIN BORRAR OTROS DATOS
+            FirebaseFirestore.getInstance()
+                    .collection("usuarios")
+                    .document(usuario.getUid())
+                    .update(
+                            "nombreApellidos",
+                            nombreCompleto
+                    )
+                    .addOnSuccessListener(vacio -> {
 
-                            if (actividad.isFinishing()
-                                    || actividad.isDestroyed()) {
-                                return;
-                            }
+                        if (actividad.isFinishing()
+                                || actividad.isDestroyed()) {
+                            return;
+                        }
 
-                            if (cambioNombre) {
-                                nombreOriginal[0] = nombreCompleto;
-                            }
+                        if (cambioNombre) {
+                            nombreOriginal[0] = nombreCompleto;
+                        }
 
-                            // SI EL CORREO NO CAMBIÓ,
-                            // FINALIZAMOS EL GUARDADO
-                            if (!cambioCorreo) {
-
-                                btnGuardar.setEnabled(true);
-                                btnGuardar.setText(
-                                        "Guardar cambios"
-                                );
-
-                                mostrarMensaje(
-                                        actividad,
-                                        "Nombre y apellido actualizados correctamente"
-                                );
-
-                                return;
-                            }
-
-                            // SI CAMBIÓ, PEDIR VERIFICACIÓN
-                            btnGuardar.setText(
-                                    "Procesando..."
-                            );
-
-                            // ENVIAR CORREO DE VERIFICACIÓN EN ESPAÑOL
-                            FirebaseAuth.getInstance().setLanguageCode("es");
-
-                            usuario.verifyBeforeUpdateEmail(
-                                            correoNuevo
-                                    )
-                                    .addOnSuccessListener(resultado -> {
-
-                                        if (actividad.isFinishing()
-                                                || actividad.isDestroyed()) {
-                                            return;
-                                        }
-
-                                        btnGuardar.setEnabled(true);
-                                        btnGuardar.setText(
-                                                "Guardar cambios"
-                                        );
-
-                                        // RECORDAR EL CORREO PENDIENTE
-                                        // HASTA QUE EL USUARIO LO VERIFIQUE
-                                        aplicacion.guardarCorreoPendiente(
-                                                usuario.getUid(),
-                                                correoNuevo
-                                        );
-
-                                        // DETECTAR EL REGRESO DESDE GMAIL
-                                        final boolean[] comprobandoCorreo = {false};
-
-                                        escuchaCorreo[0] = actividadRegreso -> {
-
-                                            if (!popup.isShowing()
-                                                    || actividad.isFinishing()
-                                                    || actividad.isDestroyed()
-                                                    || comprobandoCorreo[0]) {
-                                                return;
-                                            }
-
-                                            comprobandoCorreo[0] = true;
-
-                                            SincronizarCorreoUsuario.comprobarCambioCorreo(
-                                                    actividad,
-                                                    correoNuevo,
-                                                    estado -> {
-
-                                                        comprobandoCorreo[0] = false;
-
-                                                        if (!popup.isShowing()
-                                                                || actividad.isFinishing()
-                                                                || actividad.isDestroyed()) {
-                                                            return;
-                                                        }
-
-                                                        switch (estado) {
-
-                                                            case ACTUALIZADO:
-
-                                                                // EL CORREO YA FUE ACTUALIZADO
-                                                                // BORRAR EL CAMBIO PENDIENTE
-                                                                aplicacion.limpiarCorreoPendiente(
-                                                                        usuario.getUid()
-                                                                );
-
-                                                                popup.dismiss();
-
-                                                                new androidx.appcompat.app.AlertDialog.Builder(actividad)
-                                                                        .setTitle("¡Verificación completada!")
-                                                                        .setMessage(
-                                                                                "Tu nueva dirección de correo electrónico "
-                                                                                        + "fue verificada y actualizada.\n\n"
-                                                                                        + "Los datos de tu cuenta ya están sincronizados."
-                                                                        )
-                                                                        .setCancelable(false)
-                                                                        .setPositiveButton(
-                                                                                "Volver a Mi cuenta",
-                                                                                (dialogo, which) -> {
-
-                                                                                    botonPerfil.post(() -> {
-
-                                                                                        if (!actividad.isFinishing()
-                                                                                                && !actividad.isDestroyed()) {
-
-                                                                                            MenuPerfilUsuario.mostrar(
-                                                                                                    actividad,
-                                                                                                    botonPerfil,
-                                                                                                    modoContraste,
-                                                                                                    escalaTexto
-                                                                                            );
-                                                                                        }
-                                                                                    });
-                                                                                }
-                                                                        )
-                                                                        .show();
-                                                                break;
-
-                                                            case SESION_INVALIDA:
-
-                                                                // EVITAR QUE SE MUESTRE DOS VECES
-                                                                // EL AVISO DE INICIO DE SESIÓN
-                                                                aplicacion.marcarAvisoSesionMostrado();
-
-                                                                popup.dismiss();
-
-                                                                SincronizarCorreoUsuario
-                                                                        .solicitarNuevoInicioSesion(actividad);
-                                                                break;
-
-                                                            case PENDIENTE:
-
-                                                                mostrarMensaje(
-                                                                        actividad,
-                                                                        "El correo todavía está pendiente de verificación."
-                                                                );
-                                                                break;
-
-                                                            case ERROR:
-
-                                                                new androidx.appcompat.app.AlertDialog.Builder(actividad)
-                                                                        .setTitle("No se pudo comprobar el cambio")
-                                                                        .setMessage(
-                                                                                "No pudimos verificar o sincronizar "
-                                                                                        + "tu nuevo correo.\n\n"
-                                                                                        + "Revisá tu conexión a Internet "
-                                                                                        + "y volvé a ViajAPP para intentarlo nuevamente."
-                                                                        )
-                                                                        .setPositiveButton("Entendido", null)
-                                                                        .show();
-                                                                break;
-                                                        }
-                                                    }
-                                            );
-                                        };
-
-                                        aplicacion.establecerEscuchaRegreso(
-                                                escuchaCorreo[0]
-                                        );
-
-                                        new androidx.appcompat.app.AlertDialog.Builder(actividad)
-                                                .setTitle("¡Correo de verificación enviado!")
-                                                .setMessage(
-                                                        "Te enviamos un enlace de verificación a:\n\n"
-                                                                + correoNuevo
-                                                                + "\n\nPara completar el cambio:\n\n"
-                                                                + "1. Abrí tu correo electrónico.\n"
-                                                                + "2. Confirmá el cambio desde el enlace recibido.\n"
-                                                                + "3. Regresá a ViajAPP.\n\n"
-                                                                + "Cuando vuelvas, comprobaremos si tu correo "
-                                                                + "se actualizó correctamente."
-                                                )
-                                                .setPositiveButton("Entendido", null)
-                                                .show();
-
-                                    })
-                                    .addOnFailureListener(error -> {
-
-                                        if (actividad.isFinishing()
-                                                || actividad.isDestroyed()) {
-                                            return;
-                                        }
-
-                                        btnGuardar.setEnabled(true);
-                                        btnGuardar.setText(
-                                                "Guardar cambios"
-                                        );
-
-                                        mostrarMensaje(
-                                                actividad,
-                                                "El nombre se guardó, pero no se pudo solicitar el cambio de correo. Volver a iniciar sesión. Detalle: "
-                                                        + error.getMessage()
-                                        );
-                                    });
-                        })
-                        .addOnFailureListener(error -> {
-
-                            if (actividad.isFinishing()
-                                    || actividad.isDestroyed()) {
-                                return;
-                            }
+                        // SI EL CORREO NO CAMBIÓ,
+                        // FINALIZAMOS EL GUARDADO
+                        if (!cambioCorreo) {
 
                             btnGuardar.setEnabled(true);
                             btnGuardar.setText(
@@ -553,57 +355,212 @@ public class MenuEditarPerfil {
 
                             mostrarMensaje(
                                     actividad,
-                                    "No se pudieron guardar los datos: "
-                                            + error.getMessage()
+                                    "Nombre y apellido actualizados correctamente"
                             );
-                        });
-            };
 
-            if (!cambioCorreo) {
-                guardarCambios.run();
-                return;
-            }
-
-            // CONSULTAR LA COLECCIÓN usuarios ANTES DE MODIFICAR LOS DATOS
-            btnGuardar.setText("Comprobando correo...");
-            FirebaseFirestore.getInstance()
-                    .collection("usuarios")
-                    .whereEqualTo("correo", correoNuevo.toLowerCase(java.util.Locale.ROOT))
-                    .get()
-                    .addOnSuccessListener(documentos -> {
-                        if (actividad.isFinishing() || actividad.isDestroyed() || !popup.isShowing()) {
                             return;
                         }
 
-                        boolean ocupado = false;
-                        for (com.google.firebase.firestore.DocumentSnapshot documento : documentos) {
-                            if (!documento.getId().equals(usuario.getUid())) {
-                                ocupado = true;
-                                break;
-                            }
-                        }
+                        // SI CAMBIÓ, PEDIR VERIFICACIÓN
+                        btnGuardar.setText(
+                                "Procesando..."
+                        );
 
-                        if (ocupado) {
-                            btnGuardar.setEnabled(true);
-                            btnGuardar.setText("Guardar cambios");
-                            layoutCorreo.setError("Este correo electrónico ya está registrado");
-                            edtCorreo.requestFocus();
-                            return;
-                        }
+                        // ENVIAR CORREO DE VERIFICACIÓN EN ESPAÑOL
+                        FirebaseAuth.getInstance().setLanguageCode("es");
 
-                        btnGuardar.setText("Guardando...");
-                        guardarCambios.run();
+                        usuario.verifyBeforeUpdateEmail(
+                                        correoNuevo
+                                )
+                                .addOnSuccessListener(resultado -> {
+
+                                    if (actividad.isFinishing()
+                                            || actividad.isDestroyed()) {
+                                        return;
+                                    }
+
+                                    btnGuardar.setEnabled(true);
+                                    btnGuardar.setText(
+                                            "Guardar cambios"
+                                    );
+
+                                    // RECORDAR EL CORREO PENDIENTE
+                                    // HASTA QUE EL USUARIO LO VERIFIQUE
+                                    aplicacion.guardarCorreoPendiente(
+                                            usuario.getUid(),
+                                            correoNuevo
+                                    );
+
+                                    // DETECTAR EL REGRESO DESDE GMAIL
+                                    final boolean[] comprobandoCorreo = {false};
+
+                                    escuchaCorreo[0] = actividadRegreso -> {
+
+                                        if (!popup.isShowing()
+                                                || actividad.isFinishing()
+                                                || actividad.isDestroyed()
+                                                || comprobandoCorreo[0]) {
+                                            return;
+                                        }
+
+                                        comprobandoCorreo[0] = true;
+
+                                        SincronizarCorreoUsuario.comprobarCambioCorreo(
+                                                actividad,
+                                                correoNuevo,
+                                                estado -> {
+
+                                                    comprobandoCorreo[0] = false;
+
+                                                    if (!popup.isShowing()
+                                                            || actividad.isFinishing()
+                                                            || actividad.isDestroyed()) {
+                                                        return;
+                                                    }
+
+                                                    switch (estado) {
+
+                                                        case ACTUALIZADO:
+
+                                                            // EL CORREO YA FUE ACTUALIZADO
+                                                            // BORRAR EL CAMBIO PENDIENTE
+                                                            aplicacion.limpiarCorreoPendiente(
+                                                                    usuario.getUid()
+                                                            );
+
+                                                            popup.dismiss();
+
+                                                            new androidx.appcompat.app.AlertDialog.Builder(actividad)
+                                                                    .setTitle("¡Verificación completada!")
+                                                                    .setMessage(
+                                                                            "Tu nueva dirección de correo electrónico "
+                                                                                    + "fue verificada y actualizada.\n\n"
+                                                                                    + "Los datos de tu cuenta ya están sincronizados."
+                                                                    )
+                                                                    .setCancelable(false)
+                                                                    .setPositiveButton(
+                                                                            "Volver a Mi cuenta",
+                                                                            (dialogo, which) -> {
+
+                                                                                botonPerfil.post(() -> {
+
+                                                                                    if (!actividad.isFinishing()
+                                                                                            && !actividad.isDestroyed()) {
+
+                                                                                        MenuPerfilUsuario.mostrar(
+                                                                                                actividad,
+                                                                                                botonPerfil,
+                                                                                                modoContraste,
+                                                                                                escalaTexto
+                                                                                        );
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                    )
+                                                                    .show();
+                                                            break;
+
+                                                        case SESION_INVALIDA:
+
+                                                            // EVITAR QUE SE MUESTRE DOS VECES
+                                                            // EL AVISO DE INICIO DE SESIÓN
+                                                            aplicacion.marcarAvisoSesionMostrado();
+
+                                                            popup.dismiss();
+
+                                                            SincronizarCorreoUsuario
+                                                                    .solicitarNuevoInicioSesion(actividad);
+                                                            break;
+
+                                                        case PENDIENTE:
+
+                                                            mostrarMensaje(
+                                                                    actividad,
+                                                                    "El correo todavía está pendiente de verificación."
+                                                            );
+                                                            break;
+
+                                                        case ERROR:
+
+                                                            new androidx.appcompat.app.AlertDialog.Builder(actividad)
+                                                                    .setTitle("No se pudo comprobar el cambio")
+                                                                    .setMessage(
+                                                                            "No pudimos verificar o sincronizar "
+                                                                                    + "tu nuevo correo.\n\n"
+                                                                                    + "Revisá tu conexión a Internet "
+                                                                                    + "y volvé a ViajAPP para intentarlo nuevamente."
+                                                                    )
+                                                                    .setPositiveButton("Entendido", null)
+                                                                    .show();
+                                                            break;
+                                                    }
+                                                }
+                                        );
+                                    };
+
+                                    aplicacion.establecerEscuchaRegreso(
+                                            escuchaCorreo[0]
+                                    );
+
+                                    new androidx.appcompat.app.AlertDialog.Builder(actividad)
+                                            .setTitle("¡Correo de verificación enviado!")
+                                            .setMessage(
+                                                    "Te enviamos un enlace de verificación a:\n\n"
+                                                            + correoNuevo
+                                                            + "\n\nPara completar el cambio:\n\n"
+                                                            + "1. Abrí tu correo electrónico.\n"
+                                                            + "2. Confirmá el cambio desde el enlace recibido.\n"
+                                                            + "3. Regresá a ViajAPP.\n\n"
+                                                            + "Cuando vuelvas, comprobaremos si tu correo "
+                                                            + "se actualizó correctamente."
+                                            )
+                                            .setPositiveButton("Entendido", null)
+                                            .show();
+
+                                })
+                                .addOnFailureListener(error -> {
+
+                                    if (actividad.isFinishing()
+                                            || actividad.isDestroyed()) {
+                                        return;
+                                    }
+
+                                    btnGuardar.setEnabled(true);
+                                    btnGuardar.setText(
+                                            "Guardar cambios"
+                                    );
+
+
+                                    new androidx.appcompat.app.AlertDialog.Builder(actividad)
+                                            .setTitle("No se pudo cambiar el correo")
+                                            .setMessage(
+                                                    "Tus datos personales se guardaron correctamente.\n\n"
+                                                            + "Por seguridad, intentá iniciar sesión nuevamente "
+                                                            + "y repetí la solicitud.\n\n"
+                                                            + "Detalle: " + error.getMessage()
+                                            )
+                                            .setPositiveButton("Entendido", null)
+                                            .show();
+
+                                });
                     })
                     .addOnFailureListener(error -> {
-                        if (actividad.isFinishing() || actividad.isDestroyed() || !popup.isShowing()) {
+
+                        if (actividad.isFinishing()
+                                || actividad.isDestroyed()) {
                             return;
                         }
 
                         btnGuardar.setEnabled(true);
-                        btnGuardar.setText("Guardar cambios");
-                        mostrarMensaje(actividad,
-                                "No se pudo comprobar si el correo ya está registrado: "
-                                        + error.getMessage());
+                        btnGuardar.setText(
+                                "Guardar cambios"
+                        );
+
+                        mostrarMensaje(
+                                actividad,
+                                "No se pudieron guardar los datos: "
+                                        + error.getMessage()
+                        );
                     });
         });
 
