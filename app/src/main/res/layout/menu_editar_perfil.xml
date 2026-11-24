@@ -139,7 +139,8 @@
             <LinearLayout
                 android:id="@+id/contenedorCorreoPerfil"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:gravity="center_vertical"
                 android:background="@null"
                 android:orientation="horizontal"
@@ -159,7 +160,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtCorreoPerfil"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
                         android:background="@null"
                         android:hint="Escribí tu correo electrónico"
                         android:paddingTop="0dp"

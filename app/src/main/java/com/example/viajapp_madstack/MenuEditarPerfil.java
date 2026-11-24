@@ -235,8 +235,14 @@ public class MenuEditarPerfil {
             layoutCorreo.setError(null);
             layoutCorreo.setErrorEnabled(false);
 
-            String nombreCompleto =
-                    obtenerTexto(edtNombre).trim();
+            // FORMATEAR NOMBRE Y APELLIDO
+            String nombreCompleto = formatearNombre(
+                    obtenerTexto(edtNombre)
+                            .trim()
+                            .replaceAll(" +", " ")
+            );
+
+            edtNombre.setText(nombreCompleto);
 
             String correoNuevo =
                     obtenerTexto(edtCorreo).trim();
@@ -325,17 +331,29 @@ public class MenuEditarPerfil {
             btnGuardar.setEnabled(false);
             btnGuardar.setText("Guardando...");
 
-            // EJECUTAR EL GUARDADO ORIGINAL SOLO DESPUÉS DE VALIDAR EL CORREO
+            // GUARDAR ÚNICAMENTE LOS DATOS MODIFICADOS
             Runnable guardarCambios = () -> {
-                // ACTUALIZAR NOMBRE SIN BORRAR OTROS DATOS
-                FirebaseFirestore.getInstance()
-                        .collection("usuarios")
-                        .document(usuario.getUid())
-                        .update(
-                                "nombreApellidos",
-                                nombreCompleto
-                        )
-                        .addOnSuccessListener(vacio -> {
+
+                com.google.android.gms.tasks.Task<Void> tareaNombre;
+
+                if (cambioNombre) {
+
+                    tareaNombre = FirebaseFirestore.getInstance()
+                            .collection("usuarios")
+                            .document(usuario.getUid())
+                            .update(
+                                    "nombreApellidos",
+                                    nombreCompleto
+                            );
+
+                } else {
+
+                    tareaNombre =
+                            com.google.android.gms.tasks.Tasks
+                                    .forResult((Void) null);
+                }
+
+                tareaNombre.addOnSuccessListener(vacio -> {
 
                             if (actividad.isFinishing()
                                     || actividad.isDestroyed()) {
@@ -376,7 +394,16 @@ public class MenuEditarPerfil {
                                     )
                                     .addOnSuccessListener(resultado -> {
 
-                                        if (actividad.isFinishing()
+                                        // RECORDAR EL CORREO PENDIENTE
+                                        // HASTA QUE EL USUARIO LO VERIFIQUE
+                                        aplicacion.guardarCorreoPendiente(
+                                                usuario.getUid(),
+                                                correoNuevo
+                                        );
+
+                                        // COMPROBAR QUE LA VENTANA SIGUE ACTIVA
+                                        if (!popup.isShowing()
+                                                || actividad.isFinishing()
                                                 || actividad.isDestroyed()) {
                                             return;
                                         }
@@ -386,12 +413,15 @@ public class MenuEditarPerfil {
                                                 "Guardar cambios"
                                         );
 
-                                        // RECORDAR EL CORREO PENDIENTE
-                                        // HASTA QUE EL USUARIO LO VERIFIQUE
-                                        aplicacion.guardarCorreoPendiente(
-                                                usuario.getUid(),
-                                                correoNuevo
-                                        );
+                                        // ELIMINAR UNA ESCUCHA ANTERIOR
+                                        if (escuchaCorreo[0] != null) {
+
+                                            aplicacion.quitarEscuchaRegreso(
+                                                    escuchaCorreo[0]
+                                            );
+
+                                            escuchaCorreo[0] = null;
+                                        }
 
                                         // DETECTAR EL REGRESO DESDE GMAIL
                                         final boolean[] comprobandoCorreo = {false};
@@ -505,16 +535,21 @@ public class MenuEditarPerfil {
                                         );
 
                                         new androidx.appcompat.app.AlertDialog.Builder(actividad)
-                                                .setTitle("¡Correo de verificación enviado!")
+                                                .setTitle("¡Solicitud de verificación realizada!")
                                                 .setMessage(
-                                                        "Te enviamos un enlace de verificación a:\n\n"
+                                                        (cambioNombre
+                                                                ? "Tu nombre y apellido se actualizaron correctamente.\n\n"
+                                                                : "")
+                                                                + "Solicitamos el envío de un enlace de verificación a:\n\n"
                                                                 + correoNuevo
                                                                 + "\n\nPara completar el cambio:\n\n"
-                                                                + "1. Abrí tu correo electrónico.\n"
+                                                                + "1. Revisá tu correo electrónico.\n"
                                                                 + "2. Confirmá el cambio desde el enlace recibido.\n"
                                                                 + "3. Regresá a ViajAPP.\n\n"
-                                                                + "Cuando vuelvas, comprobaremos si tu correo "
-                                                                + "se actualizó correctamente."
+                                                                + "Si no recibís el enlace, revisá el correo no deseado "
+                                                                + "y comprobá la dirección ingresada.\n\n"
+                                                                + "Tu correo anterior seguirá vigente hasta "
+                                                                + "que confirmes el nuevo."
                                                 )
                                                 .setPositiveButton("Entendido", null)
                                                 .show();
@@ -535,10 +570,15 @@ public class MenuEditarPerfil {
                                         new androidx.appcompat.app.AlertDialog.Builder(actividad)
                                                 .setTitle("No se pudo cambiar el correo")
                                                 .setMessage(
-                                                        "Tus datos personales se guardaron correctamente.\n\n"
-                                                                + "Por seguridad, intentá iniciar sesión nuevamente  "
-                                                                + "Repetí la solicitud.\n\n"
-                                                                + "Detalle: " + error.getMessage()
+                                                        cambioNombre
+                                                                ? "Tu nombre y apellido se actualizaron correctamente, "
+                                                                  + "pero no pudimos enviar el enlace de verificación "
+                                                                  + "del nuevo correo electrónico.\n\n"
+                                                                  + "Tu correo anterior sigue vigente."
+
+                                                                : "No pudimos enviar el enlace de verificación "
+                                                                  + "del nuevo correo electrónico.\n\n"
+                                                                  + "Tu correo anterior sigue vigente."
                                                 )
                                                 .setPositiveButton("Entendido", null)
                                                 .show();
@@ -563,53 +603,7 @@ public class MenuEditarPerfil {
                             );
                         });
             };
-
-            if (!cambioCorreo) {
-                guardarCambios.run();
-                return;
-            }
-
-            // CONSULTAR LA COLECCIÓN usuarios ANTES DE MODIFICAR LOS DATOS
-            btnGuardar.setText("Comprobando correo...");
-            FirebaseFirestore.getInstance()
-                    .collection("usuarios")
-                    .whereEqualTo("correo", correoNuevo.toLowerCase(java.util.Locale.ROOT))
-                    .get()
-                    .addOnSuccessListener(documentos -> {
-                        if (actividad.isFinishing() || actividad.isDestroyed() || !popup.isShowing()) {
-                            return;
-                        }
-
-                        boolean ocupado = false;
-                        for (com.google.firebase.firestore.DocumentSnapshot documento : documentos) {
-                            if (!documento.getId().equals(usuario.getUid())) {
-                                ocupado = true;
-                                break;
-                            }
-                        }
-
-                        if (ocupado) {
-                            btnGuardar.setEnabled(true);
-                            btnGuardar.setText("Guardar cambios");
-                            layoutCorreo.setError("Este correo electrónico ya está registrado");
-                            edtCorreo.requestFocus();
-                            return;
-                        }
-
-                        btnGuardar.setText("Guardando...");
-                        guardarCambios.run();
-                    })
-                    .addOnFailureListener(error -> {
-                        if (actividad.isFinishing() || actividad.isDestroyed() || !popup.isShowing()) {
-                            return;
-                        }
-
-                        btnGuardar.setEnabled(true);
-                        btnGuardar.setText("Guardar cambios");
-                        mostrarMensaje(actividad,
-                                "No se pudo comprobar si el correo ya está registrado: "
-                                        + error.getMessage());
-                    });
+            guardarCambios.run();
         });
 
         // MOSTRAR DEBAJO DEL ICONO DE PERFIL
@@ -675,6 +669,12 @@ public class MenuEditarPerfil {
                     resultados.get(0),
                     tipoCampo
             );
+
+            // FORMATEAR ÚNICAMENTE EL NOMBRE Y APELLIDO
+            if (requestCode == REQ_DICTADO_NOMBRE_PERFIL) {
+                textoProcesado = formatearNombre(textoProcesado);
+            }
+
             destino.setText(textoProcesado);
             destino.setSelection(textoProcesado.length());
             destino.requestFocus();
@@ -735,7 +735,9 @@ public class MenuEditarPerfil {
                     String apellido =
                             documento.getString("apellido");
 
-                    if (nombre != null
+                    if ((nombreCompleto == null
+                            || nombreCompleto.trim().isEmpty())
+                            && nombre != null
                             && !nombre.trim().isEmpty()
                             && apellido != null
                             && !apellido.trim().isEmpty()) {
@@ -773,6 +775,41 @@ public class MenuEditarPerfil {
                         );
                     }
                 });
+    }
+
+    // =========================================
+    // FORMATEAR NOMBRE Y APELLIDO
+    // =========================================
+
+    private static String formatearNombre(String nombre) {
+
+        String[] palabras = nombre.toLowerCase().split(" ");
+        StringBuilder resultado = new StringBuilder();
+
+        for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+                if (resultado.length() > 0) {
+                    resultado.append(" ");
+                }
+
+                if (palabra.equals("de")
+                        || palabra.equals("del")
+                        || palabra.equals("la")
+                        || palabra.equals("las")
+                        || palabra.equals("los")) {
+
+                    resultado.append(palabra);
+
+                } else {
+
+                    resultado.append(
+                            palabra.substring(0, 1).toUpperCase()
+                    ).append(palabra.substring(1));
+                }
+            }
+        }
+
+        return resultado.toString();
     }
 
     // OBTENER TEXTO
