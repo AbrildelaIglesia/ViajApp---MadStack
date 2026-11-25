@@ -165,6 +165,13 @@ public class InicioActivity extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(correo, contrasena)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
+
+                            // REACTIVAR COMPROBACIÓN DEL CORREO PENDIENTE
+                            ViajAppApplication aplicacion =
+                                    (ViajAppApplication) getApplication();
+
+                            aplicacion.restablecerAvisoSesion();
+
                             Toast.makeText(InicioActivity.this, "¡Bienvenido!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(InicioActivity.this, AccesibilidadActivity.class);
                             startActivity(intent);
