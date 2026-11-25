@@ -146,6 +146,12 @@ public class ViajAppApplication extends Application {
         avisoSesionMostrado = true;
     }
 
+    // PERMITIR COMPROBAR EL CORREO PENDIENTE
+    // DESPUÉS DE INICIAR SESIÓN NUEVAMENTE
+    public void restablecerAvisoSesion() {
+        avisoSesionMostrado = false;
+    }
+
     // CONSULTAR FIREBASE AL VOLVER A VIAJAPP
     private void comprobarCorreoPendienteGlobal(Activity actividad) {
 

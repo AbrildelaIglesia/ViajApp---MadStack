@@ -670,7 +670,8 @@ public class MenuEditarPerfil {
                     tipoCampo
             );
 
-            // FORMATEAR ÚNICAMENTE EL NOMBRE Y APELLIDO
+
+             // FORMATEAR ÚNICAMENTE EL NOMBRE Y APELLIDO
             if (requestCode == REQ_DICTADO_NOMBRE_PERFIL) {
                 textoProcesado = formatearNombre(textoProcesado);
             }
